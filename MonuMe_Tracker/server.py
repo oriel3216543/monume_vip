@@ -15,7 +15,12 @@ import json
 import hashlib
 import secrets
 from functools import wraps
-from config.production import ProductionConfig, DevelopmentConfig
+# Ensure configuration imports resolve both when running from the project root
+# and when executing within the `MonuMe_Tracker` package.
+try:
+    from config.production import ProductionConfig, DevelopmentConfig  # type: ignore
+except ModuleNotFoundError:
+    from MonuMe_Tracker.config.production import ProductionConfig, DevelopmentConfig
 from sqlalchemy import text
 
 # Email helpers
