@@ -1,0 +1,3230 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script src="/static/sidebar-loader.js"></script>
+    <script>
+        // Early auth check before page initialization
+        window.isAdmin = false;
+        window.currentUser = null;
+        window.selectedLocationParam = null;
+        window.__authPromise = (async () => {
+            try {
+                const res = await fetch('/api/check-auth');
+                if (!res.ok) {
+                    window.location.href = '/login';
+                    return;
+                }
+                const data = await res.json();
+                if (!data.authenticated || !data.user) {
+                    window.location.href = '/login';
+                    return;
+                }
+                window.currentUser = data.user;
+                window.isAdmin = (data.user.role === 'admin');
+                const params = new URLSearchParams(window.location.search);
+                const loc = params.get('location');
+                window.selectedLocationParam = loc;
+            } catch (e) {
+                // On error, force login to re-establish session
+                window.location.href = '/login';
+            }
+        })();
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MonuMe Performance - Appointments</title>
+    <link rel="icon" type="image/png" href="/icon.png">
+    <meta name="description" content="Manage MonuMe appointments and scheduling">
+
+    <!-- External Libraries -->
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.0/main.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Sidebar Styles -->
+    <link rel="stylesheet" href="/sidebar-styles.css">
+
+    <style>
+        :root {
+            --primary-color: #ff9562;
+            --primary-light: #fff0eb;
+            --primary-dark: #ff7f42;
+            --secondary-color: #f9fafb;
+            --accent-color: #4a6cf7;
+            --text-primary: #1f2937;
+            --text-secondary: #6b7280;
+            --text-tertiary: #9ca3af;
+            --border-color: #e5e7eb;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --info-color: #3b82f6;
+            --white: #ffffff;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+            --gray-900: #111827;
+
+            /* Shadows */
+            --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+
+            /* Border radius */
+            --radius-sm: 0.375rem;
+            --radius-md: 0.5rem;
+            --radius-lg: 0.75rem;
+            --radius-xl: 1rem;
+            --radius-2xl: 1.5rem;
+
+            /* Transitions */
+            --transition-fast: all 0.15s ease;
+            --transition-normal: all 0.3s ease;
+            --transition-slow: all 0.5s ease;
+        }
+
+        /* Time Conflict Animation Styles */
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            10%,
+            30%,
+            50%,
+            70%,
+            90% {
+                transform: translateX(-5px);
+            }
+
+            20%,
+            40%,
+            60%,
+            80% {
+                transform: translateX(5px);
+            }
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #ff9562 0%, #ff7f42 50%, #ffcab1 100%);
+            min-height: 100vh;
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Background pattern overlay */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="2" fill="white" opacity="0.1"/></svg>') repeat;
+            background-size: 50px 50px;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* Main Container */
+        .main-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar styles are inherited from the global sidebar template/loader to match dashboard exactly */
+
+        /* Mobile sidebar toggle */
+        .sidebar-toggle {
+            display: none;
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 200;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            box-shadow: var(--shadow-lg);
+            transition: var(--transition-fast);
+        }
+
+        .sidebar-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: var(--shadow-xl);
+        }
+
+        /* Content Area */
+        .content-area {
+            flex: 1;
+            margin-left: 280px;
+            width: calc(100% - 280px);
+            padding: 40px 40px 40px 16px; /* small breathing room from sidebar */
+            transition: var(--transition-normal);
+            min-height: 100vh;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Hard override to eliminate any residual left gap from external styles */
+        .content-area, .content-area * {
+            --local-zero-left: 0 !important;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .sidebar-toggle {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .content-area {
+                margin-left: 0;
+                padding: 1rem;
+                padding-top: 4rem;
+            }
+        }
+
+        /* Page Header */
+        .page-header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 12px;
+            padding: 20px 24px;
+            margin: 0 0 24px 0; /* remove side gap so it spans full content width */
+            box-shadow: var(--shadow-lg);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Improve readability on light header */
+        .page-header, .page-header .header-text, .page-header .header-text h1, .page-header .header-text p {
+            color: #1f2937; /* slate-800 */
+            text-shadow: none;
+        }
+        .page-header .header-text p { color: #6b7280; }
+
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-dark), var(--primary-color));
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .header-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .header-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            border-radius: var(--radius-xl);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            box-shadow: var(--shadow-md);
+        }
+
+        .header-text h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 0.25rem;
+        }
+
+        .header-text p {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            font-size: 0.875rem;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            transition: var(--transition-fast);
+            white-space: nowrap;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+            background: linear-gradient(135deg, var(--primary-dark), #ff6b2d);
+        }
+
+        .btn-secondary {
+            background: var(--white);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background: var(--gray-50);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-icon {
+            padding: 0.75rem;
+            border-radius: 50%;
+        }
+
+        /* Tab Navigation */
+        .tab-navigation {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: var(--radius-xl);
+            padding: 0.5rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-md);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            display: flex;
+            gap: 0.25rem;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 0.875rem 1.5rem;
+            background: #ffffff;
+            border: 1px solid rgba(0,0,0,0.08);
+            border-radius: var(--radius-lg);
+            font-weight: 500;
+            color: #374151;
+            cursor: pointer;
+            transition: var(--transition-fast);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .tab-btn:not(.active):hover {
+            background: #f3f4f6;
+            color: #1f2937;
+        }
+
+        /* Filter/Tab container background for contrast */
+        .tab-navigation {
+            background: #fffdfb;
+            border: 1px solid rgba(0,0,0,0.06);
+            border-radius: 12px;
+            padding: 10px 12px;
+            position: sticky;
+            top: 0;
+            z-index: 20; /* ensure above list items */
+        }
+
+        /* Content Cards */
+        .content-card {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-lg);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            overflow: hidden;
+            margin-bottom: 2rem;
+            color: #1f2937;
+            position: relative;
+            z-index: 10; /* stay below the sticky tab bar */
+        }
+
+        .calendar-view {
+            padding: 1.5rem;
+            min-height: 600px;
+            display: block;
+        }
+
+        /* Ensure FullCalendar container has proper dimensions */
+        #calendar {
+            width: 100%;
+            min-height: 500px;
+        }
+
+        /* FullCalendar readability tweaks (safe if FullCalendar present) */
+        #calendar .fc .fc-toolbar-title { color: #1f2937 !important; }
+        #calendar .fc .fc-col-header-cell-cushion { color: #6b7280 !important; }
+        #calendar .fc .fc-daygrid-day-number { color: #374151 !important; }
+        #calendar .fc .fc-button-primary { background: linear-gradient(135deg, var(--primary-color), var(--primary-dark)); border: none; color: #ffffff; }
+
+        .list-view {
+            display: none;
+            padding: 1.5rem;
+        }
+
+        .list-view.active {
+            display: block;
+        }
+
+        /* Appointment Cards */
+        .appointments-grid {
+            display: grid;
+            gap: 1.5rem;
+            grid-template-columns: 1fr;
+        }
+
+        /* Simple list layout for appointments */
+        .appointments-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        /* Enhanced appointment card for list view */
+        .appointment-card-list {
+            background: #ffffff;
+            border-radius: var(--radius-lg);
+            padding: 1rem 1.25rem;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid rgba(0,0,0,0.08);
+            transition: var(--transition-normal);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .appointment-card-list:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--primary-color);
+        }
+
+        .appointment-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex: 1;
+            min-width: 300px;
+            border-radius: var(--radius-md);
+            transition: var(--transition-fast);
+        }
+
+        .appointment-info:hover {
+            background: rgba(255, 149, 98, 0.05);
+            transform: translateX(2px);
+        }
+
+        .appointment-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 1.2rem;
+        }
+
+        .appointment-details-list { flex: 1; min-width: 240px; }
+
+        .appointment-client-name { font-weight: 700; font-size: 1rem; color: #111827; margin-bottom: 0.125rem; }
+
+        .appointment-meta-list { display: flex; align-items: center; gap: 0.75rem; color: #4b5563; font-size: 0.85rem; flex-wrap: wrap; }
+
+        .appointment-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+        }
+
+        .appointment-actions-list { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+
+        /* Empty state styling */
+        .no-appointments {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-tertiary);
+        }
+
+        .no-appointments i {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            color: var(--text-tertiary);
+            opacity: 0.5;
+        }
+
+        .no-appointments h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .no-appointments p {
+            margin-bottom: 2rem;
+            font-size: 1rem;
+            color: var(--text-tertiary);
+        }
+
+        .appointment-card {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-color);
+            transition: var(--transition-normal);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .appointment-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg, var(--primary-color), var(--primary-dark));
+        }
+
+        .appointment-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-xl);
+            border-color: var(--primary-color);
+        }
+
+        .appointment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .appointment-title {
+            font-weight: 600;
+            font-size: 1.125rem;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .appointment-type-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .type-monume {
+            background: rgba(255, 149, 98, 0.1);
+            color: var(--primary-dark);
+        }
+
+        .type-fameme {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success-color);
+        }
+
+        .type-crystalme {
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--info-color);
+        }
+
+        .appointment-meta {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .appointment-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .detail-label {
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .detail-value {
+            font-size: 0.875rem;
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .appointment-url {
+            font-family: monospace;
+            background: var(--gray-100);
+            padding: 0.5rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.75rem;
+            word-break: break-all;
+        }
+
+        .appointment-actions {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            padding: 0.4rem 0.7rem;
+            border-radius: 10px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: var(--transition-fast);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        .action-edit {
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--info-color);
+        }
+
+        .action-delete {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger-color);
+        }
+
+        .action-copy {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success-color);
+        }
+
+        .action-email {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning-color);
+        }
+
+        .action-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* Status Badges */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            padding: 0.375rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .status-scheduled {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning-color);
+        }
+
+        .status-confirmed {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success-color);
+        }
+
+        .status-rescheduled {
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--info-color);
+        }
+
+        .status-cancelled {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger-color);
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition-normal);
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-container {
+            background: #ffffff;
+            border-radius: var(--radius-2xl);
+            width: 92%;
+            max-width: 860px; /* wider so content doesn't cram */
+            max-height: 88vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-xl);
+            transform: translateY(20px) scale(0.95);
+            transition: var(--transition-normal);
+            color: #1f2937; /* text on white */
+        }
+
+        .modal-overlay.active .modal-container {
+            transform: translateY(0) scale(1);
+        }
+
+        .modal-header {
+            padding: 1.25rem 1.5rem 0.75rem;
+            border-bottom: 1px solid rgba(0,0,0,0.06);
+            position: relative;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #111827; /* slate-900 */
+            margin-bottom: 0.25rem;
+        }
+
+        .modal-subtitle {
+            color: #6b7280; /* slate-500 */
+            font-size: 0.9rem;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #f3f4f6;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6b7280;
+            transition: var(--transition-fast);
+        }
+
+        .modal-close:hover { background: #e5e7eb; color: #111827; }
+
+        .modal-body { padding: 1.25rem 1.5rem 1.75rem; }
+
+        /* Form Styles */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: #374151; /* slate-700 */
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-input,
+        .form-select,
+        .form-textarea {
+            padding: 0.875rem 1rem;
+            border: 1px solid rgba(0,0,0,0.12);
+            border-radius: var(--radius-md);
+            font-size: 0.95rem;
+            transition: var(--transition-fast);
+            background: #ffffff;
+            color: #111827;
+        }
+
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(255, 149, 98, 0.18);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border-color);
+            position: sticky; /* keep buttons visible at bottom while scrolling */
+            bottom: 0;
+            background: linear-gradient(to top, rgba(255,255,255,1), rgba(255,255,255,0.92));
+            z-index: 6;
+        }
+
+        /* Email Template Selection Styles */
+        .form-help-text {
+            margin-top: 0.5rem;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .form-help-text i {
+            font-size: 0.625rem;
+            opacity: 0.7;
+        }
+
+        .email-preview-group {
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 1rem;
+            background: var(--gray-50);
+            margin-top: 0.5rem;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        .email-preview-group.show {
+            display: block !important;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+                max-height: 0;
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+                max-height: 200px;
+            }
+        }
+
+        /* Details Button Styling */
+        .action-details {
+            background: linear-gradient(135deg, var(--info-color), #1d4ed8);
+            color: white;
+        }
+
+        .action-details:hover {
+            background: linear-gradient(135deg, #1d4ed8, #1e40af);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        /* Appointment Details Modal */
+        .appointment-details-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 3000;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition-normal);
+        }
+
+        .appointment-details-modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .appointment-details-container {
+            background: var(--white);
+            border-radius: var(--radius-2xl);
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-xl);
+            transform: translateY(20px) scale(0.95);
+            transition: var(--transition-normal);
+        }
+
+        .appointment-details-modal.active .appointment-details-container {
+            transform: translateY(0) scale(1);
+        }
+
+        .appointment-details-header {
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(135deg, var(--info-color), #1d4ed8);
+            color: white;
+            border-radius: var(--radius-2xl) var(--radius-2xl) 0 0;
+        }
+
+        .appointment-details-header h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .appointment-details-close {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            transition: var(--transition-fast);
+        }
+
+        .appointment-details-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .appointment-details-body {
+            padding: 2rem;
+        }
+
+        .details-section {
+            margin-bottom: 2rem;
+        }
+
+        .details-section h4 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .detail-card {
+            background: var(--gray-50);
+            border-radius: var(--radius-lg);
+            padding: 1rem;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .detail-card-label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 0.25rem;
+        }
+
+        .detail-card-value {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        /* History Tables */
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .history-table th,
+        .history-table td {
+            padding: 0.75rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .history-table th {
+            background: var(--gray-100);
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 0.875rem;
+        }
+
+        .history-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .history-table tr:hover {
+            background: var(--gray-50);
+        }
+
+        .history-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .history-status.success {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success-color);
+        }
+
+        .history-status.failed {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger-color);
+        }
+
+        .history-status.pending {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning-color);
+        }
+
+        .empty-history {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+
+        /* Email Protection Modal */
+        .email-protection-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 3500;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition-normal);
+        }
+
+        .email-protection-modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .email-protection-container {
+            background: var(--white);
+            border-radius: var(--radius-2xl);
+            width: 90%;
+            max-width: 500px;
+            box-shadow: var(--shadow-xl);
+            transform: translateY(20px) scale(0.95);
+            transition: var(--transition-normal);
+        }
+
+        .email-protection-modal.active .email-protection-container {
+            transform: translateY(0) scale(1);
+        }
+
+        .email-protection-header {
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--border-color);
+            text-align: center;
+            background: linear-gradient(135deg, var(--warning-color), #d97706);
+            color: white;
+            border-radius: var(--radius-2xl) var(--radius-2xl) 0 0;
+        }
+
+        .email-protection-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .email-protection-body {
+            padding: 2rem;
+        }
+
+        .protection-warning {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.2);
+            border-radius: var(--radius-lg);
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            color: var(--warning-color);
+            text-align: center;
+        }
+
+        .admin-auth-form {
+            margin-top: 1.5rem;
+        }
+
+        .admin-auth-form .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .admin-auth-form label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            font-size: 0.875rem;
+        }
+
+        .admin-auth-form input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            font-size: 0.875rem;
+            transition: var(--transition-fast);
+        }
+
+        .admin-auth-form input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(255, 149, 98, 0.1);
+        }
+
+        /* Alerts */
+        .alert {
+            padding: 1rem 1.5rem;
+            border-radius: var(--radius-lg);
+            margin-bottom: 1.5rem;
+            display: none;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 500;
+        }
+
+        .alert.show {
+            display: flex;
+        }
+
+        .alert-success {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success-color);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .alert-error {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger-color);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        /* Loading Spinner */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(4px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition-normal);
+        }
+
+        .loading-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .spinner {
+            width: 48px;
+            height: 48px;
+            border: 4px solid var(--gray-200);
+            border-top-color: var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .loading-text {
+            margin-top: 1rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .content-area {
+                margin-left: 0;
+                padding: 1rem;
+            }
+
+            .header-content {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .header-actions {
+                width: 100%;
+                justify-content: flex-start;
+            }
+
+            .tab-navigation {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .tab-btn {
+                justify-content: flex-start;
+            }
+
+            .appointment-details {
+                grid-template-columns: 1fr;
+            }
+
+            .appointment-header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-actions {
+                flex-direction: column-reverse;
+            }
+
+            .modal-container {
+                margin: 1rem;
+                width: calc(100% - 2rem);
+            }
+        }
+
+        /* Custom FullCalendar Styles */
+        .fc {
+            font-family: 'Inter', sans-serif;
+            width: 100% !important;
+            height: auto !important;
+        }
+
+        .fc-theme-standard .fc-scrollgrid {
+            border-color: var(--border-color);
+        }
+
+        .fc .fc-toolbar-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .fc .fc-button-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            border-color: var(--primary-color);
+            box-shadow: var(--shadow-sm);
+            font-weight: 500;
+        }
+
+        .fc .fc-button-primary:hover {
+            background: linear-gradient(135deg, var(--primary-dark), #ff6b2d);
+            border-color: var(--primary-dark);
+            box-shadow: var(--shadow-md);
+        }
+
+        .fc .fc-button-primary:not(:disabled) {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            border-color: var(--primary-color);
+        }
+
+        .fc-event {
+            border-radius: var(--radius-sm);
+            border: none;
+            padding: 2px 4px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        /* Custom event content styling */
+        .fc-event-content {
+            padding: 2px;
+            line-height: 1.2;
+        }
+
+        .fc-event-time {
+            font-size: 0.7rem;
+            opacity: 0.9;
+            font-weight: 400;
+        }
+
+        .fc-event-title {
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-top: 1px;
+        }
+
+        /* Different styling for different views */
+        .fc-dayGridMonth-view .fc-event-title {
+            font-size: 0.7rem;
+        }
+
+        .fc-timeGridWeek-view .fc-event-title,
+        .fc-timeGridDay-view .fc-event-title {
+            font-size: 0.8rem;
+        }
+
+        .fc-day-today {
+            background-color: rgba(255, 149, 98, 0.05) !important;
+        }
+
+        /* Ensure calendar container is visible */
+        .fc-header-toolbar {
+            margin-bottom: 1em;
+        }
+
+        .fc-view-harness {
+            height: auto !important;
+        }
+
+        /* Fix any potential z-index issues */
+        .fc {
+            z-index: 1;
+        }
+
+        /* Delete Authentication Modal */
+        .delete-auth-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition-normal);
+        }
+
+        .delete-auth-modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .delete-auth-container {
+            background: var(--white);
+            border-radius: var(--radius-2xl);
+            width: 90%;
+            max-width: 500px;
+            box-shadow: var(--shadow-xl);
+            transform: translateY(20px) scale(0.95);
+            transition: var(--transition-normal);
+        }
+
+        .delete-auth-modal.active .delete-auth-container {
+            transform: translateY(0) scale(1);
+        }
+
+        .delete-auth-header {
+            padding: 1.5rem 2rem 1rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .delete-auth-header h3 {
+            color: var(--danger-color);
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .delete-auth-close {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--gray-100);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            transition: var(--transition-fast);
+        }
+
+        .delete-auth-close:hover {
+            background: var(--gray-200);
+            color: var(--text-primary);
+        }
+
+        .delete-auth-body {
+            padding: 1.5rem 2rem 2rem;
+        }
+
+        .appointment-info-display {
+            background: var(--gray-50);
+            border-radius: var(--radius-lg);
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .appointment-info-display h4 {
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+
+        .appointment-info-display p {
+            margin: 0.25rem 0;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .appointment-info-display strong {
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .auth-form {
+            margin-bottom: 1.5rem;
+        }
+
+        .auth-form .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .auth-form label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            font-size: 0.875rem;
+        }
+
+        .auth-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            font-size: 0.875rem;
+            transition: var(--transition-fast);
+        }
+
+        .auth-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(255, 149, 98, 0.1);
+        }
+
+        .auth-warning {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+            padding: 0.75rem;
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.2);
+            border-radius: var(--radius-md);
+            color: var(--warning-color);
+            font-size: 0.8rem;
+        }
+
+        .auth-warning i {
+            margin-top: 0.1rem;
+            flex-shrink: 0;
+        }
+
+        .delete-auth-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.75rem;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, var(--danger-color), #dc2626);
+            color: white;
+            border: none;
+        }
+
+        .btn-danger:hover {
+            background: linear-gradient(135deg, #dc2626, #b91c1c);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-danger:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-danger:disabled:hover {
+            background: linear-gradient(135deg, var(--danger-color), #dc2626);
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Authentication Error Modal */
+        .auth-error-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2500;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition-normal);
+        }
+
+        .auth-error-modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .auth-error-container {
+            background: var(--white);
+            border-radius: var(--radius-xl);
+            width: 90%;
+            max-width: 400px;
+            box-shadow: var(--shadow-xl);
+            transform: translateY(20px) scale(0.9);
+            transition: var(--transition-normal);
+            overflow: hidden;
+        }
+
+        .auth-error-modal.active .auth-error-container {
+            transform: translateY(0) scale(1);
+        }
+
+        .auth-error-header {
+            padding: 1.5rem 1.5rem 1rem;
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .auth-error-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            margin: 0 auto 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .auth-error .auth-error-icon {
+            background: linear-gradient(135deg, var(--danger-color), #dc2626);
+        }
+
+        .permission-error .auth-error-icon {
+            background: linear-gradient(135deg, var(--warning-color), #d97706);
+        }
+
+        .general-error .auth-error-icon {
+            background: linear-gradient(135deg, var(--info-color), #1d4ed8);
+        }
+
+        .auth-error-header h3 {
+            color: var(--text-primary);
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .auth-error-body {
+            padding: 1rem 1.5rem;
+            text-align: center;
+        }
+
+        .auth-error-body p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        .auth-error-actions {
+            padding: 1rem 1.5rem 1.5rem;
+            display: flex;
+            justify-content: center;
+        }
+
+        .auth-error-actions .btn {
+            min-width: 100px;
+        }
+
+        /* Filter System Styles */
+        .filter-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            white-space: nowrap;
+            padding: 10px 14px;
+            border-radius: 10px;
+            border: 1px solid rgba(0,0,0,0.08);
+            background: #ffffff;
+            color: #1f2937;
+            font-weight: 600;
+        }
+
+        /* High-contrast styles for Filter modal */
+        #filter-modal .modal-container { color: #111827; background: #ffffff; }
+        #filter-modal .modal-title { color: #111827; font-weight: 800; }
+        #filter-modal .modal-subtitle { color: #6b7280; }
+        #filter-modal .filter-section-title, 
+        #filter-modal .subsection-title, 
+        #filter-modal .form-label { color: #1f2937; }
+        #filter-modal .helper-text { color: #9ca3af; }
+        #filter-modal input::placeholder { color: #9ca3af; }
+        #filter-modal input, 
+        #filter-modal select { color: #111827; background: #fff; border-color: #d1d5db; }
+        #filter-modal .quick-time-filters { background: #f8fafc; border: 1px solid #e5e7eb; }
+        #filter-modal .quick-filter-btn { background: #ffffff; color: #1f2937; border: 1px solid #d1d5db; }
+        #filter-modal .quick-filter-btn:hover { background: #fff7ed; color: var(--primary-color); border-color: var(--primary-color); }
+        #filter-modal .custom-date-range { background: #f8fafc; border: 1px solid #e5e7eb; }
+        #filter-modal .date-label { color: #6b7280; }
+
+        .filter-form {
+            margin-bottom: 1.5rem;
+        }
+
+        .filter-section {
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .filter-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+        .filter-section-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .filter-section-title::before {
+            content: '';
+            width: 4px;
+            height: 1.1rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            border-radius: 2px;
+        }
+
+        .filter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .filter-checkbox {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--primary-color);
+            margin-right: 0.75rem;
+        }
+
+        .date-range-inputs {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .date-range-inputs span {
+            color: var(--text-secondary);
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .date-range-inputs input {
+            flex: 1;
+            min-width: 140px;
+        }
+
+        /* Filter Button Active State */
+        .filter-btn.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        /* Active Filters Indicator */
+        .filter-btn .filter-count {
+            background: var(--danger-color);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 0.25rem;
+        }
+
+        /* Edit Authentication Modal */
+        .edit-auth-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition-normal);
+        }
+
+        .edit-auth-modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .edit-auth-container {
+            background: var(--white);
+            border-radius: var(--radius-2xl);
+            width: 90%;
+            max-width: 500px;
+            box-shadow: var(--shadow-xl);
+            transform: translateY(20px) scale(0.95);
+            transition: var(--transition-normal);
+        }
+
+        .edit-auth-modal.active .edit-auth-container {
+            transform: translateY(0) scale(1);
+        }
+
+        .edit-auth-header {
+            padding: 1.5rem 2rem 1rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .edit-auth-header h3 {
+            color: var(--primary-color);
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .edit-auth-close {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--gray-100);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            transition: var(--transition-fast);
+        }
+
+        .edit-auth-close:hover {
+            background: var(--gray-200);
+            color: var(--text-primary);
+        }
+
+        .edit-auth-body {
+            padding: 1.5rem 2rem 2rem;
+        }
+
+        .edit-auth-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.75rem;
+        }
+
+        /* Time Selection Grid */
+        .time-selection-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 0.5rem;
+        }
+
+        .time-select {
+            min-width: 0;
+            font-size: 0.875rem;
+            text-align: center;
+        }
+
+        /* Calendar More Link Styling */
+        .fc-more-link {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark)) !important;
+            color: white !important;
+            border-radius: 8px !important;
+            padding: 2px 8px !important;
+            font-size: 0.75rem !important;
+            font-weight: 600 !important;
+            text-decoration: none !important;
+            box-shadow: 0 2px 4px rgba(255, 149, 98, 0.3) !important;
+            transition: all 0.2s ease !important;
+        }
+
+        .fc-more-link:hover {
+            transform: translateY(-1px) !important;
+            box-shadow: 0 4px 8px rgba(255, 149, 98, 0.4) !important;
+        }
+
+        /* Enhanced Filter Modal Styles */
+        .subsection-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .quick-time-filters {
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background: var(--gray-50);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-color);
+        }
+
+        .quick-filter-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .quick-filter-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1rem;
+            border: 2px solid var(--border-color);
+            background: var(--white);
+            color: var(--text-secondary);
+            border-radius: var(--radius-md);
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+
+        .quick-filter-btn:hover {
+            border-color: var(--primary-color);
+            background: var(--primary-light);
+            color: var(--primary-color);
+            transform: translateY(-1px);
+        }
+
+        .quick-filter-btn.active {
+            border-color: var(--primary-color);
+            background: var(--primary-color);
+            color: var(--white);
+            box-shadow: 0 2px 8px rgba(255, 149, 98, 0.3);
+        }
+
+        .quick-filter-btn i {
+            font-size: 0.9rem;
+        }
+
+        .custom-date-range {
+            padding: 1rem;
+            background: var(--gray-50);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-color);
+        }
+
+        .date-range-container {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 1rem;
+            align-items: end;
+            margin-top: 0.5rem;
+        }
+
+        .date-input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .date-label {
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .date-input {
+            font-size: 0.85rem;
+        }
+
+        .date-range-separator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .date-range-helper {
+            margin-top: 0.75rem;
+            text-align: center;
+        }
+
+        .helper-text {
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.25rem;
+        }
+
+        .helper-text i {
+            color: var(--primary-color);
+        }
+
+        /* Responsive adjustments for mobile */
+        @media (max-width: 768px) {
+            .quick-filter-buttons {
+                grid-template-columns: 1fr 1fr;
+                gap: 0.75rem;
+            }
+
+            .quick-filter-btn {
+                padding: 0.875rem 0.75rem;
+                font-size: 0.8rem;
+            }
+
+            .date-range-container {
+                grid-template-columns: 1fr;
+                gap: 0.75rem;
+            }
+
+            .date-range-separator {
+                display: none;
+            }
+        }
+
+        /* Animation Classes */
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .slide-up {
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <style>
+      /* Local overrides to guarantee no extra left gap on this page */
+      .content-area.main-content, .main-content { padding-left: 0 !important; margin-left: 0 !important; }
+    </style>
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loading-overlay">
+        <div class="spinner"></div>
+        <div class="loading-text">Loading...</div>
+    </div>
+
+    <!-- Mobile Sidebar Toggle -->
+    <button class="sidebar-toggle" id="sidebar-toggle">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div class="main-container">
+    <!-- Sidebar is injected by sidebar-loader.js (matches dashboard design) -->
+
+        <!-- Main Content Area -->
+        <div class="content-area">
+            <!-- Page Header -->
+            <div class="page-header slide-up">
+                <div class="header-content">
+                    <div class="header-info">
+                        <div class="header-icon">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                        <div class="header-text">
+                            <h1>Appointment Management</h1>
+                            <p>Schedule and manage your MonuMe appointments efficiently</p>
+                        </div>
+                    </div>
+                    <div class="header-actions">
+                        <button class="btn btn-secondary" id="help-btn">
+                            <i class="fas fa-question-circle"></i>
+                            Help
+                        </button>
+                        <button class="btn btn-primary" id="add-appointment-btn">
+                            <i class="fas fa-plus"></i>
+                            New Appointment
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Success/Error Alerts -->
+            <div class="alert alert-success" id="success-alert">
+                <i class="fas fa-check-circle"></i>
+                <span id="success-message">Operation completed successfully!</span>
+            </div>
+            <div class="alert alert-error" id="error-alert">
+                <i class="fas fa-exclamation-circle"></i>
+                <span id="error-message">An error occurred. Please try again.</span>
+            </div>
+
+            <!-- Tab Navigation -->
+            <div class="tab-navigation slide-up">
+                <button class="tab-btn active" data-view="calendar">
+                    <i class="fas fa-calendar-alt"></i>
+                    Calendar View
+                </button>
+                <button class="tab-btn" data-view="list">
+                    <i class="fas fa-list"></i>
+                    List View
+                </button>
+                <button class="btn btn-secondary filter-btn" id="filter-btn" style="margin-left: auto; display: none;">
+                    <i class="fas fa-filter"></i>
+                    Filters
+                </button>
+            </div>
+
+            <!-- Content Views -->
+            <div class="content-card slide-up">
+                <!-- Calendar View -->
+                <div class="calendar-view" id="calendar-view">
+                    <div id="calendar"></div>
+                </div>
+
+                <!-- List View -->
+                <div class="list-view" id="list-view">
+                    <div class="appointments-grid" id="appointments-grid">
+                        <!-- Appointments will be loaded here dynamically -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Appointment Form Modal -->
+    <div class="modal-overlay" id="appointment-modal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <div>
+                    <h2 class="modal-title">Schedule New Appointment</h2>
+                    <p class="modal-subtitle">Fill out the details below to create a new appointment</p>
+                </div>
+                <button class="modal-close" id="close-modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="appointment-form">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-user" style="color: var(--primary-color);"></i>
+                                Client Name
+                            </label>
+                            <input type="text" class="form-input" id="client-name" placeholder="Enter client name"
+                                required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-envelope" style="color: var(--primary-color);"></i>
+                                Client Email
+                            </label>
+                            <input type="email" class="form-input" id="client-email" placeholder="Enter client email"
+                                required>
+                        </div>
+                        <div class="form-group" style="grid-column: span 2;">
+                            <label class="form-label">
+                                <i class="fas fa-phone" style="color: var(--primary-color);"></i>
+                                Client Phone
+                            </label>
+                            <input type="tel" class="form-input" id="client-phone"
+                                placeholder="Enter client phone number (e.g., +1 (555) 123-4567)" required>
+                        </div>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-calendar" style="color: var(--primary-color);"></i>
+                                Date
+                            </label>
+                            <input type="date" class="form-input" id="appointment-date" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-clock" style="color: var(--primary-color);"></i>
+                                Time
+                            </label>
+                            <div class="time-selection-grid">
+                                <select class="form-select time-select" id="appointment-hour" required>
+                                    <option value="">Hour</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                    <option value="6">6</option>
+                                    <option value="7">7</option>
+                                    <option value="8">8</option>
+                                    <option value="9">9</option>
+                                    <option value="10">10</option>
+                                    <option value="11">11</option>
+                                    <option value="12">12</option>
+                                </select>
+                                <select class="form-select time-select" id="appointment-minute" required>
+                                    <option value="">Min</option>
+                                    <option value="00">00</option>
+                                    <option value="15">15</option>
+                                    <option value="30">30</option>
+                                    <option value="45">45</option>
+                                </select>
+                                <select class="form-select time-select" id="appointment-ampm" required>
+                                    <option value="">AM/PM</option>
+                                    <option value="AM">AM</option>
+                                    <option value="PM">PM</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-tag" style="color: var(--primary-color);"></i>
+                                Appointment Type
+                            </label>
+                            <select class="form-select" id="appointment-type" required>
+                                <option value="">Select appointment type</option>
+                                <option value="MonuMe">MonuMe</option>
+                                <option value="FameMe">FameMe</option>
+                                <option value="CrystalMe">CrystalMe</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-user-tie" style="color: var(--primary-color);"></i>
+                                Appointment Host
+                            </label>
+                            <select class="form-select" id="appointment-host">
+                                <option value="">Select host</option>
+                                <!-- Hosts will be loaded dynamically -->
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Email Template Selection -->
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-envelope" style="color: var(--primary-color);"></i>
+                            Email Template
+                        </label>
+                        <select class="form-select" id="appointment-email-template">
+                            <option value="">Select email template (optional)</option>
+                            <option value="confirmation">Appointment Confirmation</option>
+                            <option value="reminder">Appointment Reminder</option>
+                            <option value="rescheduled">Rescheduled Notification</option>
+                            <option value="custom">Custom Template</option>
+                        </select>
+                        <div class="form-help-text">
+                            <i class="fas fa-info-circle"></i>
+                            Select a template to automatically send an email notification
+                        </div>
+                    </div>
+
+                    <!-- Email Preview Button (only shown when template is selected) -->
+                    <div class="form-group email-preview-group" id="email-preview-group" style="display: none;">
+                        <button type="button" class="btn btn-secondary" id="preview-email-btn">
+                            <i class="fas fa-eye"></i>
+                            Preview Email
+                        </button>
+                        <div class="form-help-text">
+                            <i class="fas fa-info-circle"></i>
+                            Preview the email before sending
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-sticky-note" style="color: var(--primary-color);"></i>
+                            Notes
+                        </label>
+                        <textarea class="form-textarea" id="appointment-notes"
+                            placeholder="Additional information about this appointment"></textarea>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="cancel-form-btn">
+                            Cancel
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i>
+                            Schedule Appointment
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filter Modal -->
+    <div class="modal-overlay" id="filter-modal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <div>
+                    <h2 class="modal-title">Filter Appointments</h2>
+                    <p class="modal-subtitle">Customize your appointment view with filters</p>
+                </div>
+                <button class="modal-close" id="close-filter-modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="filter-form">
+                    <div class="filter-section">
+                        <h3 class="filter-section-title">📅 Time Period</h3>
+
+                        <!-- Quick Time Filters -->
+                        <div class="quick-time-filters">
+                            <h4 class="subsection-title">Quick Filters</h4>
+                            <div class="quick-filter-buttons">
+                                <button type="button" class="quick-filter-btn" data-filter="upcoming">
+                                    <i class="fas fa-arrow-right"></i>
+                                    Upcoming Only
+                                </button>
+                                <button type="button" class="quick-filter-btn" data-filter="all"
+                                    id="show-all-appointments">
+                                    <i class="fas fa-calendar"></i>
+                                    Show All (Past + Future)
+                                </button>
+                                <button type="button" class="quick-filter-btn" data-filter="today">
+                                    <i class="fas fa-calendar-day"></i>
+                                    Today Only
+                                </button>
+                                <button type="button" class="quick-filter-btn" data-filter="week">
+                                    <i class="fas fa-calendar-week"></i>
+                                    This Week
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Custom Date Range -->
+                        <div class="custom-date-range">
+                            <h4 class="subsection-title">Custom Date Range</h4>
+                            <div class="date-range-container">
+                                <div class="date-input-group">
+                                    <label class="date-label">From</label>
+                                    <input type="date" class="form-input date-input" id="filter-date-from"
+                                        placeholder="Start date">
+                                </div>
+                                <div class="date-range-separator">
+                                    <i class="fas fa-arrow-right"></i>
+                                </div>
+                                <div class="date-input-group">
+                                    <label class="date-label">To</label>
+                                    <input type="date" class="form-input date-input" id="filter-date-to"
+                                        placeholder="End date">
+                                </div>
+                            </div>
+                            <div class="date-range-helper">
+                                <small class="helper-text">
+                                    <i class="fas fa-info-circle"></i>
+                                    Leave empty to use quick filters above
+                                </small>
+                            </div>
+                        </div>
+
+                        <!-- Hidden checkbox for backwards compatibility -->
+                        <input type="checkbox" id="show-past-appointments" class="filter-checkbox"
+                            style="display: none;">
+                    </div>
+
+                    <div class="filter-section">
+                        <h3 class="filter-section-title">Appointment Details</h3>
+                        <div class="filter-grid">
+                            <div class="form-group">
+                                <label class="form-label">Appointment Type</label>
+                                <select class="form-select" id="filter-type">
+                                    <option value="">All Types</option>
+                                    <option value="MonuMe">MonuMe</option>
+                                    <option value="FameMe">FameMe</option>
+                                    <option value="CrystalMe">CrystalMe</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Host</label>
+                                <select class="form-select" id="filter-host">
+                                    <option value="">All Hosts</option>
+                                    <!-- Options will be populated dynamically -->
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="filter-section">
+                        <h3 class="filter-section-title">Customer Information</h3>
+                        <div class="filter-grid">
+                            <div class="form-group">
+                                <label class="form-label">Customer Phone</label>
+                                <input type="tel" class="form-input" id="filter-phone"
+                                    placeholder="Enter phone number to search">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Customer Name</label>
+                                <input type="text" class="form-input" id="filter-customer-name"
+                                    placeholder="Enter customer name">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="filter-section">
+                        <h3 class="filter-section-title">Status</h3>
+                        <div class="filter-grid">
+                            <div class="form-group">
+                                <label class="form-label">Status</label>
+                                <select class="form-select" id="filter-status">
+                                    <option value="">All Statuses</option>
+                                    <option value="scheduled">Scheduled</option>
+                                    <option value="confirmed">Confirmed</option>
+                                    <option value="rescheduled">Rescheduled</option>
+                                    <option value="completed">Completed</option>
+                                    <option value="cancelled">Cancelled</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" id="clear-filters-btn">
+                        Clear All
+                    </button>
+                    <button type="button" class="btn btn-primary" id="apply-filters-btn">
+                        <i class="fas fa-filter"></i>
+                        Apply Filters
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- External Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.0/main.min.js"></script>
+    <script src="/static/appointment.js"></script>
+
+    <script>
+        // Initialize application
+        document.addEventListener('DOMContentLoaded', function () {
+            console.log('DOM loaded, initializing appointment manager...');
+
+            // Initialize appointment manager
+            window.appointmentManager = new AppointmentManager();
+
+            // Console helper function for development
+            window.clearAllAppointments = function () {
+                if (window.appointmentManager) {
+                    window.appointmentManager.clearAllAppointments();
+                }
+            };
+
+            // Test delete function
+            window.testDelete = function () {
+                if (window.appointmentManager && window.appointmentManager.appointments.length > 0) {
+                    const firstAppointment = window.appointmentManager.appointments[0];
+                    console.log('Testing delete for appointment:', firstAppointment);
+                    window.appointmentManager.deleteAppointment(firstAppointment.id);
+                } else {
+                    console.log('No appointments to test delete');
+                }
+            };
+
+            // Debug helper for edit issues
+            window.debugEdit = function () {
+                if (window.appointmentManager) {
+                    window.appointmentManager.debugEditIssues();
+                } else {
+                    console.error('Appointment manager not initialized');
+                }
+            };
+
+            // **NEW: Comprehensive Edit Test Function**
+            window.testEditComprehensive = function () {
+                if (!window.appointmentManager) {
+                    console.error('❌ Appointment manager not initialized');
+                    return;
+                }
+
+                console.log('🧪 === COMPREHENSIVE EDIT FUNCTIONALITY TEST ===');
+
+                if (window.appointmentManager.appointments.length === 0) {
+                    console.error('❌ No appointments available to test. Creating sample appointment...');
+
+                    // Create a test appointment
+                    const testAppointment = {
+                        id: `test-edit-${Date.now()}`,
+                        clientName: 'Test Client',
+                        clientEmail: 'test@email.com',
+                        clientPhone: '(555) 123-4567',
+                        date: new Date().toISOString().split('T')[0],
+                        time: '10:00',
+                        type: 'MonuMe',
+                        status: 'scheduled',
+                        notes: 'Original test appointment',
+                        url: 'https://www.monuevip.com/appointment/test',
+                        hostId: 'admin'
+                    };
+
+                    window.appointmentManager.appointments.push(testAppointment);
+                    window.appointmentManager.saveAppointmentsToStorage();
+                    window.appointmentManager.forceRefreshAllViews();
+
+                    console.log('✅ Test appointment created:', testAppointment);
+                }
+
+                const testAppointment = window.appointmentManager.appointments[0];
+                console.log('🎯 Testing edit for appointment:', testAppointment);
+
+                // Step 1: Test authentication modal
+                console.log('📋 Step 1: Opening authentication modal...');
+                window.appointmentManager.editAppointment(testAppointment.id);
+
+                // Provide instructions for manual testing
+                setTimeout(() => {
+                    console.log('🔐 Step 2: Authentication Instructions:');
+                    console.log('   Enter credentials: admin / admin123');
+                    console.log('   After authentication, the edit modal should open');
+                    console.log('   Make changes to the appointment and save');
+                    console.log('   🚀 To skip authentication, run: testEditDirect()');
+
+                    // Create direct edit test function
+                    window.testEditDirect = function () {
+                        console.log('🚀 === DIRECT EDIT TEST (NO AUTH) ===');
+
+                        // Get current data
+                        const beforeEdit = JSON.parse(JSON.stringify(testAppointment));
+                        console.log('📋 BEFORE EDIT:', beforeEdit);
+
+                        // Simulate the edit process directly
+                        window.appointmentManager.proceedToEdit(testAppointment);
+
+                        console.log('✅ Edit modal should now be open with current appointment data');
+                        console.log('📝 Expected form values:');
+                        console.log('   Name:', testAppointment.clientName);
+                        console.log('   Email:', testAppointment.clientEmail);
+                        console.log('   Phone:', testAppointment.clientPhone);
+                        console.log('   Date:', testAppointment.date);
+                        console.log('   Time:', testAppointment.time);
+                        console.log('   Type:', testAppointment.type);
+
+                        // Add automatic test that simulates form changes
+                        window.simulateEdit = function () {
+                            console.log('🤖 === SIMULATING EDIT CHANGES ===');
+
+                            // Change some values in the form
+                            const newName = 'Edited Test Client';
+                            const newEmail = 'edited@email.com';
+                            const newNotes = 'Updated appointment notes';
+
+                            window.appointmentManager.elements.clientName.value = newName;
+                            window.appointmentManager.elements.clientEmail.value = newEmail;
+                            window.appointmentManager.elements.appointmentNotes.value = newNotes;
+
+                            console.log('📝 Form values changed to:');
+                            console.log('   Name:', newName);
+                            console.log('   Email:', newEmail);
+                            console.log('   Notes:', newNotes);
+
+                            // Trigger form submission
+                            console.log('💾 Triggering form submission...');
+                            const form = window.appointmentManager.elements.appointmentForm;
+                            const submitEvent = new Event('submit', {
+                                bubbles: true,
+                                cancelable: true
+                            });
+                            form.dispatchEvent(submitEvent);
+
+                            // Verify changes after a short delay
+                            setTimeout(() => {
+                                console.log('🔍 === VERIFICATION ===');
+                                const updatedAppointment = window.appointmentManager.appointments.find(apt => apt.id === testAppointment.id);
+
+                                if (updatedAppointment) {
+                                    console.log('📋 AFTER EDIT:', updatedAppointment);
+
+                                    const changesDetected =
+                                        updatedAppointment.clientName === newName &&
+                                        updatedAppointment.clientEmail === newEmail &&
+                                        updatedAppointment.notes === newNotes;
+
+                                    if (changesDetected) {
+                                        console.log('✅ SUCCESS: Changes were successfully saved!');
+                                        console.log('   ✓ Name updated');
+                                        console.log('   ✓ Email updated');
+                                        console.log('   ✓ Notes updated');
+                                    } else {
+                                        console.error('❌ FAILURE: Changes were not saved properly');
+                                        console.log('Expected name:', newName, 'Got:', updatedAppointment.clientName);
+                                        console.log('Expected email:', newEmail, 'Got:', updatedAppointment.clientEmail);
+                                        console.log('Expected notes:', newNotes, 'Got:', updatedAppointment.notes);
+                                    }
+
+                                    // Check localStorage
+                                    const storageData = localStorage.getItem('monumeAppointments');
+                                    const storageAppointments = storageData ? JSON.parse(storageData) : [];
+                                    const storageAppointment = storageAppointments.find(apt => apt.id === testAppointment.id);
+
+                                    if (storageAppointment && storageAppointment.clientName === newName) {
+                                        console.log('✅ SUCCESS: Changes also saved to localStorage');
+                                    } else {
+                                        console.error('❌ FAILURE: Changes not saved to localStorage');
+                                    }
+                                } else {
+                                    console.error('❌ CRITICAL: Appointment not found after edit!');
+                                }
+                            }, 1000);
+                        };
+
+                        console.log('🤖 To simulate automatic editing, run: simulateEdit()');
+                    };
+                }, 1000);
+            };
+
+            // **NEW: Quick Direct Edit Test (No Auth)**
+            window.quickEditTest = function () {
+                if (!window.appointmentManager || window.appointmentManager.appointments.length === 0) {
+                    console.error('❌ No appointments available. Run testEditComprehensive() first.');
+                    return;
+                }
+
+                const appointment = window.appointmentManager.appointments[0];
+                console.log('🚀 Quick edit test for:', appointment.clientName);
+
+                // Open edit modal directly
+                window.appointmentManager.proceedToEdit(appointment);
+
+                console.log('✅ Edit modal opened. You can now make changes and save.');
+                console.log('💡 Or run simulateEdit() to automatically test changes.');
+            };
+
+            // **NEW: Emergency Edit Test - Very Simple**
+            window.emergencyEditTest = function () {
+                console.log('🚨 === EMERGENCY EDIT TEST ===');
+
+                if (!window.appointmentManager) {
+                    console.error('❌ Appointment manager not found');
+                    return;
+                }
+
+                console.log('✅ Appointment manager exists');
+                console.log('📊 Total appointments:', window.appointmentManager.appointments.length);
+
+                // Create a test appointment if none exist
+                if (window.appointmentManager.appointments.length === 0) {
+                    console.log('📝 Creating test appointment...');
+                    const testAppt = {
+                        id: 'emergency-test-' + Date.now(),
+                        clientName: 'Emergency Test',
+                        clientEmail: 'test@emergency.com',
+                        clientPhone: '(555) 999-9999',
+                        date: new Date().toISOString().split('T')[0],
+                        time: '10:00',
+                        type: 'MonuMe',
+                        status: 'scheduled',
+                        notes: 'Emergency test appointment',
+                        hostId: 'admin'
+                    };
+
+                    window.appointmentManager.appointments.push(testAppt);
+                    window.appointmentManager.saveAppointmentsToStorage();
+                    window.appointmentManager.forceRefreshAllViews();
+                    console.log('✅ Test appointment created');
+                }
+
+                const testAppointment = window.appointmentManager.appointments[0];
+                console.log('🎯 Testing with appointment:', testAppointment.clientName);
+
+                // Check if modal elements exist
+                const modal = document.getElementById('appointment-modal');
+                const form = document.getElementById('appointment-form');
+
+                console.log('🔍 Modal element exists:', !!modal);
+                console.log('🔍 Form element exists:', !!form);
+
+                if (!modal || !form) {
+                    console.error('❌ Critical: Modal or form elements missing!');
+                    return;
+                }
+
+                // Try to open the edit modal directly
+                console.log('🚀 Opening edit modal directly...');
+
+                try {
+                    // Set editing mode
+                    window.appointmentManager.editingAppointment = testAppointment;
+
+                    // Populate form directly
+                    const elements = window.appointmentManager.elements;
+                    elements.clientName.value = testAppointment.clientName;
+                    elements.clientEmail.value = testAppointment.clientEmail;
+                    elements.clientPhone.value = testAppointment.clientPhone || '';
+                    elements.appointmentDate.value = testAppointment.date;
+                    elements.appointmentType.value = testAppointment.type;
+                    elements.appointmentNotes.value = testAppointment.notes || '';
+
+                    // Parse time
+                    if (testAppointment.time) {
+                        const [timeHour, timeMinute] = testAppointment.time.split(':');
+                        const hour24 = parseInt(timeHour);
+                        let hour = '', ampm = '';
+
+                        if (hour24 === 0) {
+                            hour = '12';
+                            ampm = 'AM';
+                        } else if (hour24 === 12) {
+                            hour = '12';
+                            ampm = 'PM';
+                        } else if (hour24 > 12) {
+                            hour = (hour24 - 12).toString();
+                            ampm = 'PM';
+                        } else {
+                            hour = hour24.toString();
+                            ampm = 'AM';
+                        }
+
+                        elements.appointmentHour.value = hour;
+                        elements.appointmentMinute.value = timeMinute;
+                        elements.appointmentAmpm.value = ampm;
+                    }
+
+                    // Update modal title
+                    const modalTitle = document.querySelector('.modal-title');
+                    if (modalTitle) modalTitle.textContent = 'Edit Appointment (Emergency Test)';
+
+                    // Show modal
+                    modal.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+
+                    console.log('✅ Edit modal should now be visible!');
+                    console.log('📝 Form populated with appointment data');
+                    console.log('🧪 Make changes and click "Schedule Appointment" to test saving');
+
+                    // Add emergency save test
+                    window.emergencySaveTest = function () {
+                        console.log('💾 === EMERGENCY SAVE TEST ===');
+
+                        // Change a field
+                        elements.clientName.value = 'EDITED - Emergency Test';
+                        elements.clientEmail.value = 'edited@emergency.com';
+
+                        console.log('📝 Changed name and email');
+                        console.log('🚀 Triggering form submission...');
+
+                        // Trigger form submission
+                        const submitEvent = new Event('submit', { bubbles: true, cancelable: true });
+                        form.dispatchEvent(submitEvent);
+
+                        // Check result after a delay
+                        setTimeout(() => {
+                            const updatedAppt = window.appointmentManager.appointments.find(a => a.id === testAppointment.id);
+                            if (updatedAppt && updatedAppt.clientName === 'EDITED - Emergency Test') {
+                                console.log('✅ SUCCESS: Edit worked! Name changed to:', updatedAppt.clientName);
+                            } else {
+                                console.error('❌ FAILED: Edit did not work');
+                                console.log('Current appointment:', updatedAppt);
+                            }
+                        }, 1000);
+                    };
+
+                    console.log('💾 To test saving, run: emergencySaveTest()');
+
+                } catch (error) {
+                    console.error('❌ Error opening edit modal:', error);
+                }
+            };
+
+            // **NEW: Verify if changes actually took effect**
+            window.verifyChanges = function () {
+                console.log('🔍 === VERIFYING CHANGES ===');
+
+                if (!window.appointmentManager) {
+                    console.error('❌ No appointment manager');
+                    return;
+                }
+
+                console.log('📊 Total appointments:', window.appointmentManager.appointments.length);
+
+                // Show all appointments
+                window.appointmentManager.appointments.forEach((apt, index) => {
+                    console.log(`📋 Appointment ${index + 1}:`, {
+                        id: apt.id,
+                        name: apt.clientName,
+                        email: apt.clientEmail,
+                        phone: apt.clientPhone,
+                        date: apt.date,
+                        time: apt.time,
+                        type: apt.type,
+                        notes: apt.notes
+                    });
+                });
+
+                // Check localStorage
+                const storageData = localStorage.getItem('monumeAppointments');
+                if (storageData) {
+                    const storageAppointments = JSON.parse(storageData);
+                    console.log('💾 localStorage appointments:', storageAppointments.length);
+                    storageAppointments.forEach((apt, index) => {
+                        console.log(`💾 Storage Appointment ${index + 1}:`, apt.clientName, apt.clientEmail);
+                    });
+                }
+
+                // Force refresh all views
+                console.log('🔄 Force refreshing views...');
+                window.appointmentManager.forceRefreshAllViews();
+
+                setTimeout(() => {
+                    console.log('✅ Views refreshed. Check the List View tab to see updates!');
+
+                    // Switch to list view to see changes
+                    const listViewBtn = document.querySelector('[data-view="list"]');
+                    if (listViewBtn) {
+                        listViewBtn.click();
+                        console.log('📋 Switched to List View - look for updated appointment names!');
+                    }
+                }, 500);
+            };
+
+            // **NEW: Quick way to see current appointment data**
+            window.showCurrentData = function () {
+                console.log('📋 === CURRENT APPOINTMENT DATA ===');
+
+                if (!window.appointmentManager || window.appointmentManager.appointments.length === 0) {
+                    console.log('❌ No appointments found');
+                    return;
+                }
+
+                const appointment = window.appointmentManager.appointments[0];
+                console.log('👤 First Appointment Details:');
+                console.log('   📝 Name:', appointment.clientName);
+                console.log('   📧 Email:', appointment.clientEmail);
+                console.log('   📞 Phone:', appointment.clientPhone);
+                console.log('   📅 Date:', appointment.date);
+                console.log('   ⏰ Time:', appointment.time);
+                console.log('   🏷️ Type:', appointment.type);
+                console.log('   📋 Notes:', appointment.notes);
+                console.log('   🆔 ID:', appointment.id);
+
+                // Check if this matches what we see on screen
+                console.log('🔍 Now look at the appointment cards on the page to see if they match!');
+
+                return appointment;
+            };
+
+            // **NEW: Force complete refresh and show changes**
+            window.refreshAndShow = function () {
+                console.log('🔄 === FORCE REFRESH AND SHOW CHANGES ===');
+
+                if (!window.appointmentManager) {
+                    console.error('❌ No appointment manager');
+                    return;
+                }
+
+                // 1. Force refresh from localStorage
+                console.log('📥 Reloading from localStorage...');
+                window.appointmentManager.reloadAppointmentsFromStorage();
+
+                // 2. Force refresh views
+                console.log('🔄 Refreshing all views...');
+                window.appointmentManager.forceRefreshAllViews();
+
+                // 3. Switch to list view to see changes
+                setTimeout(() => {
+                    const listViewBtn = document.querySelector('[data-view="list"]');
+                    if (listViewBtn && !listViewBtn.classList.contains('active')) {
+                        console.log('📋 Switching to List View...');
+                        listViewBtn.click();
+                    }
+
+                    // 4. Show what should be visible
+                    setTimeout(() => {
+                        console.log('👀 === WHAT YOU SHOULD SEE ===');
+                        const appointments = window.appointmentManager.appointments;
+
+                        if (appointments.length > 0) {
+                            const first = appointments[0];
+                            console.log('🔍 Look for this appointment in the list:');
+                            console.log(`   Name: "${first.clientName}"`);
+                            console.log(`   Email: "${first.clientEmail}"`);
+                            console.log(`   Type: "${first.type}"`);
+
+                            if (first.clientName.includes('EDITED')) {
+                                console.log('✅ SUCCESS: Changes are in the data!');
+                            } else {
+                                console.log('❓ The appointment should have "EDITED" in the name if the test worked');
+                            }
+                        }
+
+                        // 5. Check if appointments are actually visible on page
+                        const appointmentCards = document.querySelectorAll('.appointment-card-list, .appointment-card');
+                        console.log(`📋 Found ${appointmentCards.length} appointment cards on the page`);
+
+                        if (appointmentCards.length === 0) {
+                            console.warn('⚠️ No appointment cards found! The list might not be rendering.');
+                            console.log('💡 Try clicking "List View" tab manually');
+                        }
+
+                    }, 500);
+                }, 500);
+            };
+
+            // **NEW: Check what happens when edit button is clicked**
+            window.debugEditClick = function () {
+                console.log('🔍 === DEBUGGING EDIT BUTTON CLICKS ===');
+
+                // Find all edit buttons
+                const editButtons = document.querySelectorAll('[data-action="edit"], .action-edit');
+                console.log('📍 Found edit buttons:', editButtons.length);
+
+                editButtons.forEach((btn, index) => {
+                    console.log(`🔘 Edit button ${index + 1}:`, btn);
+                    console.log('   - Has onclick:', !!btn.onclick);
+                    console.log('   - Has data-id:', btn.dataset.id || btn.getAttribute('data-appointment-id'));
+
+                    // Add click listener to debug
+                    btn.addEventListener('click', function (e) {
+                        console.log('🖱️ Edit button clicked!', e.target);
+                        console.log('📋 Appointment ID:', this.dataset.id || this.getAttribute('data-appointment-id'));
+                    });
+                });
+
+                if (editButtons.length === 0) {
+                    console.warn('⚠️ No edit buttons found. The appointments might not be rendering correctly.');
+                    console.log('🔄 Try refreshing the list view...');
+                    if (window.appointmentManager) {
+                        window.appointmentManager.renderAppointmentsList();
+                        setTimeout(() => {
+                            const newEditButtons = document.querySelectorAll('[data-action="edit"], .action-edit');
+                            console.log('📍 After refresh, found edit buttons:', newEditButtons.length);
+                        }, 500);
+                    }
+                }
+            };
+
+            // Mobile sidebar toggle functionality
+            const sidebarToggle = document.getElementById('sidebar-toggle');
+            const sidebar = document.querySelector('.sidebar');
+
+            if (sidebarToggle && sidebar) {
+                sidebarToggle.addEventListener('click', function () {
+                    sidebar.classList.toggle('active');
+                });
+
+                // Close sidebar when clicking outside on mobile
+                document.addEventListener('click', function (e) {
+                    if (window.innerWidth <= 768 &&
+                        !sidebar.contains(e.target) &&
+                        !sidebarToggle.contains(e.target) &&
+                        sidebar.classList.contains('active')) {
+                        sidebar.classList.remove('active');
+                    }
+                });
+            }
+
+            // **NEW: Simple fix function to force view refresh**
+            window.fixEditAndShow = function () {
+                console.log('🔧 === FORCING VIEW REFRESH TO SHOW CHANGES ===');
+
+                if (!window.appointmentManager) {
+                    console.error('❌ No appointment manager');
+                    return;
+                }
+
+                // 1. Force reload from localStorage
+                console.log('📥 Reloading from localStorage...');
+                window.appointmentManager.reloadAppointmentsFromStorage();
+
+                // 2. Switch to list view
+                console.log('📋 Switching to List View...');
+                const listBtn = document.querySelector('[data-view="list"]');
+                if (listBtn) {
+                    listBtn.click();
+                }
+
+                // 3. Clear any filters that might hide appointments
+                console.log('🔄 Clearing filters...');
+                if (window.appointmentManager.filters) {
+                    window.appointmentManager.filters = {
+                        showPast: true, // Show all appointments
+                        dateFrom: '',
+                        dateTo: '',
+                        type: '',
+                        host: '',
+                        phone: '',
+                        customerName: '',
+                        status: ''
+                    };
+                }
+
+                // 4. Force refresh the list
+                console.log('🔄 Force refreshing list...');
+                window.appointmentManager.renderAppointmentsList();
+
+                // 5. Show what should be visible
+                setTimeout(() => {
+                    console.log('👁️ === WHAT YOU SHOULD SEE ===');
+                    const appointments = window.appointmentManager.appointments;
+                    console.log(`📊 Total appointments: ${appointments.length}`);
+
+                    appointments.forEach((apt, index) => {
+                        console.log(`${index + 1}. ${apt.clientName} (${apt.clientEmail}) - ${apt.type}`);
+                        if (apt.clientName.includes('EDITED')) {
+                            console.log('   ✅ This appointment has been edited!');
+                        }
+                    });
+
+                    const visibleCards = document.querySelectorAll('.appointment-card-list');
+                    console.log(`👁️ Visible appointment cards: ${visibleCards.length}`);
+
+                    if (visibleCards.length === 0) {
+                        console.warn('⚠️ No appointment cards visible! There might be a rendering issue.');
+                        console.log('💡 Try refreshing the page');
+                    }
+                }, 500);
+            };
+
+            // **NEW: Quick test complete edit cycle**
+            window.testCompleteEdit = function () {
+                console.log('🧪 === COMPLETE EDIT TEST ===');
+
+                // Run emergency test first
+                emergencyEditTest();
+
+                // Wait a bit, then automatically test saving
+                setTimeout(() => {
+                    if (window.emergencySaveTest) {
+                        emergencySaveTest();
+
+                        // Then force refresh to show changes
+                        setTimeout(() => {
+                            fixEditAndShow();
+                        }, 1500);
+                    }
+                }, 2000);
+            };
+
+            // **NEW: Test database functionality**
+            window.testDatabaseEdit = function () {
+                console.log('🧪 === TESTING DATABASE EDIT FUNCTIONALITY ===');
+
+                if (!window.appointmentManager) {
+                    console.error('❌ Appointment manager not initialized');
+                    return;
+                }
+
+                // Create a test appointment first
+                const testAppt = {
+                    id: 'db-test-' + Date.now(),
+                    clientName: 'Database Test Client',
+                    clientEmail: 'dbtest@email.com',
+                    clientPhone: '(555) 999-1234',
+                    date: new Date().toISOString().split('T')[0],
+                    time: '14:00',
+                    type: 'MonuMe',
+                    status: 'scheduled',
+                    notes: 'Original database test appointment'
+                };
+
+                console.log('📝 Creating test appointment in database...');
+
+                // Use the save function to create in database
+                window.appointmentManager.saveAppointment(testAppt).then(saveResult => {
+                    if (saveResult.success) {
+                        console.log('✅ Test appointment created in database');
+
+                        // Now test editing it
+                        setTimeout(() => {
+                            console.log('📝 Testing edit functionality...');
+
+                            // Simulate edit
+                            window.appointmentManager.proceedToEdit(saveResult.appointment);
+
+                            setTimeout(() => {
+                                // Make changes
+                                console.log('📝 Making changes to test appointment...');
+                                window.appointmentManager.elements.clientName.value = 'EDITED Database Test';
+                                window.appointmentManager.elements.clientEmail.value = 'edited-db@email.com';
+                                window.appointmentManager.elements.appointmentNotes.value = 'Updated via database test';
+
+                                // Trigger save
+                                console.log('💾 Triggering database update...');
+                                const form = window.appointmentManager.elements.appointmentForm;
+                                const submitEvent = new Event('submit', { bubbles: true, cancelable: true });
+                                form.dispatchEvent(submitEvent);
+
+                                // Verify after delay
+                                setTimeout(() => {
+                                    console.log('🔍 === DATABASE VERIFICATION ===');
+
+                                    // Check if appointment was updated
+                                    const updatedAppt = window.appointmentManager.appointments.find(apt => apt.id === saveResult.appointment.id);
+
+                                    if (updatedAppt) {
+                                        console.log('📋 Updated appointment found:', updatedAppt);
+
+                                        if (updatedAppt.clientName === 'EDITED Database Test') {
+                                            console.log('✅ SUCCESS: Database edit test PASSED!');
+                                            console.log('   ✓ Name updated to:', updatedAppt.clientName);
+                                            console.log('   ✓ Email updated to:', updatedAppt.clientEmail);
+                                            console.log('   ✓ Notes updated to:', updatedAppt.notes);
+                                            console.log('   ✓ Changes saved to database and visible in UI');
+                                        } else {
+                                            console.error('❌ FAILED: Database edit test FAILED!');
+                                            console.log('Expected name: "EDITED Database Test"');
+                                            console.log('Actual name:', updatedAppt.clientName);
+                                        }
+                                    } else {
+                                        console.error('❌ CRITICAL: Appointment not found after edit!');
+                                    }
+
+                                    // Clean up - delete test appointment
+                                    setTimeout(() => {
+                                        console.log('🧹 Cleaning up test appointment...');
+                                        window.appointmentManager.appointments = window.appointmentManager.appointments.filter(apt => apt.id !== saveResult.appointment.id);
+                                        window.appointmentManager.saveAppointmentsToStorage();
+                                        window.appointmentManager.renderAppointmentsList();
+                                        console.log('✅ Test cleanup completed');
+                                    }, 2000);
+
+                                }, 2000);
+                            }, 1000);
+                        }, 1000);
+                    } else {
+                        console.error('❌ Failed to create test appointment:', saveResult.message);
+                    }
+                }).catch(error => {
+                    console.error('❌ Error in database test:', error);
+                });
+            };
+
+            // **NEW: Quick server connectivity test**
+            window.testServerConnection = function () {
+                console.log('🔗 === TESTING SERVER CONNECTION ===');
+
+                // Test basic server health
+                fetch('/health').then(response => {
+                    if (response.ok) {
+                        console.log('✅ Server is responding');
+
+                        // Test appointment API
+                        fetch('/api/appointments').then(apiResponse => {
+                            if (apiResponse.ok) {
+                                console.log('✅ Appointment API is working');
+                                apiResponse.json().then(data => {
+                                    console.log('📊 Current appointments in database:', data.length || 0);
+                                    console.log('🚀 Server connection test PASSED - ready for database operations');
+                                });
+                            } else {
+                                console.error('❌ Appointment API failed:', apiResponse.status);
+                            }
+                        }).catch(error => {
+                            console.error('❌ Appointment API error:', error);
+                        });
+                    } else {
+                        console.error('❌ Server not responding:', response.status);
+                    }
+                }).catch(error => {
+                    console.error('❌ Server connection failed:', error);
+                });
+            };
+        });
+
+        // Additional setup after window load
+        window.addEventListener('load', function () {
+            console.log('Window fully loaded');
+
+            // Ensure calendar is properly sized
+            if (window.appointmentManager && window.appointmentManager.calendar) {
+                window.appointmentManager.calendar.updateSize();
+            }
+        });
+    </script>
+</body>
+
+</html>

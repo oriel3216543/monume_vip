@@ -1,0 +1,1273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MonuMe Tracker - Management</title>
+    <link rel="icon" type="image/png" href="/icon.png">
+    <!-- Authentication Check -->
+    <script>
+        // Immediate authentication check - runs before page loads
+        (function() {
+            const username = localStorage.getItem("username");
+            const isLoggedIn = localStorage.getItem("isLoggedIn");
+            
+            if (!username || !isLoggedIn) {
+                console.log("Authentication failed, redirecting to login page");
+                window.location.href = "/login";
+                return;
+            }
+
+            // Check for location-specific access
+            const urlParams = new URLSearchParams(window.location.search);
+            const locationParam = urlParams.get('location');
+            const locationCode = localStorage.getItem("locationCode") || localStorage.getItem("location_username") || localStorage.getItem("location_name");
+            const isAdmin = localStorage.getItem("isAdmin") === "true";
+            const role = localStorage.getItem("role");
+
+            // If URL has location parameter and user is not admin
+            if (locationParam && !isAdmin) {
+                // Verify user has access to this location
+                if (locationCode !== locationParam) {
+                    console.log("Access denied to location:", locationParam);
+                    alert("Access denied. You don't have permission to access this location.");
+                    window.location.href = "/login";
+                    return;
+                }
+            }
+
+            // If user is not admin and no location parameter, redirect to their location
+            if (!isAdmin && locationCode && !locationParam) {
+                console.log("Redirecting user to their location management:", locationCode);
+                window.location.href = `/management?location=${locationCode}`;
+                return;
+            }
+
+            console.log("Authentication successful for:", username, "Role:", role, "Location:", locationParam || locationCode || "all");
+            
+            // Update navigation links based on location parameter
+            updateNavigationLinks(locationParam || locationCode);
+        })();
+        
+        function updateNavigationLinks(locationParam) {
+            if (locationParam) {
+                // Update all navigation links to include location parameter
+                const dashboardLink = document.getElementById('dashboard-link');
+                const managementLink = document.getElementById('management-link');
+                const usersLink = document.getElementById('users-link');
+                const locationsLink = document.getElementById('locations-link');
+                const analyticsLink = document.getElementById('analytics-link');
+                const emailsLink = document.getElementById('emails-link');
+                
+                if (dashboardLink) dashboardLink.href = `/dashboard?location=${locationParam}`;
+                if (managementLink) managementLink.href = `/management?location=${locationParam}`;
+                if (usersLink) usersLink.href = `/users?location=${locationParam}`;
+                if (locationsLink) locationsLink.href = `/locations?location=${locationParam}`;
+                if (analyticsLink) analyticsLink.href = `/analytics?location=${locationParam}`;
+                if (emailsLink) emailsLink.href = `/emails?location=${locationParam}`;
+                
+                console.log("Navigation links updated for location:", locationParam);
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        :root {
+            --main-color: #ff9562;
+            --primary-color: #ff9562;
+            --primary-color-rgb: 255, 149, 98;
+            --gradient-start: #ff7f42;
+            --gradient-end: #ff9562;
+            --sidebar-bg: #272430;
+            --card-bg: rgba(255, 255, 255, 0.85);
+            --card-hover-bg: rgba(255, 255, 255, 0.95);
+            --text-primary: #333;
+            --text-secondary: #666;
+            --text-light: #f8f9fa;
+            --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --shadow-md: 0 10px 25px rgba(0, 0, 0, 0.12);
+            --shadow-lg: 0 15px 35px rgba(0, 0, 0, 0.15);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            --border-radius: 16px;
+            --white: #ffffff;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --border-color: #e5e7eb;
+            --radius-sm: 0.375rem;
+            --radius-md: 0.5rem;
+            --radius-lg: 0.75rem;
+            --radius-xl: 1rem;
+            --radius-2xl: 1.5rem;
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --transition-fast: all 0.15s ease;
+            --transition-normal: all 0.3s ease;
+        }
+
+        body {
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2000 1500"><rect fill="%23ff9562" width="2000" height="1500"/><defs><radialGradient id="a" gradientUnits="objectBoundingBox"><stop offset="0" stop-color="%23ffffff"/><stop offset="1" stop-color="%23ff9562"/></radialGradient><linearGradient id="b" gradientUnits="userSpaceOnUse" x1="0" y1="750" x2="1550" y2="750"><stop offset="0" stop-color="%23ffcab1"/><stop offset="1" stop-color="%23ff9562"/></linearGradient></defs><path fill="url(%23a)" d="M1549.2 51.6c-5.4 99.1-20.2 197.6-44.2 293.6-24.1 96-57.4 189.4-99.3 278.6-41.9 89.2-92.4 174.1-150.3 253.3-58 79.2-123.4 152.6-195.1 219-71.7 66.4-149.6 125.8-232.2 177.2-82.7 51.4-170.1 94.7-260.7 129.1-90.6 34.4-184.4 60-279.5 76.3C192.6 1495 96.1 1502 0 1500v-400.7c96.1-2.1 191.8-13.3 285.4-33.6 93.6-20.2 185-49.5 272.5-87.2 87.6-37.7 171.3-83.8 249.6-137.3 78.4-53.5 151.5-114.5 217.9-181.7 66.5-67.2 126.4-140.7 178.6-218.9 52.3-78.3 96.9-161.4 133-247.9 36.1-86.5 63.8-176.2 82.6-267.6 18.8-91.4 28.6-184.4 29.6-277.4H1500c0.9 92.9 10.7 185.8 29.2 277.2z"/><path d="M1549.2 51.6c-5.4 99.1-20.2 197.6-44.2 293.6-24.1 96-57.4 189.4-99.3 278.6-41.9 89.2-92.4 174.1-150.3 253.3-58 79.2-123.4 152.6-195.1 219-71.7 66.4-149.6 125.8-232.2 177.2-82.7 51.4-170.1 94.7-260.7 129.1-90.6 34.4-184.4 60-279.5 76.3C192.6 1495 96.1 1502 0 1500v-400.7c96.1-2.1 191.8-13.3 285.4-33.6 93.6-20.2 185-49.5 272.5-87.2 87.6-37.7 171.3-83.8 249.6-137.3 78.4-53.5 151.5-114.5 217.9-181.7 66.5-67.2 126.4-140.7 178.6-218.9 52.3-78.3 96.9-161.4 133-247.9 36.1-86.5 63.8-176.2 82.6-267.6 18.8-91.4 28.6-184.4 29.6-277.4H1500c0.9 92.9 10.7 185.8 29.2 277.2z" fill="url(%23b)"/></svg>') no-repeat center center fixed;
+            background-size: cover;
+            color: var(--text-primary);
+            display: flex;
+            min-height: 100vh;
+            overflow-x: hidden;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Enhanced Sidebar Styles */
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(180deg, var(--main-color) 0%, #e8824d 100%);
+            min-height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            transition: var(--transition);
+            z-index: 100;
+            box-shadow: var(--shadow-lg);
+            border-right: 1px solid rgba(255, 255, 255, 0.3);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-header {
+            padding: 32px 24px 24px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.1);
+            position: relative;
+        }
+
+        .sidebar-header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 24px;
+            right: 24px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+            opacity: 0.8;
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .sidebar-brand a {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            width: 100%;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px;
+            transition: var(--transition);
+            width: 100%;
+            min-height: 80px;
+        }
+
+        .logo-container:hover {
+            transform: scale(1.05);
+        }
+
+        .sidebar-logo {
+            max-width: 200px;
+            max-height: 100px;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+            transition: var(--transition);
+            filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.2));
+            display: block;
+            margin: 0 auto;
+        }
+
+        .sidebar-logo:hover {
+            transform: translateY(-2px) scale(1.05);
+            filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.3));
+        }
+
+        .sidebar-divider {
+            height: 1px;
+            background: rgba(255, 255, 255, 0.2);
+            margin-top: 24px;
+            opacity: 0.6;
+        }
+
+        .sidebar-navigation {
+            flex: 1;
+            overflow-y: auto;
+            padding: 40px 0;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+        }
+
+        .sidebar-navigation::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .sidebar-navigation::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .sidebar-navigation::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 2px;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .menu-item {
+            margin: 0 16px;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: var(--transition);
+        }
+
+        .menu-link {
+            display: flex;
+            align-items: center;
+            padding: 18px 20px;
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 500;
+            border-radius: 12px;
+            transition: var(--transition);
+            position: relative;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .menu-link::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 0;
+            background: rgba(255, 255, 255, 0.2);
+            transition: var(--transition);
+            border-radius: 12px;
+        }
+
+        .menu-icon {
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+            margin-right: 16px;
+            transition: var(--transition);
+            font-size: 18px;
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+        }
+
+        .menu-icon i {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            line-height: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .menu-text {
+            flex: 1;
+            font-size: 16px;
+            font-weight: 600;
+            transition: var(--transition);
+            color: white;
+        }
+
+        .menu-arrow {
+            opacity: 0;
+            transform: translateX(-8px);
+            transition: var(--transition);
+            color: white;
+            font-size: 14px;
+        }
+
+        .menu-item:hover .menu-link {
+            color: white;
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateX(6px);
+            border-color: rgba(255, 255, 255, 0.4);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .menu-item:hover .menu-link::before {
+            width: 4px;
+        }
+
+        .menu-item:hover .menu-icon {
+            background: rgba(255, 255, 255, 0.3);
+            color: white;
+            box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        .menu-item:hover .menu-arrow {
+            opacity: 1;
+            transform: translateX(0);
+            color: white;
+        }
+
+        .menu-item.active .menu-link {
+            color: white;
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateX(6px);
+            border-color: rgba(255, 255, 255, 0.5);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .menu-item.active .menu-link::before {
+            width: 4px;
+        }
+
+        .menu-item.active .menu-icon {
+            background: rgba(255, 255, 255, 0.4);
+            color: white;
+            box-shadow: 0 6px 16px rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .menu-item.active .menu-arrow {
+            opacity: 1;
+            transform: translateX(0);
+            color: white;
+        }
+
+        .sidebar-footer {
+            padding: 24px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            transition: var(--transition);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+            position: relative;
+        }
+
+        .user-profile:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .user-info {
+            flex: 1;
+        }
+
+        .user-name {
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .user-status {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .user-status::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: #4caf50;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        .user-menu-toggle {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 12px;
+            transition: var(--transition);
+        }
+
+        .user-profile:hover .user-menu-toggle {
+            color: white;
+            transform: rotate(180deg);
+        }
+
+        .user-menu {
+            position: absolute;
+            bottom: 100%;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            margin-bottom: 8px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1000;
+        }
+
+        .user-menu.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .user-menu-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px 20px;
+            color: #333;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-radius: 12px;
+            margin: 4px;
+        }
+
+        .user-menu-item:hover {
+            background: rgba(255, 149, 98, 0.1);
+            color: var(--main-color);
+            transform: translateX(4px);
+        }
+
+        .user-menu-item i {
+            font-size: 16px;
+            width: 20px;
+            text-align: center;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.7; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* Main content styles */
+        .main-content {
+            margin-left: 280px;
+            width: calc(100% - 280px);
+            padding: 40px;
+            transition: var(--transition);
+            display: block;
+            min-height: 100vh;
+            position: relative;
+            z-index: 1;
+        }
+
+        .welcome-container {
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            color: white;
+            border-radius: 32px;
+            box-shadow: 
+                0 20px 40px rgba(255, 127, 66, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            padding: 64px 48px;
+            margin-bottom: 64px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        .welcome-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(255, 255, 255, 0.6), 
+                transparent);
+        }
+
+        .welcome-container::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            z-index: 0;
+        }
+
+        .welcome-container h1 {
+            font-size: 3.5rem;
+            font-weight: 900;
+            margin-bottom: 16px;
+            color: white;
+            position: relative;
+            z-index: 1;
+            line-height: 1.1;
+            letter-spacing: -2px;
+        }
+
+        .welcome-container p {
+            font-size: 1.375rem;
+            color: rgba(255, 255, 255, 0.85);
+            margin: 0 auto;
+            max-width: 600px;
+            position: relative;
+            z-index: 1;
+            font-weight: 400;
+            line-height: 1.5;
+        }
+
+        .welcome-container:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 
+                0 25px 50px rgba(255, 127, 66, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        }
+
+        /* Management Grid Layout */
+        .management-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 32px;
+            margin-bottom: 48px;
+        }
+
+        /* Management Cards */
+        .management-card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: 24px;
+            padding: 32px;
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.12),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            position: relative;
+            overflow: hidden;
+            min-height: 280px;
+            display: flex;
+            flex-direction: column;
+            cursor: pointer;
+        }
+
+        .management-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--gradient-start), var(--gradient-end));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .management-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .management-card:hover::before {
+            opacity: 1;
+        }
+
+        .management-card-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 24px;
+            font-size: 32px;
+            color: white;
+            box-shadow: 0 8px 24px rgba(255, 127, 66, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .management-card:hover .management-card-icon {
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 12px 32px rgba(255, 127, 66, 0.4);
+        }
+
+        .management-card h3 {
+            font-size: 24px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 12px;
+            line-height: 1.2;
+        }
+
+        .management-card p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            flex-grow: 1;
+        }
+
+        .management-card .card-action {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 12px 24px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .management-card .card-action:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        /* Enhanced User Management Card */
+        .management-card[data-type="users"] {
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .management-card[data-type="users"]:active {
+            transform: translateY(-4px);
+            box-shadow: 
+                0 15px 30px rgba(0, 0, 0, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        }
+
+        .management-card[data-type="users"]:hover .management-card-icon {
+            background: linear-gradient(135deg, #ff9562, #ff7f42);
+            transform: scale(1.15) rotate(8deg);
+            box-shadow: 0 15px 35px rgba(255, 127, 66, 0.5);
+        }
+
+        .card-hover-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255, 149, 98, 0.1), rgba(255, 149, 98, 0.05));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+            border-radius: 24px;
+        }
+
+        .management-card:hover .card-hover-overlay {
+            opacity: 1;
+        }
+
+        /* Verification Modal */
+        .verification-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+
+        .verification-modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .verification-content {
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            border-radius: 24px;
+            padding: 48px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .verification-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(255, 255, 255, 0.8), 
+                transparent);
+        }
+
+        .verification-icon {
+            width: 100px;
+            height: 100px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            font-size: 48px;
+            color: white;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .verification-content h2 {
+            color: white;
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            line-height: 1.2;
+        }
+
+        .verification-content p {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 32px;
+        }
+
+        .verification-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .verification-input {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 16px 20px;
+            color: white;
+            font-size: 16px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .verification-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .verification-input:focus {
+            outline: none;
+            border-color: rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
+        }
+
+        .verification-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            margin-top: 24px;
+        }
+
+        .verification-btn {
+            padding: 14px 32px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            min-width: 120px;
+        }
+
+        .verification-btn.primary {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .verification-btn.primary:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+        }
+
+        .verification-btn.secondary {
+            background: rgba(0, 0, 0, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .verification-btn.secondary:hover {
+            background: rgba(0, 0, 0, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .error-message {
+            color: #ff6b6b;
+            background: rgba(255, 107, 107, 0.1);
+            border: 1px solid rgba(255, 107, 107, 0.3);
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 16px;
+            font-size: 14px;
+            display: none;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+                padding: 20px;
+            }
+            
+            .management-grid {
+                grid-template-columns: 1fr;
+                gap: 24px;
+            }
+            
+            .welcome-container {
+                padding: 40px 24px;
+            }
+            
+            .welcome-container h1 {
+                font-size: 2.5rem;
+            }
+            
+            .verification-content {
+                padding: 32px 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Enhanced Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-brand">
+                <a href="/dashboard" title="Go to Dashboard">
+                    <div class="logo-container">
+                        <img src="/static/logo11.png" alt="MonuMe Logo" class="sidebar-logo">
+                    </div>
+                </a>
+            </div>
+            <div class="sidebar-divider"></div>
+        </div>
+        
+                        <nav class="sidebar-navigation">
+                    <ul class="sidebar-menu">
+                        <li class="menu-item">
+                            <a href="/dashboard" class="menu-link" id="dashboard-link">
+                                <div class="menu-icon">
+                                    <i class="fas fa-chart-pie"></i>
+                                </div>
+                                <span class="menu-text">Dashboard</span>
+                                <div class="menu-arrow">
+                                    <i class="fas fa-chevron-right"></i>
+                                </div>
+                            </a>
+                        </li>
+                        
+                        <li class="menu-item active">
+                            <a href="/management" class="menu-link" id="management-link">
+                                <div class="menu-icon">
+                                    <i class="fas fa-cogs"></i>
+                                </div>
+                                <span class="menu-text">Management</span>
+                                <div class="menu-arrow">
+                                    <i class="fas fa-chevron-right"></i>
+                                </div>
+                            </a>
+                        </li>
+                        
+                        <li class="menu-item">
+                            <a href="/users" class="menu-link" id="users-link">
+                                <div class="menu-icon">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <span class="menu-text">Users</span>
+                                <div class="menu-arrow">
+                                    <i class="fas fa-chevron-right"></i>
+                                </div>
+                            </a>
+                        </li>
+                        
+                        <li class="menu-item">
+                            <a href="/locations" class="menu-link" id="locations-link">
+                                <div class="menu-icon">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                </div>
+                                <span class="menu-text">Locations</span>
+                                <div class="menu-arrow">
+                                    <i class="fas fa-chevron-right"></i>
+                                </div>
+                            </a>
+                        </li>
+                        
+                        <li class="menu-item">
+                            <a href="/analytics" class="menu-link" id="analytics-link">
+                                <div class="menu-icon">
+                                    <i class="fas fa-chart-bar"></i>
+                                </div>
+                                <span class="menu-text">Analytics</span>
+                                <div class="menu-arrow">
+                                    <i class="fas fa-chevron-right"></i>
+                                </div>
+                            </a>
+                        </li>
+                        
+                        <li class="menu-item">
+                            <a href="/emails" class="menu-link" id="emails-link">
+                                <div class="menu-icon">
+                                    <i class="fas fa-envelope"></i>
+                                </div>
+                                <span class="menu-text">Emails</span>
+                                <div class="menu-arrow">
+                                    <i class="fas fa-chevron-right"></i>
+                                </div>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+        
+        <div class="sidebar-footer">
+            <div class="user-profile" id="user-profile" onclick="toggleUserMenu()">
+                <div class="user-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="user-info">
+                    <div class="user-name" id="user-name">Loading...</div>
+                    <div class="user-status" id="user-status">Online</div>
+                </div>
+                <div class="user-menu-toggle">
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+            </div>
+            
+            <!-- User Menu Dropdown -->
+            <div class="user-menu" id="user-menu">
+                <div class="user-menu-item" onclick="signOut()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Sign Out</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="welcome-container">
+            <h1>Management Center</h1>
+            <p>Comprehensive tools for administrators and managers to oversee operations, manage users, and control system settings.</p>
+        </div>
+
+        <div class="management-grid">
+            <div class="management-card" data-type="users" onclick="openUserManagement(); return false;" style="cursor: pointer;">
+                <div class="management-card-icon">
+                    <i class="fas fa-users-cog"></i>
+                </div>
+                <h3 class="card-title">User Management</h3>
+                <p class="card-subtitle">All Locations</p>
+                <p>Manage user accounts, roles, permissions, and access levels across all locations and departments.</p>
+                <div class="card-action">Manage Users</div>
+                <div class="card-hover-overlay"></div>
+            </div>
+
+            <div class="management-card" data-type="locations" onclick="openLocationManagement()">
+                <div class="management-card-icon">
+                    <i class="fas fa-map-marked-alt"></i>
+                </div>
+                <h3 class="card-title">Location Management</h3>
+                <p class="card-subtitle">All Locations</p>
+                <p>Configure and manage business locations, settings, and location-specific configurations.</p>
+                <div class="card-action">Manage Locations</div>
+            </div>
+
+            <div class="management-card" data-type="emails" onclick="openEmailsManagement()">
+                <div class="management-card-icon">
+                    <i class="fas fa-envelope-open-text"></i>
+                </div>
+                <h3 class="card-title">Emails Management</h3>
+                <p class="card-subtitle">All Locations</p>
+                <p>Manage email templates, configurations, and communication settings for the platform.</p>
+                <div class="card-action">Manage Emails</div>
+            </div>
+
+
+
+            <div class="management-card" data-type="salary" onclick="openSalaryCalculator()">
+                <div class="management-card-icon">
+                    <i class="fas fa-sack-dollar"></i>
+                </div>
+                <h3 class="card-title">Salary Calculator</h3>
+                <p class="card-subtitle">All Locations</p>
+                <p>Calculate daily salaries from sales and hours, compare sessions, and export reports.</p>
+                <div class="card-action">Open Salary</div>
+            </div>
+
+            <div class="management-card" data-type="reports" onclick="openReportsCenter()">
+                <div class="management-card-icon">
+                    <i class="fas fa-chart-pie"></i>
+                </div>
+                <h3 class="card-title">Analytics Center</h3>
+                <p class="card-subtitle">All Locations</p>
+                <p>Generate comprehensive reports, analytics, and insights for business intelligence.</p>
+                <div class="card-action">View Analytics</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Verification Modal -->
+    <div id="verificationModal" class="verification-modal">
+        <div class="verification-content">
+            <div class="verification-icon">
+                <i class="fas fa-lock"></i>
+            </div>
+            <h2>Access Verification Required</h2>
+            <p>This management area is restricted to administrators and managers only. Please verify your credentials to continue.</p>
+            
+            <form class="verification-form" id="verificationForm">
+                <input type="text" class="verification-input" id="verificationUsername" placeholder="Username" required>
+                <input type="password" class="verification-input" id="verificationPassword" placeholder="Password" autocomplete="current-password" required>
+                
+                <div class="error-message" id="errorMessage">
+                    Invalid credentials. Please try again.
+                </div>
+                
+                <div class="verification-buttons">
+                    <button type="submit" class="verification-btn primary">Verify Access</button>
+                    <button type="button" class="verification-btn secondary" onclick="cancelVerification()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="/static/js/management.js"></script>
+    
+    <!-- Fallback Functions - Ensure functions are available even if external script fails -->
+    <script>
+        // Fallback function for openUserManagement
+        if (typeof openUserManagement === 'undefined') {
+            console.log('⚠️ openUserManagement not found in external script, creating fallback...');
+            
+            window.openUserManagement = function() {
+                console.log('🚀 Fallback openUserManagement called');
+                console.log('🔍 Checking user verification and admin status...');
+                
+                // Get user info from localStorage
+                const isAdmin = localStorage.getItem('isAdmin') === 'true';
+                const currentLocation = localStorage.getItem('locationCode') || localStorage.getItem('location_username') || localStorage.getItem('location_name') || '';
+                const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+                
+                console.log('👤 User info - Admin:', isAdmin, 'Location:', currentLocation, 'Logged in:', isLoggedIn);
+                
+                if (!isLoggedIn) {
+                    console.log('❌ User not logged in, redirecting to login');
+                    window.location.href = '/login';
+                    return;
+                }
+                
+                // Navigate to user management with location parameter
+                if (isAdmin) {
+                    console.log('✅ Admin user - navigating to /users');
+                    window.location.href = '/users';
+                } else {
+                    console.log(`✅ Location user - navigating to /users?location=${currentLocation}`);
+                    window.location.href = `/users?location=${currentLocation}`;
+                }
+            };
+            
+            console.log('✅ Fallback openUserManagement function created');
+        }
+        
+        // Fallback function for other management functions
+        if (typeof openLocationManagement === 'undefined') {
+            window.openLocationManagement = function() {
+                console.log('🏢 Fallback openLocationManagement called');
+                const isAdmin = localStorage.getItem('isAdmin') === 'true';
+                if (isAdmin) {
+                    window.location.href = '/locations';
+                } else {
+                    alert('Access denied. Only administrators can manage locations.');
+                }
+            };
+        }
+        
+        if (typeof openEmailsManagement === 'undefined') {
+            window.openEmailsManagement = function() {
+                console.log('📧 Fallback openEmailsManagement called');
+                const isAdmin = localStorage.getItem('isAdmin') === 'true';
+                const currentLocation = localStorage.getItem('locationCode') || localStorage.getItem('location_username') || localStorage.getItem('location_name') || '';
+                if (isAdmin) {
+                    window.location.href = '/emails';
+                } else {
+                    window.location.href = `/emails?location=${currentLocation}`;
+                }
+            };
+        }
+    </script>
+    
+    <!-- Enhanced User Management Card Functionality -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get the User Management card
+            const userManagementCard = document.querySelector('.management-card[data-type="users"]');
+            
+            if (userManagementCard) {
+                console.log('✅ User Management card found and enhanced');
+                
+                // Add additional click event listener for debugging
+                userManagementCard.addEventListener('click', function(e) {
+                    console.log('🎯 User Management card clicked!');
+                    console.log('📍 Click coordinates:', e.clientX, e.clientY);
+                    console.log('🔍 Event target:', e.target);
+                    
+                    // Call the original function
+                    openUserManagement();
+                });
+                
+                // Add visual feedback on click
+                userManagementCard.addEventListener('mousedown', function() {
+                    this.style.transform = 'translateY(-4px) scale(0.98)';
+                });
+                
+                userManagementCard.addEventListener('mouseup', function() {
+                    this.style.transform = 'translateY(-8px) scale(1)';
+                });
+                
+                // Add keyboard support
+                userManagementCard.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        console.log('⌨️ User Management card activated via keyboard');
+                        openUserManagement();
+                    }
+                });
+                
+                // Make it focusable for accessibility
+                userManagementCard.setAttribute('tabindex', '0');
+                userManagementCard.setAttribute('role', 'button');
+                userManagementCard.setAttribute('aria-label', 'Open User Management');
+                
+            } else {
+                console.error('❌ User Management card not found');
+            }
+        });
+        
+        // Global function to test User Management navigation
+        window.testUserManagementCard = function() {
+            console.log('🧪 === TESTING USER MANAGEMENT CARD ===');
+            const card = document.querySelector('.management-card[data-type="users"]');
+            if (card) {
+                console.log('✅ Card found, simulating click...');
+                card.click();
+            } else {
+                console.error('❌ Card not found');
+            }
+        };
+        
+        // Simple test function to verify function exists
+        window.testFunctionExists = function() {
+            console.log('🔍 === TESTING FUNCTION AVAILABILITY ===');
+            console.log('openUserManagement exists:', typeof openUserManagement === 'function');
+            console.log('openLocationManagement exists:', typeof openLocationManagement === 'function');
+            console.log('openEmailsManagement exists:', typeof openEmailsManagement === 'function');
+            
+            if (typeof openUserManagement === 'function') {
+                console.log('✅ openUserManagement is available and ready to use');
+            } else {
+                console.error('❌ openUserManagement is not available');
+            }
+        };
+        
+        // Auto-test on page load
+        setTimeout(function() {
+            testFunctionExists();
+        }, 1000);
+    </script>
+</body>
+</html>

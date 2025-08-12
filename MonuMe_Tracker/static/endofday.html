@@ -1,0 +1,1281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>End of Day Report</title>
+    <link rel="icon" type="image/png" href="/icon.png">
+    <link rel="stylesheet" href="style.css">
+    <!-- Add jsPDF library for PDF generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #1e1e2f;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+        
+        /* Main content styles */
+        .main-content {
+            max-width: 800px;
+            margin: 50px auto;
+            margin-left: 280px;
+            padding: 30px;
+            background-color: #2a2a3b;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+        
+        h1 {
+            color: #ff9562;
+            margin-bottom: 30px;
+            font-size: 32px;
+        }
+        
+        .description {
+            margin-bottom: 30px;
+            line-height: 1.6;
+            font-size: 16px;
+            color: #ccc;
+        }
+        
+        .submit-button {
+            display: block;
+            width: 220px;
+            margin: 30px auto;
+            padding: 15px;
+            background-color: #ff9562;
+            color: #1e1e2f;
+            border: none;
+            border-radius: 50px;
+            font-size: 17px;
+            font-weight: bold;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(255, 149, 98, 0.3);
+        }
+        
+        .submit-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(255, 149, 98, 0.4);
+        }
+        
+        .popup {
+            display: none;
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 500px;
+            padding: 35px;
+            background-color: #2a2a3b;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .popup h2 {
+            color: #ff9562;
+            margin-top: 0;
+            margin-bottom: 25px;
+            text-align: center;
+            font-size: 26px;
+        }
+        
+        .popup-field {
+            margin-bottom: 25px;
+        }
+        
+        .popup-field label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #ddd;
+            font-size: 16px;
+        }
+        
+        .popup-field input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #444;
+            background-color: #1e1e2f;
+            color: #fff;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+            box-sizing: border-box;
+        }
+        
+        .popup-field input:focus {
+            border-color: #ff9562;
+            outline: none;
+        }
+        
+        .popup-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+            width: 100%;
+        }
+        
+        .popup-buttons button {
+            padding: 15px 30px;
+            min-width: 120px;
+            cursor: pointer;
+            border: none;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        
+        .save-btn {
+            background-color: #ff9562;
+            color: #1e1e2f;
+            box-shadow: 0 4px 8px rgba(255, 149, 98, 0.3);
+        }
+        
+        .save-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(255, 149, 98, 0.4);
+        }
+        
+        .cancel-btn {
+            background-color: #444;
+            color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .cancel-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+        
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 999;
+            backdrop-filter: blur(5px);
+        }
+        
+        #summaryContent {
+            margin: 25px 0;
+            width: 100%;
+        }
+        
+        .summary-item {
+            margin-bottom: 15px;
+            padding: 12px;
+            background-color: #232336;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        
+        .summary-item span {
+            font-weight: bold;
+            color: #ff9562;
+            float: right;
+        }
+        
+        .summary-title {
+            text-align: center;
+            color: #ddd;
+            margin-bottom: 20px;
+            font-size: 18px;
+        }
+        
+        .summary-date {
+            text-align: center;
+            color: #ff9562;
+            font-weight: bold;
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .input-icon {
+            position: relative;
+            width: 100%;
+        }
+        
+        .input-icon:before {
+            content: "$";
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #777;
+            font-size: 16px;
+            z-index: 1;
+        }
+        
+        .input-icon input {
+            padding-left: 35px;
+            width: 100%;
+        }
+        
+        .download-btn {
+            background-color: #4CAF50;
+            color: white;
+            box-shadow: 0 4px 8px rgba(76, 175, 80, 0.3);
+        }
+        
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(76, 175, 80, 0.4);
+        }
+        
+        #pdfContent {
+            display: none;
+            background-color: white;
+            color: black;
+            padding: 40px;
+            width: 210mm;
+            min-height: 297mm;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+        
+        .pdf-header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+            border-bottom: 2px solid #ff9562;
+            padding-bottom: 20px;
+        }
+        
+        .pdf-title {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #2a2a3b;
+        }
+        
+        .pdf-date {
+            font-size: 16px;
+            margin-bottom: 20px;
+            color: #666;
+        }
+        
+        .pdf-logo {
+            margin-bottom: 15px;
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+            color: #ff9562;
+        }
+        
+        .pdf-item {
+            padding: 12px;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #eee;
+            font-size: 14px;
+            color: #333;
+        }
+        
+        .pdf-item span {
+            float: right;
+            font-weight: bold;
+            color: #2a2a3b;
+        }
+        
+        .pdf-monthly-section {
+            width: 100%;
+            box-sizing: border-box;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .pdf-monthly-item {
+            flex: 1;
+            text-align: center;
+            padding: 0 10px;
+        }
+        
+        .pdf-monthly-label {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        
+        .pdf-monthly-value {
+            font-size: 22px;
+            font-weight: bold;
+            color: #ff9562;
+        }
+        
+        .pdf-section-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin: 20px 0 15px 0;
+            color: #2a2a3b;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+        }
+        
+        .pdf-footer {
+            text-align: center;
+            margin-top: 40px;
+            font-size: 12px;
+            color: #999;
+            border-top: 1px solid #eee;
+            padding-top: 15px;
+        }
+        
+        .pdf-paired-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            box-sizing: border-box;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-left: 5px solid #ff9562;
+        }
+        
+        .pdf-paired-item {
+            flex: 1;
+            text-align: center;
+            padding: 0 5px;
+        }
+        
+        .pdf-paired-label {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        
+        .pdf-paired-value {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2a2a3b;
+        }
+        
+        .pdf-success-rate {
+            min-width: 80px;
+            text-align: center;
+            background-color: #e9f7ef;
+            padding: 8px 10px;
+            border-radius: 30px;
+            margin-left: 10px;
+            flex-shrink: 0;
+        }
+        
+        .pdf-success-label {
+            font-size: 11px;
+            color: #666;
+            margin-bottom: 3px;
+        }
+        
+        .pdf-success-value {
+            font-size: 16px;
+            font-weight: bold;
+            color: #4CAF50;
+        }
+        
+        .summary-paired-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            box-sizing: border-box;
+            background-color: #232336;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .summary-paired-item {
+            flex: 1;
+            text-align: center;
+            padding: 0 5px;
+        }
+        
+        .summary-paired-label {
+            font-size: 12px;
+            color: #aaa;
+            margin-bottom: 5px;
+            text-align: center;
+            width: 100%;
+            display: block;
+        }
+        
+        .summary-paired-value {
+            font-size: 18px;
+            font-weight: bold;
+            color: #ff9562;
+            text-align: center;
+            width: 100%;
+            display: block;
+        }
+        
+        .summary-success-rate {
+            min-width: 80px;
+            text-align: center;
+            background-color: #1e272e;
+            padding: 8px 10px;
+            border-radius: 30px;
+            margin-left: 10px;
+            flex-shrink: 0;
+        }
+        
+        .summary-success-label {
+            font-size: 10px;
+            color: #aaa;
+            margin-bottom: 3px;
+        }
+        
+        .summary-success-value {
+            font-size: 15px;
+            font-weight: bold;
+            color: #4CAF50;
+        }
+    </style>
+    <!-- Load shared dashboard sidebar -->
+    <script src="sidebar-loader.js"></script>
+    <!-- Remove page-specific sidebar CSS below once loader is verified on this page -->
+    <style>
+        :root {
+            --main-color: #ff9562;
+            --gradient-start: #ff7f42;
+            --gradient-end: #ff9562;
+            --sidebar-bg: #272430; /* Updated to the requested color */
+            --card-bg: rgba(255, 255, 255, 0.85);
+            --card-hover-bg: rgba(255, 255, 255, 0.95);
+            --text-primary: #333;
+            --text-secondary: #666;
+            --text-light: #f8f9fa;
+            --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --shadow-md: 0 10px 25px rgba(0, 0, 0, 0.12);
+            --shadow-lg: 0 15px 35px rgba(0, 0, 0, 0.15);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            --border-radius: 16px;
+        }
+
+        /* Sidebar styles with enhanced design */
+        .sidebar {
+            width: 280px;
+            background: #272430; /* Direct hexcode to ensure it's applied */
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            min-height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            transition: var(--transition);
+            z-index: 100;
+            box-shadow: var(--shadow-md);
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .sidebar-header {
+            padding: 35px 25px 15px;
+            border-bottom: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 30px;
+            background: transparent;
+            box-shadow: none;
+            position: relative;
+        }
+
+        /* Add a subtle gradient overlay to the header */
+        .sidebar-header:after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 15%;
+            width: 70%;
+            height: 1px;
+            background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.1), transparent);
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .sidebar-brand a {
+            text-decoration: none;
+            border-bottom: none;
+            box-shadow: none;
+            outline: none;
+        }
+
+        .app-title {
+            color: var(--main-color);
+            font-size: 42px; /* Slightly bigger */
+            font-weight: 800;
+            font-family: 'Poppins', 'Segoe UI', sans-serif;
+            text-shadow: none; /* Removed the white glow effect */
+            letter-spacing: 1px;
+            margin: 0;
+            transition: transform 0.3s ease;
+            text-align: center;
+            background: linear-gradient(135deg, var(--main-color), var(--gradient-start));
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 18px;
+        }
+        
+        .app-title:hover {
+            transform: scale(1.05);
+            text-shadow: none; /* Removed the white glow effect on hover */
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0 15px;
+            margin-top: 30px;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 10px; /* Slightly more spacing */
+            border-radius: 12px;
+            overflow: hidden;
+            transition: var(--transition);
+        }
+
+        .sidebar-menu li a {
+            display: flex;
+            align-items: center;
+            padding: 16px 20px; /* Slightly taller */
+            color: rgba(255, 255, 255, 0.8); /* Brighter text */
+            text-decoration: none;
+            font-size: 16px;
+            border-radius: 12px;
+            font-weight: 500;
+            transition: var(--transition);
+            position: relative;
+            z-index: 1;
+        }
+
+        .sidebar-menu li a i {
+            min-width: 24px;
+            margin-right: 15px;
+            font-size: 18px;
+            transition: transform 0.3s ease; /* Animate the icon */
+        }
+
+        .sidebar-menu li a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 100%;
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            opacity: 0.8;
+            z-index: -1;
+            transition: width 0.3s ease;
+            border-radius: 12px;
+        }
+
+        /* Enhanced hover and active states */
+        .sidebar-menu li:hover a::before,
+        .sidebar-menu li.active a::before {
+            width: 100%;
+        }
+
+        .sidebar-menu li:hover a,
+        .sidebar-menu li.active a {
+            color: white;
+            transform: translateX(5px);
+        }
+        
+        .sidebar-menu li:hover a i,
+        .sidebar-menu li.active a i {
+            transform: scale(1.2); /* Scale up icon on hover */
+        }
+
+        /* Add subtle indicators for menu items */
+        .sidebar-menu li:not(.active)::after {
+            content: none;
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .sidebar-menu li:not(.active):hover::after {
+            opacity: 0;
+        }
+
+        /* Responsive styles */
+        @media screen and (max-width: 1200px) {
+            .sidebar {
+                width: 240px;
+            }
+        }
+
+        @media screen and (max-width: 992px) {
+            .sidebar {
+                width: 80px;
+                overflow: hidden;
+            }
+                
+            .sidebar-header h2,
+            .sidebar-menu li a span {
+                display: none;
+            }
+                
+            .sidebar-menu li a {
+                justify-content: center;
+                padding: 15px 0;
+            }
+                
+            .sidebar-menu li a i {
+                margin-right: 0;
+                font-size: 20px;
+            }
+        }
+    </style>
+    </head>
+<body>
+    <!-- Sidebar is injected by sidebar-loader.js -->
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set up analytics link event listener
+            const analyticsLink = document.getElementById('analytics-link');
+            if (analyticsLink) {
+                analyticsLink.addEventListener('click', function(event) {
+                    event.preventDefault();
+                    // Open verification modal directly
+                    openVerificationModal();
+                });
+            }
+    
+            // Highlight the current page in the sidebar
+            const currentPage = window.location.pathname.split('/').pop();
+            
+            // If it's the root, consider it as dashboard
+            const activePage = currentPage === '' || currentPage === 'index.html' ? 'dashboard' : currentPage;
+            
+            // Find the corresponding link and make it active
+            const menuItems = document.querySelectorAll('.sidebar-menu li');
+            menuItems.forEach(item => {
+                const link = item.querySelector('a');
+                if (link && link.getAttribute('href') === activePage) {
+                    item.classList.add('active');
+                } else {
+                    item.classList.remove('active');
+                }
+            });
+        });
+    
+        // Add new function to open verification modal directly
+        function openVerificationModal() {
+            // Create modal HTML
+            const modalHTML = `
+                <div id="password-verification-modal" style="
+                    display: flex;
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    background-color: rgba(0, 0, 0, 0.7);
+                    z-index: 9999;
+                    justify-content: center;
+                    align-items: center;
+                    backdrop-filter: blur(5px);
+                    -webkit-backdrop-filter: blur(5px);">
+                    <div style="
+                        background-color: white;
+                        border-radius: 20px;
+                        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+                        width: 380px;
+                        padding: 30px;
+                        text-align: center;
+                        animation: modalFadeIn 0.3s;">
+                        <h3 style="
+                            margin-top: 0;
+                            color: #ff9562;
+                            font-size: 24px;
+                            font-weight: 700;
+                            margin-bottom: 15px;">Password Verification</h3>
+                        <p style="margin-bottom: 20px; color: #666;">Please enter your password to access Analytics</p>
+                        <input type="password" id="verification-password" placeholder="Your password" style="
+                            width: 100%;
+                            padding: 12px 15px;
+                            margin: 15px 0;
+                            border: 1px solid #ddd;
+                            border-radius: 10px;
+                            font-size: 16px;
+                            box-sizing: border-box;">
+                        <div style="
+                            display: flex;
+                            justify-content: space-between;
+                            margin-top: 20px;">
+                            <button onclick="cancelPasswordVerification()" style="
+                                padding: 12px 20px;
+                                border: none;
+                                border-radius: 10px;
+                                cursor: pointer;
+                                font-size: 15px;
+                                font-weight: 600;
+                                background-color: #f0f0f0;
+                                color: #666;">Cancel</button>
+                            <button onclick="submitPasswordVerification()" style="
+                                padding: 12px 20px;
+                                border: none;
+                                border-radius: 10px;
+                                cursor: pointer;
+                                font-size: 15px;
+                                font-weight: 600;
+                                background: linear-gradient(135deg, #ff7f42, #ff9562);
+                                color: white;">Verify</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Add modal to document
+            const div = document.createElement('div');
+            div.innerHTML = modalHTML;
+            document.body.appendChild(div.firstElementChild);
+            
+            // Focus on password field
+            setTimeout(() => {
+                document.getElementById('verification-password').focus();
+            }, 100);
+            
+            // Add enter key handler
+            document.getElementById('verification-password').addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    submitPasswordVerification();
+                }
+            });
+        }
+    
+        function cancelPasswordVerification() {
+            const modal = document.getElementById('password-verification-modal');
+            if (modal) {
+                modal.remove();
+            }
+        }
+    
+        function submitPasswordVerification() {
+            const password = document.getElementById('verification-password').value;
+            
+            // Verify password
+            if (password === 'admin' || password === 'manager' || password === 'employee') {
+                // Determine role based on password
+                let role, location, username;
+                
+                if (password === 'admin') {
+                    role = 'admin';
+                    location = 'all';
+                    username = 'admin';
+                } else if (password === 'manager') {
+                    role = 'manager';
+                    location = 'Location1';
+                    username = 'manager';
+                } else if (password === 'employee') {
+                    role = 'employee';
+                    location = 'Location1';
+                    username = 'employee';
+                }
+                
+                // Store user info in localStorage for persistence
+                localStorage.setItem('username', username);
+                localStorage.setItem('role', role);
+                localStorage.setItem('location', location);
+                
+                // Close the verification modal
+                cancelPasswordVerification();
+                
+                // Navigate to analytics page
+                window.location.href = 'analytics.html';
+            } else {
+                alert('Invalid password. Please try again.');
+            }
+        }
+    </script>
+    
+    <div class="main-content">
+        <h1>End of Day Report</h1>
+        <p class="description">Complete your end of day report by submitting your total gross and net figures. This information will be used for daily performance tracking.</p>
+        <button id="openEodForm" class="submit-button">Submit End of Day Report</button>
+    </div>
+    
+    <!-- First Popup: EOD Input Form -->
+    <div class="overlay" id="overlay"></div>
+    <div class="popup" id="eodPopup">
+        <h2>End of Day Report</h2>
+        <div class="popup-field">
+            <label for="reportDate">Report Date:</label>
+            <input type="date" id="reportDate">
+        </div>
+        <div class="popup-field">
+            <label for="totalGross">Total Gross:</label>
+            <div class="input-icon">
+                <input type="number" id="totalGross" placeholder="Enter total gross amount" step="0.01">
+            </div>
+        </div>
+        <div class="popup-field">
+            <label for="totalNet">Total Net:</label>
+            <div class="input-icon">
+                <input type="number" id="totalNet" placeholder="Enter total net amount" step="0.01">
+            </div>
+        </div>
+        <div class="popup-buttons">
+            <button class="cancel-btn" id="cancelEod">Cancel</button>
+            <button class="save-btn" id="saveEod">Save</button>
+        </div>
+    </div>
+    
+    <!-- Second Popup: EOD Summary -->
+    <div class="popup" id="summaryPopup">
+        <h2>Today's Summary</h2>
+        <div id="summaryDate" class="summary-date"></div>
+        <div class="summary-title">Combined team performance for today:</div>
+        <div id="summaryContent">Loading...</div>
+        <div class="popup-buttons">
+            <button class="download-btn" id="closeSummary">Finish & Download</button>
+        </div>
+    </div>
+    
+    <!-- Hidden div for PDF generation -->
+    <div id="pdfContent">
+        <div class="pdf-header">
+            <div class="pdf-logo">MonuMe Performance</div>
+            <div class="pdf-title">End of Day Report</div>
+            <div class="pdf-date" id="pdfDate"></div>
+        </div>
+        
+        <div class="pdf-monthly-section">
+            <div class="pdf-monthly-item">
+                <div class="pdf-monthly-label">MONTHLY GROSS</div>
+                <div class="pdf-monthly-value" id="pdf-monthly-gross">$0</div>
+            </div>
+            <div class="pdf-monthly-item">
+                <div class="pdf-monthly-label">MONTHLY NET</div>
+                <div class="pdf-monthly-value" id="pdf-monthly-net">$0</div>
+            </div>
+        </div>
+        
+        <div class="pdf-section-title">Today's Performance</div>
+        
+        <!-- Daily gross/net section -->
+        <div class="pdf-paired-section">
+            <div class="pdf-paired-item">
+                <div class="pdf-paired-label">DAILY GROSS</div>
+                <div class="pdf-paired-value" id="pdf-daily-gross">$0</div>
+            </div>
+            <div class="pdf-paired-item">
+                <div class="pdf-paired-label">DAILY NET</div>
+                <div class="pdf-paired-value" id="pdf-daily-net">$0</div>
+            </div>
+        </div>
+        
+        <!-- Scan metrics section -->
+        <div class="pdf-paired-section">
+            <div class="pdf-paired-item">
+                <div class="pdf-paired-label">SCAN DEMOS</div>
+                <div class="pdf-paired-value" id="pdf-scan-demos">0</div>
+            </div>
+            <div class="pdf-paired-item">
+                <div class="pdf-paired-label">SCAN SALES</div>
+                <div class="pdf-paired-value" id="pdf-scan-sales">0</div>
+            </div>
+            <div class="pdf-success-rate">
+                <div class="pdf-success-label">SUCCESS</div>
+                <div class="pdf-success-value" id="pdf-scan-rate">0%</div>
+            </div>
+        </div>
+        
+        <!-- Opal metrics section -->
+        <div class="pdf-paired-section">
+            <div class="pdf-paired-item">
+                <div class="pdf-paired-label">OPAL DEMOS</div>
+                <div class="pdf-paired-value" id="pdf-opal-demos">0</div>
+            </div>
+            <div class="pdf-paired-item">
+                <div class="pdf-paired-label">OPAL SALES</div>
+                <div class="pdf-paired-value" id="pdf-opal-sales">0</div>
+            </div>
+            <div class="pdf-success-rate">
+                <div class="pdf-success-label">SUCCESS</div>
+                <div class="pdf-success-value" id="pdf-opal-rate">0%</div>
+            </div>
+        </div>
+        
+        <div class="pdf-footer">
+            Generated on <span id="pdfGeneratedDate"></span>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const openEodFormBtn = document.getElementById('openEodForm');
+            const eodPopup = document.getElementById('eodPopup');
+            const summaryPopup = document.getElementById('summaryPopup');
+            const overlay = document.getElementById('overlay');
+            const saveEodBtn = document.getElementById('saveEod');
+            const cancelEodBtn = document.getElementById('cancelEod');
+            const closeSummaryBtn = document.getElementById('closeSummary');
+            const summaryDate = document.getElementById('summaryDate');
+            const reportDateInput = document.getElementById('reportDate');
+
+            let selectedDateForReport = null;
+            
+            // Get today's date in YYYY-MM-DD format
+            const getCurrentDateString = () => {
+                const now = new Date();
+                return now.getFullYear() + '-' + 
+                       String(now.getMonth() + 1).padStart(2, '0') + '-' + 
+                       String(now.getDate()).padStart(2, '0');
+            };
+            
+            // Format date for display
+            const formatDate = (dateString) => {
+                const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+                return new Date(dateString).toLocaleDateString(undefined, options);
+            };
+            
+            // Format date and time for display
+            const formatDateAndTime = () => {
+                const now = new Date();
+                const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+                return now.toLocaleDateString(undefined, options);
+            };
+            
+            // Initialize date fields
+            const currentDate = getCurrentDateString();
+            selectedDateForReport = currentDate;
+            if (reportDateInput) {
+                reportDateInput.value = currentDate;
+            }
+            summaryDate.textContent = formatDate(selectedDateForReport);
+            document.getElementById('pdfDate').textContent = formatDate(selectedDateForReport);
+            document.getElementById('pdfGeneratedDate').textContent = formatDateAndTime();
+            
+            // Open EOD form popup
+            openEodFormBtn.addEventListener('click', function() {
+                eodPopup.style.display = 'block';
+                overlay.style.display = 'block';
+            });
+            
+            // Cancel EOD form
+            cancelEodBtn.addEventListener('click', function() {
+                eodPopup.style.display = 'none';
+                overlay.style.display = 'none';
+            });
+            
+            // Save EOD data
+            saveEodBtn.addEventListener('click', function() {
+                const totalGross = document.getElementById('totalGross').value;
+                const totalNet = document.getElementById('totalNet').value;
+                const chosenDate = (reportDateInput && reportDateInput.value) ? reportDateInput.value : getCurrentDateString();
+                
+                if (!totalGross || !totalNet) {
+                    alert('Please enter both Total Gross and Total Net values.');
+                    return;
+                }
+                
+                // Get existing EOD data or create new array
+                const eodDB = JSON.parse(localStorage.getItem('eodDB') || '[]');
+                
+                // Use selected date for the entry
+                const exactDate = chosenDate;
+                
+                eodDB.push({
+                    userId: localStorage.getItem('currentUser') || 'unknown',
+                    date: exactDate,
+                    totalGross: totalGross,
+                    totalNet: totalNet,
+                    timestamp: new Date().toISOString()
+                });
+                
+                // Save back to localStorage
+                localStorage.setItem('eodDB', JSON.stringify(eodDB));
+                
+                // Close the first popup
+                eodPopup.style.display = 'none';
+                
+                // Reset form fields for next time
+                document.getElementById('totalGross').value = '';
+                document.getElementById('totalNet').value = '';
+                if (reportDateInput) {
+                    reportDateInput.value = exactDate;
+                }
+                selectedDateForReport = exactDate;
+                
+                // Update and show the summary popup
+                summaryDate.textContent = formatDate(selectedDateForReport);
+                updateSummary(selectedDateForReport);
+                summaryPopup.style.display = 'block';
+            });
+            
+            // Generate and download PDF report
+            closeSummaryBtn.addEventListener('click', async function() {
+                // Prepare PDF content
+                updatePdfContent(selectedDateForReport);
+                
+                try {
+                    // Create PDF using jsPDF and html2canvas
+                    const { jsPDF } = window.jspdf;
+                    const doc = new jsPDF('p', 'mm', 'a4');
+                    
+                    const pdfContent = document.getElementById('pdfContent');
+                    
+                    // Make the PDF content visible for html2canvas
+                    pdfContent.style.display = 'block';
+                    
+                    const canvas = await html2canvas(pdfContent, {
+                        scale: 2,
+                        backgroundColor: '#ffffff'
+                    });
+                    
+                    // Convert canvas to image
+                    const imgData = canvas.toDataURL('image/png');
+                    const imgProps = doc.getImageProperties(imgData);
+                    const pdfWidth = doc.internal.pageSize.getWidth();
+                    const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+                    
+                    doc.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+                    
+                    // Download PDF
+                    const fileName = 'MonuMe_EOD_Report_' + (selectedDateForReport || getCurrentDateString()) + '.pdf';
+                    doc.save(fileName);
+                    
+                    // Hide the PDF content again
+                    pdfContent.style.display = 'none';
+                    
+                    // Close the popup
+                    summaryPopup.style.display = 'none';
+                    overlay.style.display = 'none';
+                    
+                } catch (error) {
+                    console.error('Error generating PDF:', error);
+                    alert('There was an error generating the PDF. Please try again.');
+                    
+                    // Hide the PDF content
+                    pdfContent.style.display = 'none';
+                }
+            });
+            
+            function updateSummary(dateString) {
+                const summaryContent = document.getElementById('summaryContent');
+                const eodData = JSON.parse(localStorage.getItem('eodDB') || '[]');
+                const allPerformanceData = JSON.parse(localStorage.getItem('Performancestorge') || '[]');
+                
+                // Determine active date
+                const todayString = dateString || selectedDateForReport || getCurrentDateString();
+                
+                // Get current month in YYYY-MM format
+                const currentMonth = todayString.substring(0, 7);
+                
+                // Filter for today's data only
+                const todaysData = eodData.filter(entry => entry.date === todayString);
+                
+                // Filter for current month's data
+                const monthlyData = eodData.filter(entry => entry.date.startsWith(currentMonth));
+                
+                // Calculate totals from today's data only
+                let totalGross = 0;
+                let totalNet = 0;
+                
+                todaysData.forEach(entry => {
+                    totalGross += parseFloat(entry.totalGross) || 0;
+                    totalNet += parseFloat(entry.totalNet) || 0;
+                });
+                
+                // Calculate monthly totals
+                let monthlyGross = 0;
+                let monthlyNet = 0;
+                
+                monthlyData.forEach(entry => {
+                    monthlyGross += parseFloat(entry.totalGross) || 0;
+                    monthlyNet += parseFloat(entry.totalNet) || 0;
+                });
+                
+                // Calculate selected day's performance metrics
+                const todaysPerformance = allPerformanceData.filter(entry => entry.date === todayString);
+                
+                let totalOpalDemos = 0;
+                let totalOpalSales = 0;
+                let totalScanDemos = 0;
+                let totalScanSold = 0;
+                
+                todaysPerformance.forEach(item => {
+                    totalOpalDemos += parseInt(item.opalDemos) || 0;
+                    totalOpalSales += parseInt(item.opalSales) || 0;
+                    totalScanDemos += parseInt(item.scanDemos) || 0;
+                    totalScanSold += parseInt(item.scanSold) || 0;
+                });
+                
+                // Calculate success rates
+                const opalSuccessRate = totalOpalDemos > 0 ? Math.round((totalOpalSales / totalOpalDemos) * 100) : 0;
+                const scanSuccessRate = totalScanDemos > 0 ? Math.round((totalScanSold / totalScanDemos) * 100) : 0;
+                
+                summaryContent.innerHTML = `
+                    <!-- Daily gross/net section -->
+                    <div class="summary-paired-section">
+                        <div class="summary-paired-item">
+                            <div class="summary-paired-label">DAILY GROSS</div>
+                            <div class="summary-paired-value">$${totalGross.toLocaleString()}</div>
+                        </div>
+                        <div class="summary-paired-item">
+                            <div class="summary-paired-label">DAILY NET</div>
+                            <div class="summary-paired-value">$${totalNet.toLocaleString()}</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Monthly gross/net section -->
+                    <div class="summary-paired-section">
+                        <div class="summary-paired-item">
+                            <div class="summary-paired-label">MONTHLY GROSS</div>
+                            <div class="summary-paired-value">$${monthlyGross.toLocaleString()}</div>
+                        </div>
+                        <div class="summary-paired-item">
+                            <div class="summary-paired-label">MONTHLY NET</div>
+                            <div class="summary-paired-value">$${monthlyNet.toLocaleString()}</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Scan metrics section -->
+                    <div class="summary-paired-section">
+                        <div class="summary-paired-item">
+                            <div class="summary-paired-label">SCAN DEMOS</div>
+                            <div class="summary-paired-value">${totalScanDemos}</div>
+                        </div>
+                        <div class="summary-paired-item">
+                            <div class="summary-paired-label">SCAN SALES</div>
+                            <div class="summary-paired-value">${totalScanSold}</div>
+                        </div>
+                        <div class="summary-success-rate">
+                            <div class="summary-success-label">SUCCESS</div>
+                            <div class="summary-success-value">${scanSuccessRate}%</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Opal metrics section -->
+                    <div class="summary-paired-section">
+                        <div class="summary-paired-item">
+                            <div class="summary-paired-label">OPAL DEMOS</div>
+                            <div class="summary-paired-value">${totalOpalDemos}</div>
+                        </div>
+                        <div class="summary-paired-item">
+                            <div class="summary-paired-label">OPAL SALES</div>
+                            <div class="summary-paired-value">${totalOpalSales}</div>
+                        </div>
+                        <div class="summary-success-rate">
+                            <div class="summary-success-label">SUCCESS</div>
+                            <div class="summary-success-value">${opalSuccessRate}%</div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            function updatePdfContent(dateString) {
+                const eodData = JSON.parse(localStorage.getItem('eodDB') || '[]');
+                const allPerformanceData = JSON.parse(localStorage.getItem('Performancestorge') || '[]');
+                
+                // Determine active date
+                const todayString = dateString || selectedDateForReport || getCurrentDateString();
+                
+                // Get current month in YYYY-MM format
+                const currentMonth = todayString.substring(0, 7);
+                
+                // Filter for today's data only
+                const todaysData = eodData.filter(entry => entry.date === todayString);
+                
+                // Filter for current month's data
+                const monthlyData = eodData.filter(entry => entry.date.startsWith(currentMonth));
+                
+                // Calculate totals from today's data only
+                let totalGross = 0;
+                let totalNet = 0;
+                
+                todaysData.forEach(entry => {
+                    totalGross += parseFloat(entry.totalGross) || 0;
+                    totalNet += parseFloat(entry.totalNet) || 0;
+                });
+                
+                // Calculate monthly totals
+                let monthlyGross = 0;
+                let monthlyNet = 0;
+                
+                monthlyData.forEach(entry => {
+                    monthlyGross += parseFloat(entry.totalGross) || 0;
+                    monthlyNet += parseFloat(entry.totalNet) || 0;
+                });
+                
+                // Update header dates
+                document.getElementById('pdfDate').textContent = formatDate(todayString);
+                document.getElementById('pdfGeneratedDate').textContent = formatDateAndTime();
+
+                // Update monthly values at the top
+                document.getElementById('pdf-monthly-gross').textContent = '$' + monthlyGross.toLocaleString();
+                document.getElementById('pdf-monthly-net').textContent = '$' + monthlyNet.toLocaleString();
+                
+                // Update daily values
+                document.getElementById('pdf-daily-gross').textContent = '$' + totalGross.toLocaleString();
+                document.getElementById('pdf-daily-net').textContent = '$' + totalNet.toLocaleString();
+                
+                // Calculate today's performance metrics using the same exact date string
+                const todaysPerformance = allPerformanceData.filter(entry => entry.date === todayString);
+                
+                let totalOpalDemos = 0;
+                let totalOpalSales = 0;
+                let totalScanDemos = 0;
+                let totalScanSold = 0;
+                
+                todaysPerformance.forEach(item => {
+                    totalOpalDemos += parseInt(item.opalDemos) || 0;
+                    totalOpalSales += parseInt(item.opalSales) || 0;
+                    totalScanDemos += parseInt(item.scanDemos) || 0;
+                    totalScanSold += parseInt(item.scanSold) || 0;
+                });
+                
+                // Calculate success rates
+                const opalSuccessRate = totalOpalDemos > 0 ? Math.round((totalOpalSales / totalOpalDemos) * 100) : 0;
+                const scanSuccessRate = totalScanDemos > 0 ? Math.round((totalScanSold / totalScanDemos) * 100) : 0;
+                
+                // Update Opal metrics in PDF
+                document.getElementById('pdf-opal-demos').textContent = totalOpalDemos;
+                document.getElementById('pdf-opal-sales').textContent = totalOpalSales;
+                document.getElementById('pdf-opal-rate').textContent = opalSuccessRate + '%';
+                
+                // Update Scan metrics in PDF
+                document.getElementById('pdf-scan-demos').textContent = totalScanDemos;
+                document.getElementById('pdf-scan-sales').textContent = totalScanSold;
+                document.getElementById('pdf-scan-rate').textContent = scanSuccessRate + '%';
+            }
+        });
+    </script>
+</body>
+</html>

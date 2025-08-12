@@ -1,0 +1,835 @@
+<!-- Classic Refined Sidebar Template -->
+<div class="sidebar">
+    <div class="sidebar-header">
+        <div class="sidebar-brand">
+            <a href="/dashboard" title="Go to Dashboard">
+                <div class="logo-container">
+                    <img src="/static/logo11.png" alt="MonuMe Logo" class="sidebar-logo">
+                </div>
+            </a>
+        </div>
+        <div class="sidebar-divider"></div>
+    </div>
+    
+    <nav class="sidebar-navigation">
+        <ul class="sidebar-menu">
+            <li class="menu-item">
+                <a href="/dashboard" class="menu-link">
+                    <div class="menu-icon">
+                        <i class="fas fa-chart-pie"></i>
+                    </div>
+                    <span class="menu-text">Dashboard</span>
+                    <div class="menu-arrow">
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/management" class="menu-link">
+                    <div class="menu-icon">
+                        <i class="fas fa-cogs"></i>
+                    </div>
+                    <span class="menu-text">Management</span>
+                    <div class="menu-arrow">
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/tracking" class="menu-link">
+                    <div class="menu-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <span class="menu-text">Performance</span>
+                    <div class="menu-arrow">
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/appointment" class="menu-link">
+                    <div class="menu-icon">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <span class="menu-text">Appointments</span>
+                    <div class="menu-arrow">
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                </a>
+            </li>
+
+            <!-- Salary Suite -->
+            <li class="menu-item">
+                <a href="/salary" class="menu-link">
+                    <div class="menu-icon">
+                        <i class="fas fa-calculator"></i>
+                    </div>
+                    <span class="menu-text">Salary Calculator</span>
+                    <div class="menu-arrow">
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="/users" class="menu-link">
+                    <div class="menu-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <span class="menu-text">Users</span>
+                    <div class="menu-arrow">
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="/salary/history" class="menu-link">
+                    <div class="menu-icon">
+                        <i class="fas fa-history"></i>
+                    </div>
+                    <span class="menu-text">Salary History</span>
+                    <div class="menu-arrow">
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                </a>
+            </li>
+
+        </ul>
+    </nav>
+    
+    <div class="sidebar-footer">
+        <div class="user-profile" id="user-profile" onclick="toggleUserMenu()">
+            <div class="user-avatar">
+                <i class="fas fa-user"></i>
+            </div>
+            <div class="user-info">
+                <div class="user-name" id="user-name">Loading...</div>
+                <div class="user-status" id="user-status">Online</div>
+            </div>
+            <div class="user-menu-toggle">
+                <i class="fas fa-chevron-down"></i>
+            </div>
+        </div>
+        <!-- User Menu Dropdown -->
+        <div class="user-menu" id="user-menu">
+            <div class="user-menu-item" onclick="signOut()">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Sign Out</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    :root {
+        --main-color: #ff9562;
+        --gradient-start: #ff7f42;
+        --gradient-end: #ff9562;
+        --sidebar-bg: #ff9562;
+        --sidebar-secondary: rgba(255, 255, 255, 0.15);
+        --sidebar-accent: rgba(255, 255, 255, 0.25);
+        --text-primary: #ffffff;
+        --text-secondary: rgba(255, 255, 255, 0.9);
+        --text-muted: rgba(255, 255, 255, 0.7);
+        --border-color: rgba(255, 255, 255, 0.2);
+        --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.15);
+        --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.2);
+        --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.25);
+        --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        --border-radius: 12px;
+        --font-weight-medium: 500;
+        --font-weight-semibold: 600;
+        --font-weight-bold: 700;
+    }
+
+    /* Global font styles */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Inter', 'Poppins', sans-serif;
+    }
+
+    /* Orange Theme Sidebar */
+    .sidebar {
+        width: 280px;
+        background: linear-gradient(180deg, var(--main-color) 0%, #e8824d 100%);
+        min-height: 100vh;
+        position: fixed;
+        left: 0;
+        top: 0;
+        transition: var(--transition);
+        z-index: 100;
+        box-shadow: var(--shadow-lg);
+        border-right: 1px solid rgba(255, 255, 255, 0.3);
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* Elegant Header */
+    .sidebar-header {
+        padding: 32px 24px 24px;
+        border-bottom: 1px solid var(--border-color);
+        background: rgba(255, 255, 255, 0.1);
+        position: relative;
+    }
+
+    .sidebar-header::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 24px;
+        right: 24px;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+        opacity: 0.8;
+    }
+
+    .sidebar-brand {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+    }
+
+    .sidebar-brand a {
+        text-decoration: none;
+        color: inherit;
+        display: block;
+        width: 100%;
+    }
+
+    .logo-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 8px;
+        transition: var(--transition);
+        width: 100%;
+        min-height: 80px;
+    }
+
+    .logo-container:hover {
+        transform: scale(1.05);
+    }
+
+    /* Enhanced Logo Styling */
+    .sidebar-logo {
+        max-width: 200px;
+        max-height: 100px;
+        width: auto;
+        height: auto;
+        object-fit: contain;
+        transition: var(--transition);
+        filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.2));
+        display: block;
+        margin: 0 auto;
+    }
+
+    .sidebar-logo:hover {
+        transform: translateY(-2px) scale(1.05);
+        filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.3));
+    }
+
+    /* Fallback styling in case image doesn't load */
+    .logo-container::before {
+        content: '';
+        display: none;
+    }
+
+    .sidebar-logo:not([src]),
+    .sidebar-logo[src=""],
+    .sidebar-logo[src="#"] {
+        display: none;
+    }
+
+    .sidebar-logo:not([src]) + .logo-fallback,
+    .sidebar-logo[src=""] + .logo-fallback,
+    .sidebar-logo[src="#"] + .logo-fallback {
+        display: flex;
+    }
+
+    .logo-fallback {
+        display: none;
+        align-items: center;
+        justify-content: center;
+        width: 60px;
+        height: 60px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 12px;
+        color: white;
+        font-size: 24px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        box-shadow: 0 4px 16px rgba(255, 255, 255, 0.2);
+        transition: var(--transition);
+    }
+
+    .logo-fallback:hover {
+        transform: translateY(-2px) scale(1.05);
+        box-shadow: 0 8px 24px rgba(255, 255, 255, 0.3);
+        background: rgba(255, 255, 255, 0.3);
+    }
+
+    .logo-icon {
+        width: 48px;
+        height: 48px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 20px;
+        box-shadow: 0 4px 16px rgba(255, 255, 255, 0.2);
+        transition: var(--transition);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .logo-icon:hover {
+        transform: translateY(-2px) scale(1.05);
+        box-shadow: 0 8px 24px rgba(255, 255, 255, 0.3);
+        background: rgba(255, 255, 255, 0.3);
+    }
+
+    .app-title {
+        color: var(--text-primary);
+        font-size: 28px;
+        font-weight: var(--font-weight-bold);
+        letter-spacing: 0.5px;
+        margin: 0;
+        transition: var(--transition);
+        text-align: center;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .sidebar-divider {
+        height: 1px;
+        background: var(--border-color);
+        margin-top: 24px;
+        opacity: 0.6;
+    }
+
+    /* Navigation */
+    .sidebar-navigation {
+        flex: 1;
+        overflow-y: auto;
+        padding: 40px 0;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+    }
+
+    .sidebar-navigation::-webkit-scrollbar {
+        width: 4px;
+    }
+
+    .sidebar-navigation::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .sidebar-navigation::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.3);
+        border-radius: 2px;
+    }
+
+    .sidebar-menu {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    /* Menu Items */
+    .menu-item {
+        margin: 0 16px;
+        border-radius: var(--border-radius);
+        overflow: hidden;
+        transition: var(--transition);
+    }
+
+    .menu-link {
+        display: flex;
+        align-items: center;
+        padding: 18px 20px;
+        color: var(--text-secondary);
+        text-decoration: none;
+        font-size: 16px;
+        font-weight: var(--font-weight-medium);
+        border-radius: var(--border-radius);
+        transition: var(--transition);
+        position: relative;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .menu-link::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 0;
+        background: rgba(255, 255, 255, 0.2);
+        transition: var(--transition);
+        border-radius: var(--border-radius);
+    }
+
+    .menu-icon {
+        width: 44px;
+        height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: 10px;
+        margin-right: 16px;
+        transition: var(--transition);
+        font-size: 18px;
+        color: var(--text-primary);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        position: relative;
+    }
+
+    .menu-icon i {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        line-height: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .menu-text {
+        flex: 1;
+        font-size: 16px;
+        font-weight: var(--font-weight-semibold);
+        transition: var(--transition);
+        color: var(--text-primary);
+    }
+
+    .menu-arrow {
+        opacity: 0;
+        transform: translateX(-8px);
+        transition: var(--transition);
+        color: var(--text-primary);
+        font-size: 14px;
+    }
+
+    /* Hover and Active States */
+    .menu-item:hover .menu-link {
+        color: var(--text-primary);
+        background: rgba(255, 255, 255, 0.2);
+        transform: translateX(6px);
+        border-color: rgba(255, 255, 255, 0.4);
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    }
+
+    .menu-item:hover .menu-link::before {
+        width: 4px;
+    }
+
+    .menu-item:hover .menu-icon {
+        background: rgba(255, 255, 255, 0.3);
+        color: white;
+        box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
+        border-color: rgba(255, 255, 255, 0.4);
+    }
+
+    .menu-item:hover .menu-arrow {
+        opacity: 1;
+        transform: translateX(0);
+        color: white;
+    }
+
+    /* Active State */
+    .menu-item.active .menu-link {
+        color: var(--text-primary);
+        background: rgba(255, 255, 255, 0.25);
+        transform: translateX(6px);
+        border-color: rgba(255, 255, 255, 0.5);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .menu-item.active .menu-link::before {
+        width: 4px;
+    }
+
+    .menu-item.active .menu-icon {
+        background: rgba(255, 255, 255, 0.4);
+        color: white;
+        box-shadow: 0 6px 16px rgba(255, 255, 255, 0.2);
+        border-color: rgba(255, 255, 255, 0.5);
+    }
+
+    .menu-item.active .menu-arrow {
+        opacity: 1;
+        transform: translateX(0);
+        color: white;
+    }
+
+    /* Footer */
+    .sidebar-footer {
+        padding: 24px;
+        border-top: 1px solid var(--border-color);
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+    .user-profile {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 16px;
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: var(--border-radius);
+        transition: var(--transition);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .user-profile:hover {
+        background: rgba(255, 255, 255, 0.25);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        border-color: rgba(255, 255, 255, 0.4);
+    }
+
+    .user-menu-toggle {
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 12px;
+        transition: var(--transition);
+    }
+
+    .user-profile:hover .user-menu-toggle {
+        color: white;
+        transform: rotate(180deg);
+    }
+
+    /* Sign Out Button - Shows on Hover */
+    .sign-out-button {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(239, 68, 68, 0.9);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        color: white;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        opacity: 0;
+        visibility: hidden;
+        transform: scale(0.95);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border-radius: var(--border-radius);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        box-shadow: 0 4px 16px rgba(239, 68, 68, 0.3);
+    }
+
+    .user-profile:hover .sign-out-button {
+        opacity: 1;
+        visibility: visible;
+        transform: scale(1);
+    }
+
+    .sign-out-button:hover {
+        background: rgba(239, 68, 68, 1);
+        transform: scale(1.02);
+        box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
+    }
+
+    .sign-out-button i {
+        font-size: 16px;
+    }
+
+    .sign-out-button span {
+        font-weight: 600;
+        letter-spacing: 0.5px;
+    }
+
+    .user-avatar {
+        width: 40px;
+        height: 40px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 16px;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .user-info {
+        flex: 1;
+    }
+
+    .user-name {
+        color: var(--text-primary);
+        font-size: 14px;
+        font-weight: var(--font-weight-semibold);
+        margin-bottom: 2px;
+    }
+
+    .user-status {
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 12px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .user-status::before {
+        content: '';
+        width: 6px;
+        height: 6px;
+        background: #4caf50;
+        border-radius: 50%;
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+        0% { transform: scale(1); opacity: 1; }
+        50% { transform: scale(1.2); opacity: 0.7; }
+        100% { transform: scale(1); opacity: 1; }
+    }
+
+    /* Responsive Design */
+    @media screen and (max-width: 1200px) {
+        .sidebar {
+            width: 240px;
+        }
+    }
+
+    @media screen and (max-width: 992px) {
+        .sidebar {
+            width: 72px;
+        }
+        
+        .menu-text,
+        .menu-arrow,
+        .user-info,
+        .app-title {
+            display: none;
+        }
+        
+        .sidebar-header {
+            padding: 24px 12px;
+        }
+        
+        .logo-container {
+            gap: 0;
+        }
+        
+        .sidebar-logo {
+            max-width: 55px;
+            max-height: 55px;
+        }
+        
+        .menu-item {
+            margin: 0 8px 8px;
+        }
+        
+        .menu-link {
+            justify-content: center;
+            padding: 16px 12px;
+        }
+        
+        .menu-icon {
+            margin-right: 0;
+        }
+        
+        .sidebar-footer {
+            padding: 16px 12px;
+        }
+        
+        .user-profile {
+            justify-content: center;
+            padding: 12px 8px;
+        }
+
+        .sign-out-button {
+            font-size: 12px;
+            gap: 6px;
+        }
+
+        .sign-out-button span {
+            display: none;
+        }
+    }
+
+    @media screen and (max-width: 768px) {
+        .sidebar {
+            transform: translateX(-100%);
+            width: 280px;
+        }
+
+        .sidebar.mobile-open {
+            transform: translateX(0);
+        }
+    }
+</style>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Load current user information
+        loadCurrentUser();
+        
+        // Highlight the current page in the sidebar
+        const currentPage = window.location.pathname.split('/').pop();
+        
+        // Find the corresponding link and make it active
+        const menuItems = document.querySelectorAll('.menu-item');
+        menuItems.forEach(item => {
+            const link = item.querySelector('a');
+            const href = link ? link.getAttribute('href') : '';
+            
+            // Check for exact match or clean URL match
+            if (href === currentPage || href === `/${currentPage}` || href.endsWith(`/${currentPage}`)) {
+                item.classList.add('active');
+            } else {
+                item.classList.remove('active');
+            }
+        });
+
+        // Check if logo loads properly
+        const logo = document.querySelector('.sidebar-logo');
+        if (logo) {
+            logo.onerror = function() {
+                console.log('Logo failed to load, using fallback');
+                // Could add fallback logic here if needed
+            };
+            
+            logo.onload = function() {
+                console.log('Logo loaded successfully');
+            };
+        }
+    });
+
+    // Load current user information
+    async function loadCurrentUser() {
+        try {
+            const response = await fetch('/get_current_user', {
+                method: 'GET',
+                credentials: 'same-origin',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            });
+            
+            if (response.ok) {
+                const data = await response.json();
+                if (data.user) {
+                    updateUserDisplay(data.user);
+                } else {
+                    console.log('No user data found');
+                    updateUserDisplay(null);
+                }
+            } else {
+                console.log('Failed to get current user');
+                updateUserDisplay(null);
+            }
+        } catch (error) {
+            console.error('Error loading current user:', error);
+            updateUserDisplay(null);
+        }
+    }
+
+    // Update user display in sidebar
+    function updateUserDisplay(user) {
+        const userNameElement = document.getElementById('user-name');
+        const userStatusElement = document.getElementById('user-status');
+        
+        if (user) {
+            // Display user name (prefer display name over username)
+            const displayName = user.name || user.username || 'User';
+            userNameElement.textContent = displayName;
+            
+            // Display role-based status
+            const role = user.role || 'user';
+            const statusText = role === 'admin' ? 'Administrator' : 
+                             role === 'location' ? 'Location Manager' : 'User';
+            userStatusElement.textContent = statusText;
+            
+            // Update localStorage for consistency
+            localStorage.setItem('username', user.username || user.name);
+            localStorage.setItem('role', role);
+            localStorage.setItem('isLoggedIn', 'true');
+        } else {
+            userNameElement.textContent = 'Not Logged In';
+            userStatusElement.textContent = 'Offline';
+        }
+    }
+
+    // Sign out function
+    async function signOut() {
+        try {
+            // Call logout endpoint
+            const response = await fetch('/api/logout', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                credentials: 'same-origin'
+            });
+            
+            if (response.ok) {
+                // Clear localStorage
+                localStorage.clear();
+                
+                // Show success message
+                showNotification('Successfully signed out!', 'success');
+                
+                // Redirect to login page after a short delay
+                setTimeout(() => {
+                    window.location.href = '/login';
+                }, 1000);
+            } else {
+                console.error('Logout failed');
+                showNotification('Failed to sign out. Please try again.', 'error');
+            }
+        } catch (error) {
+            console.error('Error during sign out:', error);
+            showNotification('Error during sign out. Please try again.', 'error');
+        }
+    }
+
+    // Notification function (if not already defined)
+    function showNotification(message, type = 'info') {
+        const notification = document.createElement('div');
+        notification.textContent = message;
+        notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: ${type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : '#3b82f6'};
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            z-index: 10000;
+            font-weight: 500;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        `;
+        document.body.appendChild(notification);
+        setTimeout(() => notification.remove(), 3000);
+    }
+</script>

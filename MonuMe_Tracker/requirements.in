@@ -1,0 +1,9 @@
+flask
+flask-sqlalchemy
+gunicorn
+jinja2
+werkzeug
+cryptography
+pdfkit
+pillow
+reportlab

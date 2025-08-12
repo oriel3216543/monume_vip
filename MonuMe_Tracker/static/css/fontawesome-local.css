@@ -1,0 +1,97 @@
+/* Font Awesome Local CSS - Essential Icons Only */
+
+.fas,
+.fa-solid {
+  font-family: "Font Awesome 6 Free";
+  font-weight: 900;
+}
+
+/* Essential icons used in the application */
+.fa-users:before { content: "\f0c0"; }
+.fa-users-cog:before { content: "\f509"; }
+.fa-shield-alt:before { content: "\f3ed"; }
+.fa-eye:before { content: "\f06e"; }
+.fa-edit:before { content: "\f044"; }
+.fa-trash:before { content: "\f1f8"; }
+.fa-plus:before { content: "\f067"; }
+.fa-search:before { content: "\f002"; }
+.fa-filter:before { content: "\f0b0"; }
+.fa-spinner:before { content: "\f110"; }
+.fa-chevron-left:before { content: "\f053"; }
+.fa-chevron-right:before { content: "\f054"; }
+.fa-times:before { content: "\f00d"; }
+.fa-check:before { content: "\f00c"; }
+.fa-exclamation-triangle:before { content: "\f071"; }
+.fa-info-circle:before { content: "\f05a"; }
+.fa-user:before { content: "\f007"; }
+.fa-user-check:before { content: "\f4fc"; }
+.fa-user-shield:before { content: "\f505"; }
+.fa-user-plus:before { content: "\f234"; }
+.fa-envelope:before { content: "\f0e0"; }
+.fa-phone:before { content: "\f095"; }
+.fa-map-marker-alt:before { content: "\f3c5"; }
+.fa-calendar:before { content: "\f133"; }
+.fa-clock:before { content: "\f017"; }
+.fa-home:before { content: "\f015"; }
+.fa-cog:before { content: "\f013"; }
+.fa-sign-out-alt:before { content: "\f2f5"; }
+.fa-bars:before { content: "\f0c9"; }
+.fa-arrow-left:before { content: "\f060"; }
+.fa-arrow-right:before { content: "\f061"; }
+.fa-save:before { content: "\f0c7"; }
+.fa-undo:before { content: "\f0e2"; }
+.fa-sync:before { content: "\f021"; }
+.fa-download:before { content: "\f019"; }
+.fa-upload:before { content: "\f093"; }
+.fa-print:before { content: "\f02f"; }
+.fa-file:before { content: "\f15b"; }
+.fa-folder:before { content: "\f07b"; }
+.fa-database:before { content: "\f1c0"; }
+.fa-server:before { content: "\f233"; }
+.fa-network-wired:before { content: "\f6ff"; }
+.fa-chart-bar:before { content: "\f080"; }
+.fa-chart-line:before { content: "\f201"; }
+.fa-chart-pie:before { content: "\f200"; }
+.fa-tachometer-alt:before { content: "\f3fd"; }
+.fa-tasks:before { content: "\f0ae"; }
+.fa-clipboard-list:before { content: "\f46d"; }
+.fa-calendar-check:before { content: "\f274"; }
+.fa-calendar-plus:before { content: "\f271"; }
+.fa-calendar-minus:before { content: "\f272"; }
+.fa-calendar-times:before { content: "\f273"; }
+.fa-bell:before { content: "\f0f3"; }
+.fa-bell-slash:before { content: "\f1f6"; }
+.fa-envelope-open:before { content: "\f2b6"; }
+.fa-inbox:before { content: "\f01c"; }
+.fa-paper-plane:before { content: "\f1d8"; }
+.fa-reply:before { content: "\f3e5"; }
+.fa-share:before { content: "\f064"; }
+.fa-heart:before { content: "\f004"; }
+.fa-star:before { content: "\f005"; }
+.fa-thumbs-up:before { content: "\f164"; }
+.fa-thumbs-down:before { content: "\f165"; }
+.fa-smile:before { content: "\f118"; }
+.fa-frown:before { content: "\f119"; }
+.fa-meh:before { content: "\f11a"; }
+.fa-laugh:before { content: "\f599"; }
+.fa-angry:before { content: "\f556"; }
+.fa-sad-tear:before { content: "\f5b4"; }
+.fa-sad-cry:before { content: "\f5b3"; }
+.fa-surprise:before { content: "\f5c2"; }
+.fa-tired:before { content: "\f5c8"; }
+.fa-dizzy:before { content: "\f567"; }
+.fa-kiss:before { content: "\f596"; }
+.fa-kiss-wink-heart:before { content: "\f598"; }
+.fa-grin:before { content: "\f580"; }
+.fa-grin-beam:before { content: "\f582"; }
+.fa-grin-beam-sweat:before { content: "\f583"; }
+.fa-grin-hearts:before { content: "\f584"; }
+.fa-grin-squint:before { content: "\f585"; }
+.fa-grin-squint-tears:before { content: "\f586"; }
+.fa-grin-stars:before { content: "\f587"; }
+.fa-grin-tears:before { content: "\f588"; }
+.fa-grin-tongue:before { content: "\f589"; }
+.fa-grin-tongue-squint:before { content: "\f58a"; }
+.fa-grin-tongue-wink:before { content: "\f58b"; }
+.fa-grin-wink:before { content: "\f58c"; }
+.fa-grin-alt:before { content: "\f581"; } 

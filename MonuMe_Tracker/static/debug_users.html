@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Users - MonuMe Tracker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .section {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .button:hover {
+            background: #0056b3;
+        }
+        .error {
+            color: red;
+            background: #ffe6e6;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .success {
+            color: green;
+            background: #e6ffe6;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .info {
+            color: blue;
+            background: #e6f3ff;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        pre {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Debug Users Page</h1>
+        
+        <div class="section">
+            <h3>1. Check Authentication</h3>
+            <button class="button" onclick="checkAuth()">Check Current User</button>
+            <div id="auth-result"></div>
+        </div>
+        
+        <div class="section">
+            <h3>2. Test Login</h3>
+            <input type="text" id="username" placeholder="Username" value="admin">
+            <input type="password" id="password" placeholder="Password" value="ori3">
+            <button class="button" onclick="testLogin()">Login</button>
+            <div id="login-result"></div>
+        </div>
+        
+        <div class="section">
+            <h3>3. Load Users</h3>
+            <button class="button" onclick="loadUsers()">Load Users</button>
+            <div id="users-result"></div>
+        </div>
+        
+        <div class="section">
+            <h3>4. Local Storage</h3>
+            <button class="button" onclick="showLocalStorage()">Show Local Storage</button>
+            <div id="localstorage-result"></div>
+        </div>
+        
+        <div class="section">
+            <h3>5. Server Health</h3>
+            <button class="button" onclick="checkHealth()">Check Server Health</button>
+            <div id="health-result"></div>
+        </div>
+        
+        <div class="section">
+            <h3>6. Go to Users Page</h3>
+            <button class="button" onclick="goToUsers()">Go to Users Page</button>
+        </div>
+    </div>
+
+    <script>
+        function showResult(elementId, message, type = 'info') {
+            const element = document.getElementById(elementId);
+            element.innerHTML = `<div class="${type}">${message}</div>`;
+        }
+        
+        async function checkAuth() {
+            try {
+                const response = await fetch('/get_current_user');
+                const result = await response.json();
+                
+                if (response.ok) {
+                    showResult('auth-result', `
+                        <strong>Authentication Successful!</strong><br>
+                        Username: ${result.username}<br>
+                        Role: ${result.role}<br>
+                        Location: ${result.location}<br>
+                        User ID: ${result.user_id}
+                    `, 'success');
+                } else {
+                    showResult('auth-result', `
+                        <strong>Authentication Failed!</strong><br>
+                        Status: ${response.status}<br>
+                        Error: ${result.error}
+                    `, 'error');
+                }
+            } catch (error) {
+                showResult('auth-result', `Error: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testLogin() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            try {
+                const response = await fetch('/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    showResult('login-result', `
+                        <strong>Login Successful!</strong><br>
+                        Username: ${result.username}<br>
+                        Role: ${result.role}<br>
+                        Location: ${result.location}<br>
+                        User ID: ${result.user_id}
+                    `, 'success');
+                } else {
+                    showResult('login-result', `
+                        <strong>Login Failed!</strong><br>
+                        Status: ${response.status}<br>
+                        Error: ${result.error}
+                    `, 'error');
+                }
+            } catch (error) {
+                showResult('login-result', `Error: ${error.message}`, 'error');
+            }
+        }
+        
+        async function loadUsers() {
+            try {
+                const response = await fetch('/get_users');
+                const result = await response.json();
+                
+                if (response.ok) {
+                    showResult('users-result', `
+                        <strong>Users Loaded Successfully!</strong><br>
+                        Number of users: ${result.users ? result.users.length : 0}<br>
+                        <pre>${JSON.stringify(result, null, 2)}</pre>
+                    `, 'success');
+                } else {
+                    showResult('users-result', `
+                        <strong>Failed to Load Users!</strong><br>
+                        Status: ${response.status}<br>
+                        Error: ${result.error}
+                    `, 'error');
+                }
+            } catch (error) {
+                showResult('users-result', `Error: ${error.message}`, 'error');
+            }
+        }
+        
+        function showLocalStorage() {
+            const data = {
+                username: localStorage.getItem('username'),
+                role: localStorage.getItem('role'),
+                locationCode: localStorage.getItem('locationCode') || localStorage.getItem('location_username') || localStorage.getItem('location_name'),
+                user_id: localStorage.getItem('user_id'),
+                isLoggedIn: localStorage.getItem('isLoggedIn'),
+                isAdmin: localStorage.getItem('isAdmin')
+            };
+            
+            showResult('localstorage-result', `
+                <strong>Local Storage Data:</strong><br>
+                <pre>${JSON.stringify(data, null, 2)}</pre>
+            `, 'info');
+        }
+        
+        async function checkHealth() {
+            try {
+                const response = await fetch('/health');
+                const result = await response.json();
+                
+                if (response.ok) {
+                    showResult('health-result', `
+                        <strong>Server is Healthy!</strong><br>
+                        Status: ${result.status}<br>
+                        Timestamp: ${result.timestamp}<br>
+                        Version: ${result.version}
+                    `, 'success');
+                } else {
+                    showResult('health-result', `
+                        <strong>Server Health Check Failed!</strong><br>
+                        Status: ${response.status}
+                    `, 'error');
+                }
+            } catch (error) {
+                showResult('health-result', `Error: ${error.message}`, 'error');
+            }
+        }
+        
+        function goToUsers() {
+            window.location.href = 'users.html';
+        }
+        
+        // Auto-check auth on page load
+        window.addEventListener('load', () => {
+            checkAuth();
+            showLocalStorage();
+        });
+    </script>
+</body>
+</html> 

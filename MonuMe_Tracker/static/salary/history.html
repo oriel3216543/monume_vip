@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SalaryPro - Salary History</title>
+    <link rel="icon" href="/static/favicon.JPG" type="image/jpeg">
+  <!-- Shared sidebar loader for consistent UI -->
+  <script src="/static/sidebar-loader.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary:#f5a069;
+      --primary-dark:#e8944d;
+      --secondary:#2c3e50;
+      --success:#10b981;
+      --danger:#ef4444;
+      --glass-bg: rgba(255,255,255,0.88);
+      --glass-border: 1px solid rgba(255,255,255,0.6);
+      --shadow:0 10px 30px rgba(0,0,0,.10);
+      --shadow-hover:0 18px 40px rgba(0,0,0,.16);
+      --muted:#64748b;
+      --fire-1:#ff7f42;
+      --fire-2:#ff9562;
+      --ink:#0f172a;
+    }
+    *{box-sizing:border-box}
+    body{font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,sans-serif;background:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2000 1500"><rect fill="%23ff9562" width="2000" height="1500"/><defs><radialGradient id="a" gradientUnits="objectBoundingBox"><stop offset="0" stop-color="%23ffffff"/><stop offset="1" stop-color="%23ff9562"/></radialGradient><linearGradient id="b" gradientUnits="userSpaceOnUse" x1="0" y1="750" x2="1550" y2="750"><stop offset="0" stop-color="%23ffcab1"/><stop offset="1" stop-color="%23ff9562"/></linearGradient></defs><path fill="url(%23a)" d="M1549.2 51.6c-5.4 99.1-20.2 197.6-44.2 293.6-24.1 96-57.4 189.4-99.3 278.6-41.9 89.2-92.4 174.1-150.3 253.3-58 79.2-123.4 152.6-195.1 219-71.7 66.4-149.6 125.8-232.2 177.2-82.7 51.4-170.1 94.7-260.7 129.1-90.6 34.4-184.4 60-279.5 76.3C192.6 1495 96.1 1502 0 1500v-400.7c96.1-2.1 191.8-13.3 285.4-33.6 93.6-20.2 185-49.5 272.5-87.2 87.6-37.7 171.3-83.8 249.6-137.3 78.4-53.5 151.5-114.5 217.9-181.7 66.5-67.2 126.4-140.7 178.6-218.9 52.3-78.3 96.9-161.4 133-247.9 36.1-86.5 63.8-176.2 82.6-267.6 18.8-91.4 28.6-184.4 29.6-277.4H1500c0.9 92.9 10.7 185.8 29.2 277.2z"/><path d="M1549.2 51.6c-5.4 99.1-20.2 197.6-44.2 293.6-24.1 96-57.4 189.4-99.3 278.6-41.9 89.2-92.4 174.1-150.3 253.3-58 79.2-123.4 152.6-195.1 219-71.7 66.4-149.6 125.8-232.2 177.2-82.7 51.4-170.1 94.7-260.7 129.1-90.6 34.4-184.4 60-279.5 76.3C192.6 1495 96.1 1502 0 1500v-400.7c96.1-2.1 191.8-13.3 285.4-33.6 93.6-20.2 185-49.5 272.5-87.2 87.6-37.7 171.3-83.8 249.6-137.3 78.4-53.5 151.5-114.5 217.9-181.7 66.5-67.2 126.4-140.7 178.6-218.9 52.3-78.3 96.9-161.4 133-247.9 36.1-86.5 63.8-176.2 82.6-267.6 18.8-91.4 28.6-184.4 29.6-277.4H1500c0.9 92.9 10.7 185.8 29.2 277.2z" fill="url(%23b)"/></svg>') no-repeat center center fixed; background-size:cover; color:#2c3e50; min-height:100vh}
+    .container{max-width:1200px;margin:0 auto;padding:20px}
+    .header-card{position:relative;border-radius:22px;padding:28px;box-shadow:var(--shadow);border:var(--glass-border);backdrop-filter:blur(10px);display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:22px;background:linear-gradient(135deg, rgba(255,255,255,.92), rgba(255,255,255,.86));overflow:hidden}
+    .header-card::after{content:"";position:absolute;inset:-40% -20% auto auto;height:220px;width:220px;background:radial-gradient(ellipse at center, rgba(245,160,105,.25), transparent 60%);filter:blur(6px)}
+    .header-card h1{font-size:2.4rem;color:#1f2937;font-weight:900;margin:0;display:flex;align-items:center;gap:10px}
+    .header-sub{color:#475569;margin-top:4px}
+    .header-actions{display:flex;gap:10px;flex-wrap:wrap}
+    .btn{--bg:#ffffff;--fg:#0f172a;--bd:#e5e7eb;--sh:rgba(15,23,42,.06);background:var(--bg);color:var(--fg);border:1px solid var(--bd);border-radius:999px;padding:10px 14px;font-weight:700;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:8px;box-shadow:0 4px 10px var(--sh);transition:transform .15s ease, box-shadow .15s ease, background .15s ease}
+    .btn:hover{transform:translateY(-1px);box-shadow:0 8px 18px rgba(15,23,42,.08)}
+    .btn:active{transform:translateY(0)}
+    .btn-primary{--bg:linear-gradient(135deg,#ff9c6a,#ff7f42);--fg:#fff;--bd:#ffc7ab;--sh:rgba(255,127,66,.25)}
+    .btn-outline{--bg:#ffffff;--fg:#0f172a;--bd:#ffd2b8}
+    .btn-ghost{--bg:rgba(255,255,255,.65);--fg:#0f172a;--bd:#e2e8f0}
+    .btn.secondary{--bg:linear-gradient(135deg,#334155,#1f2937);--fg:#fff;--bd:#cbd5e1;--sh:rgba(30,41,59,.25)}
+    .btn.danger{--bg:linear-gradient(135deg,#ef4444,#dc2626);--fg:#fff;--bd:#fecaca;--sh:rgba(239,68,68,.25)}
+    .card{background:rgba(255,255,255,.94);border-radius:18px;padding:20px;margin-bottom:20px;box-shadow:var(--shadow);border:1px solid rgba(0,0,0,.05);backdrop-filter:blur(10px)}
+    .card-title{font-size:1.05rem;font-weight:900;color:#1f2937;margin-bottom:14px;display:flex;align-items:center;gap:8px;border-bottom:1px dashed rgba(0,0,0,0.08);padding-bottom:10px}
+    .filters{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center}
+    .filter-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .input{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:12px 14px;min-width:240px;font-size:1rem}
+    .chip{border:1px solid #e5e7eb;background:#fff;color:#0f172a;border-radius:999px;padding:8px 12px;font-weight:600;cursor:pointer;transition:.2s}
+    .chip.active{background:#ffefe5;border-color:#ffd4bc;color:#b45309}
+    .select{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:10px 12px;font-size:1rem}
+    .actions{display:flex;gap:8px;flex-wrap:wrap}
+    .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin:16px 0}
+    .stat-card{background:linear-gradient(180deg,#fff, #fff6f1);border:1px solid #ffe0cd;border-radius:16px;padding:18px;text-align:center;box-shadow:0 6px 16px rgba(255,149,98,.15)}
+    .stat-value{font-size:1.4rem;font-weight:800;color:#1f2937}
+    .stat-label{font-size:.9rem;color:#6b7280}
+    .sessions-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px}
+    .session-card{background:#fff;border:1px solid #e5e7eb;border-radius:18px;padding:16px;cursor:pointer;transition:transform .2s ease, box-shadow .2s ease;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+    .session-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-hover)}
+    .session-top{display:flex;align-items:center;gap:12px}
+    .avatar{width:42px;height:42px;border-radius:10px;background:linear-gradient(135deg,#ffad7d,#ff7f42);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:900}
+    .title-wrap{flex:1}
+    .session-meta{color:#64748b;font-size:.9rem}
+    .badge{padding:6px 10px;border-radius:999px;background:#f1f5f9;color:#0f172a;border:1px solid #e2e8f0;font-weight:700;font-size:.75rem}
+    .badge.mode{background:#fff4e8;color:#b45309;border-color:#ffd7ba}
+    .session-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px}
+    .meta-kv{font-size:.8rem;color:var(--muted)}
+    .empty{color:var(--muted);text-align:center;padding:2rem}
+
+    /* Modal */
+    .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center;z-index:9999}
+    .modal-overlay.show{display:flex}
+    .modal-card{background:#fff;border-radius:16px;box-shadow:var(--shadow-hover);max-width:1000px;width:calc(100% - 48px);max-height:90vh;display:flex;flex-direction:column;overflow:hidden}
+    .modal-header{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid #e5e7eb}
+    .modal-title{font-weight:800;color:#1f2937}
+    .modal-body{padding:16px;overflow:auto}
+    .modal-actions{display:flex;gap:8px;flex-wrap:wrap}
+    .close-x{background:none;border:none;font-size:22px;cursor:pointer}
+    .detail-table{width:100%;border-collapse:collapse}
+    .detail-table th,.detail-table td{padding:10px;border-bottom:1px solid #eee;text-align:center}
+    .detail-table thead th{position:sticky;top:0;background:#fafafa;z-index:1}
+    .kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-bottom:12px;color:#475569}
+  </style>
+  <script>
+    // Ensure sidebar offsets content if needed
+    document.addEventListener('DOMContentLoaded',()=>{
+      document.body.classList.add('body-offset');
+    });
+  </script>
+</head>
+<body>
+  <main class="main-content">
+    <div class="container">
+      <div class="header-card">
+        <div>
+          <h1>📜 Salary History</h1>
+          <div class="header-sub">Review, search and manage saved salary sessions</div>
+        </div>
+        <div class="header-actions">
+          <a class="btn btn-ghost" href="/users" title="Manage Users">👥 Users</a>
+          <a class="btn btn-primary" href="/salary" title="Open Calculator">🏠 Open Calculator</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">🔎 Filters & Actions</div>
+        <div class="filters">
+          <div class="filter-row">
+            <input id="searchInput" class="input" placeholder="Search by employee or location..." onkeyup="filterSessions()" />
+            <div id="chips" class="filter-row">
+              <button class="chip active" data-range="">All</button>
+              <button class="chip" data-range="today">Today</button>
+              <button class="chip" data-range="week">This Week</button>
+              <button class="chip" data-range="month">This Month</button>
+            </div>
+          </div>
+          <div class="actions">
+            <button class="btn btn-outline" onclick="refreshData()" title="Reload sessions">🔄 Refresh</button>
+            <button class="btn btn-primary" onclick="exportAllSessions()" title="Export all to HTML">📄 Export All</button>
+            <button class="btn danger" onclick="clearAllSessions()" title="Remove all sessions">🗑️ Clear All</button>
+          </div>
+          <select id="dateFilter" class="select" style="display:none"><option value=""></option></select>
+        </div>
+      </div>
+
+      <div class="stats-grid" id="statsGrid"></div>
+
+      <div class="card">
+        <div class="card-title" id="sessionsTitle">📊 All Sessions</div>
+        <div class="sessions-grid" id="sessionsGrid"></div>
+        <div id="emptyState" class="empty" style="display:none">No sessions found</div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Session detail modal -->
+  <div id="sessionDetailModal" class="modal-overlay" onclick="backdropClose(event)">
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="sessionModalTitle">
+      <div class="modal-header">
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <div id="sessionModalTitle" class="modal-title">Session</div>
+          <div id="sessionModalSub" style="color:#64748b;font-size:.9rem"></div>
+        </div>
+        <div class="modal-actions">
+          <button class="btn btn-primary" onclick="openInCalculator()">🏠 Open</button>
+          <button class="btn btn-outline" onclick="exportSessionDetail()">📄 Export</button>
+          <button class="btn btn-ghost" onclick="copySessionDetail()">📋 Copy</button>
+          <button class="btn danger" onclick="deleteSessionDetail()">🗑️ Delete</button>
+          <button class="close-x btn btn-ghost" aria-label="Close" onclick="closeSessionModal()">✕</button>
+        </div>
+      </div>
+      <div class="modal-body">
+        <div id="sessionKV" class="kv"></div>
+        <div class="table-container" style="border:1px solid #e5e7eb;border-radius:12px;overflow:hidden">
+          <table class="detail-table" id="detailTable">
+            <thead>
+              <tr><th>Date</th><th>Sales ($)</th><th>Rate</th><th>Hours</th><th>Demo ($)</th><th>Reimb. ($)</th><th>Deduct ($)</th><th>Salary ($)</th><th>Cost %</th></tr>
+            </thead>
+            <tbody id="detailBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let allSessions=[],filteredSessions=[];
+    document.addEventListener('DOMContentLoaded',()=>{loadData();renderDashboard()});
+
+    function loadData(){
+      try{
+        const saved = localStorage.getItem('salaryCalc_sessions');
+        if(saved){ allSessions = JSON.parse(saved) }
+        filteredSessions = [...allSessions];
+      }catch(e){ console.error(e) }
+    }
+
+    function renderDashboard(){ renderStats(); renderSessions(); }
+
+    function renderStats(){
+      const c=document.getElementById('statsGrid');
+      const totalSessions=filteredSessions.length;
+      const totalSales=filteredSessions.reduce((s,x)=>s+(x.summary?.totalSales||0),0);
+      const totalSalary=filteredSessions.reduce((s,x)=>s+(x.summary?.totalSalary||0),0);
+      const totalHours=filteredSessions.reduce((s,x)=>s+(x.summary?.totalHours||0),0);
+      const employeeCost=totalSales>0?Math.round((totalSalary/totalSales)*100):0;
+      c.innerHTML = `
+        <div class="stat-card"><div>📁</div><div class="stat-value">${totalSessions}</div><div class="stat-label">Total Sessions</div></div>
+        <div class="stat-card"><div>💰</div><div class="stat-value">$${totalSales.toLocaleString()}</div><div class="stat-label">Revenue</div></div>
+        <div class="stat-card"><div>💵</div><div class="stat-value">$${totalSalary.toLocaleString()}</div><div class="stat-label">Compensation</div></div>
+        <div class="stat-card"><div>⏱️</div><div class="stat-value">${formatHours(totalHours)}</div><div class="stat-label">Work Hours</div></div>
+        <div class="stat-card"><div>📈</div><div class="stat-value">${employeeCost}%</div><div class="stat-label">Employee Cost</div></div>`;
+    }
+
+    function renderSessions(){
+      const grid=document.getElementById('sessionsGrid');
+      const empty=document.getElementById('emptyState');
+      const title=document.getElementById('sessionsTitle');
+      if(filteredSessions.length===0){
+        grid.style.display='none'; empty.style.display='block';
+        title.textContent='🔍 No Sessions Found'; return;
+      }
+      grid.style.display='grid'; empty.style.display='none';
+      title.textContent='📊 All Sessions';
+      grid.innerHTML = filteredSessions.map(s=>{
+        const d=new Date(s.sessionDate||s.createdAt).toLocaleDateString();
+        const summary=s.summary||{};
+        const cost=summary.totalSales>0?((summary.totalSalary/summary.totalSales)*100):0;
+        const modeText=s.calculationMode==='commission'? 'Comm + H Pay' : 'H Rate';
+        const period = s.period ? ` • ⌛ ${s.period.start} → ${s.period.end}` : '';
+        return `
+          <div class="session-card" onclick="openSessionModal('${s.id}')">
+            <div class="session-top">
+              <div class="avatar">${(s.userName||'?').slice(0,2).toUpperCase()}</div>
+              <div class="title-wrap">
+                <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+                  <div style="font-weight:900;color:#0f172a">${s.userName}</div>
+                  <span class="badge mode">${modeText}</span>
+                </div>
+                <div class="session-meta">📍 ${s.userLocation} • 📅 ${d}${period}</div>
+              </div>
+            </div>
+            <div class="session-stats">
+              <div><div class="stat-value" style="font-size:1rem">$${(summary.totalSales||0).toLocaleString()}</div><div class="stat-label">Revenue</div></div>
+              <div><div class="stat-value" style="font-size:1rem">${formatHours(summary.totalHours||0)}</div><div class="stat-label">Hours</div></div>
+              <div><div class="stat-value" style="font-size:1rem">$${(summary.totalSalary||0).toLocaleString()}</div><div class="stat-label">Salary</div></div>
+              <div><div class="stat-value" style="font-size:1rem">${cost.toFixed(0)}%</div><div class="stat-label">Cost</div></div>
+            </div>
+          </div>`
+      }).join('');
+    }
+
+    function filterSessions(){
+      const term=(document.getElementById('searchInput').value||'').toLowerCase();
+      const filter=document.getElementById('dateFilter').value;
+      filteredSessions = allSessions.filter(s=>{
+        if(term){
+          const t=`${s.userName||''} ${s.userLocation||''}`.toLowerCase();
+          if(!t.includes(term)) return false;
+        }
+        if(filter){
+          const d=new Date(s.sessionDate||s.createdAt);
+          const now=new Date();
+          if(filter==='today' && d.toDateString()!==now.toDateString()) return false;
+          if(filter==='week'){
+            const w=new Date(now.getTime()-7*24*60*60*1000);
+            if(d<w) return false;
+          }
+          if(filter==='month'){
+            if(d.getMonth()!==now.getMonth()||d.getFullYear()!==now.getFullYear()) return false;
+          }
+        }
+        return true;
+      });
+      renderDashboard();
+    }
+
+    // Chips behavior for date ranges
+    document.addEventListener('DOMContentLoaded',()=>{
+      const chips=document.querySelectorAll('#chips .chip');
+      chips.forEach(ch=>{
+        ch.addEventListener('click',()=>{
+          chips.forEach(x=>x.classList.remove('active'));
+          ch.classList.add('active');
+          document.getElementById('dateFilter').value = ch.getAttribute('data-range')||'';
+          filterSessions();
+        })
+      })
+    })
+
+    function formatHours(h){ if(!h||h===0) return '0:00'; const wh=Math.floor(h); const m=Math.round((h-wh)*60); return `${wh}:${m.toString().padStart(2,'0')}` }
+    function refreshData(){ loadData(); renderDashboard(); }
+    function clearAllSessions(){ if(confirm('Delete ALL sessions?')){ localStorage.removeItem('salaryCalc_sessions'); loadData(); renderDashboard(); } }
+    // Modal lifecycle
+    let currentModalSession=null;
+    function openSessionModal(id){
+      const s=allSessions.find(x=>x.id===id);
+      if(!s){alert('Session not found');return}
+      currentModalSession=s;
+      // Title and sub
+      document.getElementById('sessionModalTitle').textContent = `${s.userName} • ${s.userLocation}`;
+      const d=new Date(s.sessionDate||s.createdAt).toLocaleDateString();
+      const period=s.period?` | ⌛ ${s.period.start} → ${s.period.end}`:'';
+      document.getElementById('sessionModalSub').textContent = `📅 ${d}${period}`;
+      // KV
+      const kv=document.getElementById('sessionKV');
+      const summary=s.summary||{}; const modeText=s.calculationMode==='commission'? 'Comm + H Pay' : 'H Rate';
+      kv.innerHTML = `
+        <div><strong>Mode:</strong> ${modeText}</div>
+        <div><strong>Total Sales:</strong> $${(summary.totalSales||0).toLocaleString()}</div>
+        <div><strong>Total Hours:</strong> ${formatHours(summary.totalHours||0)}</div>
+        <div><strong>Total Salary:</strong> $${(summary.totalSalary||0).toLocaleString()}</div>
+      `;
+      // Table
+      const body=document.getElementById('detailBody');
+      body.innerHTML='';
+      (s.data||[]).forEach(row=>{
+        const cost=row.sales>0?((row.salary/row.sales)*100):0;
+        const rateDisplay=row.tierType==='commission'?`${((row.salary/row.sales)*100).toFixed(1)}%`:`$${(row.rate||0).toFixed(2)}/hr`;
+        body.insertAdjacentHTML('beforeend',
+          `<tr><td>${new Date(row.date+"T00:00:00").toLocaleDateString()}</td><td>$${(row.sales||0).toFixed(2)}</td><td>${rateDisplay}</td><td>${formatHours(row.hours||0)}</td><td>$${(row.demoAmount||0).toFixed(2)}</td><td>$${(row.reimbur||0).toFixed(2)}</td><td>-$${(row.deductions||0).toFixed(2)}</td><td>$${(row.salary||0).toFixed(2)}</td><td>${cost.toFixed(1)}%</td></tr>`
+        );
+      });
+      document.getElementById('sessionDetailModal').classList.add('show');
+      document.addEventListener('keydown', escCloseOnce);
+    }
+    function closeSessionModal(){ document.getElementById('sessionDetailModal').classList.remove('show'); document.removeEventListener('keydown', escCloseOnce); }
+    function backdropClose(e){ if(e.target.id==='sessionDetailModal'){ closeSessionModal(); } }
+    function escCloseOnce(e){ if(e.key==='Escape'){ closeSessionModal(); } }
+
+    // Actions
+    function openInCalculator(){ if(!currentModalSession) return; sessionStorage.setItem('loadSessionId', currentModalSession.id); window.location.href='/salary'; }
+    function exportSessionDetail(){ if(!currentModalSession){return} const html = buildSessionExportHTML(currentModalSession); const blob=new Blob([html],{type:'text/html'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=`salary-session-${(currentModalSession.userName||'user')}.html`; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url); }
+    function copySessionDetail(){ if(!currentModalSession){return} const text = buildSessionText(currentModalSession); navigator.clipboard.writeText(text).then(()=>alert('Copied')).catch(()=>alert('Copy failed')); }
+    function deleteSessionDetail(){ if(!currentModalSession){return} if(!confirm('Delete this session?')) return; const all=JSON.parse(localStorage.getItem('salaryCalc_sessions')||'[]').filter(s=>s.id!==currentModalSession.id); localStorage.setItem('salaryCalc_sessions', JSON.stringify(all)); closeSessionModal(); loadData(); renderDashboard(); }
+
+    function buildSessionExportHTML(s){
+      const d=new Date(s.sessionDate||s.createdAt).toLocaleDateString();
+      const modeText=s.calculationMode==='commission'? 'Comm + H Pay' : 'H Rate';
+      const period=s.period?`<div><strong>Period:</strong> ${s.period.start} → ${s.period.end}</div>`:'';
+      const rows=(s.data||[]).map(r=>{const cost=r.sales>0?((r.salary/r.sales)*100):0;const rate=r.tierType==='commission'?`${((r.salary/r.sales)*100).toFixed(1)}%`:`$${(r.rate||0).toFixed(2)}/hr`;return `<tr><td>${r.date}</td><td>$${(r.sales||0).toFixed(2)}</td><td>${rate}</td><td>${formatHours(r.hours||0)}</td><td>$${(r.demoAmount||0).toFixed(2)}</td><td>$${(r.reimbur||0).toFixed(2)}</td><td>-$${(r.deductions||0).toFixed(2)}</td><td>$${(r.salary||0).toFixed(2)}</td><td>${cost.toFixed(1)}%</td></tr>`}).join('');
+      return `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Session - ${s.userName}</title><style>body{font-family:Inter,Arial,sans-serif;margin:20px;color:#1f2937}h1{color:#f5a069}table{width:100%;border-collapse:collapse;margin-top:12px}th,td{border:1px solid #f5a069;padding:8px;text-align:center}th{background:#f5a069;color:#fff}</style></head><body><h1>Salary Session</h1><div><strong>Employee:</strong> ${s.userName} • ${s.userLocation}</div><div><strong>Date:</strong> ${d}</div>${period}<div><strong>Mode:</strong> ${modeText}</div><table><thead><tr><th>Date</th><th>Sales ($)</th><th>Rate</th><th>Hours</th><th>Demo ($)</th><th>Reimb.</th><th>Deduct</th><th>Salary ($)</th><th>Cost %</th></tr></thead><tbody>${rows}</tbody></table></body></html>`;
+    }
+    function buildSessionText(s){
+      let text = `Session for ${s.userName} (${s.userLocation})\nDate: ${(new Date(s.sessionDate||s.createdAt)).toLocaleDateString()}\n`;
+      if(s.period){ text += `Period: ${s.period.start} -> ${s.period.end}\n`; }
+      text += `Mode: ${s.calculationMode==='commission'?'Comm + H Pay':'H Rate'}\n\n`;
+      text += ['Date','Sales','Rate','Hours','Demo','Reimb','Deduct','Salary','Cost%'].join('\t')+'\n';
+      (s.data||[]).forEach(r=>{const cost=r.sales>0?((r.salary/r.sales)*100):0;const rate=r.tierType==='commission'?`${((r.salary/r.sales)*100).toFixed(1)}%`:`$${(r.rate||0).toFixed(2)}/hr`;text += [r.date, `$${(r.sales||0).toFixed(2)}`, rate, formatHours(r.hours||0), `$${(r.demoAmount||0).toFixed(2)}`, `$${(r.reimbur||0).toFixed(2)}`, `-$${(r.deductions||0).toFixed(2)}`, `$${(r.salary||0).toFixed(2)}`, `${cost.toFixed(1)}%`].join('\t')+'\n'; });
+      return text;
+    }
+
+    function exportAllSessions(){
+      if(filteredSessions.length===0){ alert('No sessions to export'); return; }
+      const today=new Date().toISOString().split('T')[0];
+      const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Salary Sessions - ${today}</title>
+        <style>body{font-family:Inter,system-ui,sans-serif;margin:20px;color:#2c3e50}h1{color:#f5a069;border-bottom:2px solid #f5a069;padding-bottom:10px}table{width:100%;border-collapse:collapse;margin:16px 0}th,td{padding:10px;border:1px solid #f5a069;text-align:center}th{background:#f5a069;color:#fff}.sub{color:#64748b;font-size:.9rem}</style></head><body>
+        <h1>📜 Salary Sessions Export</h1>
+        <div class="sub">Generated: ${new Date().toLocaleString()}</div>
+        <table><thead><tr><th>Employee</th><th>Location</th><th>Date</th><th>Mode</th><th>Sales ($)</th><th>Hours</th><th>Salary ($)</th><th>Cost %</th></tr></thead><tbody>
+        ${filteredSessions.map(s=>{
+          const d=new Date(s.sessionDate||s.createdAt).toLocaleDateString();
+          const summary=s.summary||{};
+          const cost=summary.totalSales>0?((summary.totalSalary/summary.totalSales)*100):0;
+          const modeText=s.calculationMode==='commission'? 'Comm + H Pay' : 'H Rate';
+          const period=s.period?`${s.period.start} → ${s.period.end}`:'';
+          return `<tr><td>${s.userName||''}</td><td>${s.userLocation||''}</td><td>${d}</td><td>${modeText}</td><td>$${(summary.totalSales||0).toFixed(2)}</td><td>${formatHours(summary.totalHours||0)}</td><td>$${(summary.totalSalary||0).toFixed(2)}</td><td>${cost.toFixed(1)}%</td></tr>`;
+        }).join('')}
+        </tbody></table>
+      </body></html>`;
+      const blob=new Blob([html],{type:'text/html'});
+      const url=URL.createObjectURL(blob);
+      const a=document.createElement('a');
+      a.href=url; a.download=`salary-sessions-${today}.html`; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+    }
+  </script>
+</body>
+</html>
+
+

@@ -1,0 +1,340 @@
+/* Immediate Sidebar Styles - Loaded instantly for zero-delay appearance */
+
+/* CSS Variables for consistent theming */
+:root {
+    --main-color: #ff9562;
+    --text-primary: #ffffff;
+    --text-secondary: rgba(255, 255, 255, 0.9);
+    --border-color: rgba(255, 255, 255, 0.2);
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --border-radius: 12px;
+    --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.25);
+}
+
+/* Immediate Sidebar Container */
+#sidebar-container {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 280px !important;
+    height: 100vh !important;
+    z-index: 1000 !important;
+    background: #ff9562 !important;
+    box-shadow: 2px 0 10px rgba(0,0,0,0.1) !important;
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: translateX(0) !important;
+}
+
+/* Immediate Sidebar Structure */
+.sidebar {
+    width: 280px !important;
+    background: linear-gradient(180deg, var(--main-color) 0%, #e8824d 100%) !important;
+    min-height: 100vh !important;
+    position: fixed !important;
+    left: 0 !important;
+    top: 0 !important;
+    z-index: 100 !important;
+    box-shadow: var(--shadow-lg) !important;
+    border-right: 1px solid rgba(255, 255, 255, 0.3) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    font-family: 'Inter', 'Poppins', sans-serif !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: translateX(0) !important;
+}
+
+/* Immediate Header */
+.sidebar-header {
+    padding: 32px 24px 24px !important;
+    border-bottom: 1px solid var(--border-color) !important;
+    background: rgba(255, 255, 255, 0.1) !important;
+}
+
+.sidebar-brand a {
+    text-decoration: none !important;
+    color: inherit !important;
+    display: block !important;
+}
+
+.logo-container {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 8px !important;
+    width: 100% !important;
+    min-height: 80px !important;
+}
+
+.logo-fallback {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 60px !important;
+    height: 60px !important;
+    background: rgba(255, 255, 255, 0.2) !important;
+    border-radius: 12px !important;
+    color: white !important;
+    font-size: 24px !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 1px !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    box-shadow: 0 4px 16px rgba(255, 255, 255, 0.2) !important;
+}
+
+/* Immediate Navigation */
+.sidebar-navigation {
+    flex: 1 !important;
+    overflow-y: auto !important;
+    padding: 40px 0 !important;
+}
+
+.sidebar-menu {
+    list-style: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+}
+
+.menu-item {
+    margin: 0 16px !important;
+    border-radius: var(--border-radius) !important;
+    overflow: hidden !important;
+}
+
+.menu-link {
+    display: flex !important;
+    align-items: center !important;
+    padding: 18px 20px !important;
+    color: var(--text-secondary) !important;
+    text-decoration: none !important;
+    font-size: 16px !important;
+    font-weight: 500 !important;
+    border-radius: var(--border-radius) !important;
+    background: rgba(255, 255, 255, 0.1) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    transition: var(--transition) !important;
+}
+
+.menu-icon {
+    width: 44px !important;
+    height: 44px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: rgba(255, 255, 255, 0.15) !important;
+    border-radius: 10px !important;
+    margin-right: 16px !important;
+    font-size: 18px !important;
+    color: var(--text-primary) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+}
+
+.menu-text {
+    flex: 1 !important;
+    font-size: 16px !important;
+    font-weight: 600 !important;
+    color: var(--text-primary) !important;
+}
+
+/* Immediate Hover Effects */
+.menu-item:hover .menu-link {
+    background: rgba(255, 255, 255, 0.2) !important;
+    transform: translateX(6px) !important;
+    border-color: rgba(255, 255, 255, 0.4) !important;
+}
+
+.menu-item:hover .menu-icon {
+    background: rgba(255, 255, 255, 0.3) !important;
+    box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2) !important;
+}
+
+/* Immediate Footer */
+.sidebar-footer {
+    padding: 24px !important;
+    border-top: 1px solid var(--border-color) !important;
+    background: rgba(255, 255, 255, 0.1) !important;
+}
+
+.user-profile {
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    padding: 16px !important;
+    background: rgba(255, 255, 255, 0.15) !important;
+    border-radius: var(--border-radius) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    cursor: pointer !important;
+}
+
+.user-avatar {
+    width: 40px !important;
+    height: 40px !important;
+    background: rgba(255, 255, 255, 0.2) !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    color: white !important;
+    font-size: 16px !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+}
+
+.user-info {
+    flex: 1 !important;
+}
+
+.user-name {
+    color: var(--text-primary) !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    margin-bottom: 2px !important;
+}
+
+.user-status {
+    color: rgba(255, 255, 255, 0.8) !important;
+    font-size: 12px !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+}
+
+.user-status::before {
+    content: '' !important;
+    width: 6px !important;
+    height: 6px !important;
+    background: #4caf50 !important;
+    border-radius: 50% !important;
+    animation: pulse 2s infinite !important;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.2); opacity: 0.7; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+/* Immediate User Menu */
+.user-menu {
+    position: absolute !important;
+    bottom: 100% !important;
+    left: 0 !important;
+    right: 0 !important;
+    background: rgba(255, 255, 255, 0.95) !important;
+    backdrop-filter: blur(20px) !important;
+    border-radius: 12px !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2) !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    margin-bottom: 8px !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    transform: translateY(10px) !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    z-index: 1000 !important;
+}
+
+.user-menu.show {
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: translateY(0) !important;
+}
+
+.user-menu-item {
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    padding: 16px 20px !important;
+    color: #333 !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    border-radius: 12px !important;
+    margin: 4px !important;
+}
+
+.user-menu-item:hover {
+    background: rgba(255, 149, 98, 0.1) !important;
+    color: var(--main-color) !important;
+    transform: translateX(4px) !important;
+}
+
+/* Immediate Responsive Design */
+@media screen and (max-width: 992px) {
+    .sidebar, #sidebar-container {
+        width: 72px !important;
+    }
+    
+    .menu-text,
+    .user-info {
+        display: none !important;
+    }
+    
+    .sidebar-header {
+        padding: 24px 12px !important;
+    }
+    
+    .menu-item {
+        margin: 0 8px 8px !important;
+    }
+    
+    .menu-link {
+        justify-content: center !important;
+        padding: 16px 12px !important;
+    }
+    
+    .menu-icon {
+        margin-right: 0 !important;
+    }
+    
+    .sidebar-footer {
+        padding: 16px 12px !important;
+    }
+    
+    .user-profile {
+        justify-content: center !important;
+        padding: 12px 8px !important;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .sidebar, #sidebar-container {
+        transform: translateX(-100%) !important;
+        width: 280px !important;
+    }
+}
+
+/* Immediate Main Content Adjustment (scoped to pages that expect body offset) */
+body.body-offset {
+    margin-left: 280px !important;
+    transition: margin-left 0.3s ease !important;
+}
+
+@media screen and (max-width: 992px) {
+    body.body-offset {
+        margin-left: 72px !important;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    body.body-offset {
+        margin-left: 0 !important;
+    }
+}
+
+/* Ensure immediate visibility */
+.sidebar, #sidebar-container {
+    animation: none !important;
+    transition: none !important;
+}
+
+/* Force immediate display */
+.sidebar * {
+    opacity: 1 !important;
+    visibility: visible !important;
+}

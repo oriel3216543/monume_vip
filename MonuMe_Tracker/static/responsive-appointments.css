@@ -1,0 +1,474 @@
+/* Responsive and Accessibility Enhancements for MonuMe Appointment System */
+
+/* Mobile First Approach - Responsive Improvements */
+@media (max-width: 576px) {
+    /* Overall container adjustments */
+    .main-content {
+        margin-left: 0;
+        width: 100%;
+        padding: 10px 0;
+    }
+    
+    /* Header adjustments */
+    .page-header {
+        padding: 15px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+    
+    .page-header h1 {
+        font-size: 24px;
+    }
+    
+    /* Appointment section adjustments */
+    .appointments-section {
+        padding: 15px;
+        margin: 15px;
+        border-radius: 12px;
+    }
+    
+    .section-title {
+        font-size: 20px;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .section-actions {
+        width: 100%;
+        justify-content: space-between;
+        margin-top: 10px;
+    }
+    
+    /* Appointment card adjustments */
+    .appointments-list {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    .appointment-card {
+        padding: 15px;
+    }
+    
+    /* Modal adjustments */
+    .modal-content {
+        padding: A15px;
+        width: 100%;
+        border-radius: 12px;
+    }
+    
+    .modal-content h2 {
+        font-size: 22px;
+    }
+    
+    /* Form adjustments */
+    #appointment-form {
+        grid-template-columns: 1fr;
+    }
+    
+    .form-actions {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .form-actions button {
+        width: 100%;
+    }
+    
+    /* Calendar adjustments */
+    .calendar-table {
+        font-size: 12px;
+    }
+    
+    .calendar-table th {
+        padding: 8px 0;
+        font-size: 12px;
+    }
+    
+    .calendar-table td {
+        height: 35px;
+        font-size: 12px;
+    }
+}
+
+/* Tablet Adjustments */
+@media (min-width: 577px) and (max-width: 768px) {
+    .main-content {
+        margin-left: 60px;
+        width: calc(100% - 60px);
+    }
+    
+    .appointments-list {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    }
+}
+
+/* Small Desktop Adjustments */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .appointments-list {
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    }
+}
+
+/* Fix for side menu visibility on mobile */
+@media (max-width: 768px) {
+    .sidebar.active {
+        transform: translateX(0);
+        width: 250px;
+    }
+    
+    body.menu-expanded .main-content {
+        margin-left: 250px;
+        width: calc(100% - 250px);
+    }
+}
+
+/* Accessibility Improvements */
+.calendar-table th, 
+.calendar-table td,
+.appointment-actions button,
+.filter-btn,
+.add-date-btn,
+.form-group input,
+.form-group select,
+.form-group textarea,
+.form-actions button {
+    border-radius: 8px;
+}
+
+.appointment-actions button,
+.filter-btn,
+.add-date-btn,
+.form-actions button,
+.calendar-nav-btn {
+    position: relative;
+    overflow: hidden;
+}
+
+/* Accessible focus states */
+button:focus, 
+input:focus, 
+select:focus, 
+textarea:focus,
+a:focus,
+.calendar-table td:focus {
+    outline: 2px solid #6a11cb;
+    outline-offset: 2px;
+}
+
+/* Accessible hover animation */
+.appointment-actions button:after,
+.filter-btn:after,
+.add-date-btn:after,
+.form-actions button:after,
+.calendar-nav-btn:after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 5px;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.5);
+    opacity: 0;
+    border-radius: 100%;
+    transform: scale(1, 1) translate(-50%, -50%);
+    transform-origin: 50% 50%;
+}
+
+.appointment-actions button:hover:after,
+.filter-btn:hover:after,
+.add-date-btn:hover:after,
+.form-actions button:hover:after,
+.calendar-nav-btn:hover:after {
+    animation: ripple 1s ease-out;
+}
+
+@keyframes ripple {
+    0% {
+        transform: scale(0, 0);
+        opacity: 0.5;
+    }
+    100% {
+        transform: scale(50, 50);
+        opacity: 0;
+    }
+}
+
+/* Skip navigation for keyboard users */
+.skip-link {
+    position: absolute;
+    top: -40px;
+    left: 0;
+    background: #6a11cb;
+    color: white;
+    padding: 8px;
+    z-index: 100;
+    transition: top 0.3s;
+}
+
+.skip-link:focus {
+    top: 0;
+}
+
+/* Improved contrast for better readability */
+.appointment-title {
+    color: #111;
+}
+
+.appointment-datetime,
+.appointment-customer {
+    color: #333;
+}
+
+/* High contrast mode support */
+@media (forced-colors: active) {
+    .status-badge,
+    .filter-btn.active,
+    .btn-primary,
+    .btn-secondary {
+        forced-color-adjust: none;
+    }
+}
+
+/* Print styles for appointments */
+@media print {
+    .sidebar, 
+    .navbar,
+    .page-header,
+    .section-actions,
+    .appointment-actions,
+    .calendar-section,
+    .skip-link {
+        display: none !important;
+    }
+    
+    body, .main-content {
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+        background: white !important;
+        color: black !important;
+    }
+    
+    .appointments-section {
+        box-shadow: none !important;
+        margin: 0 !important;
+        padding: 10px !important;
+        background: white !important;
+    }
+    
+    .appointment-card {
+        break-inside: avoid;
+        border: 1px solid #ccc !important;
+        box-shadow: none !important;
+        margin-bottom: 15px !important;
+    }
+    
+    .status-badge {
+        background: none !important;
+        border: 1px solid black !important;
+        color: black !important;
+        box-shadow: none !important;
+    }
+}
+
+/* Enhanced Appointment Detail Modal Styles */
+#appointmentDetailModal {
+    display: none;
+    position: fixed;
+    z-index: 2000;
+    left: 0; top: 0;
+    width: 100vw; height: 100vh;
+    background: rgba(0,0,0,0.45);
+    backdrop-filter: blur(2px);
+    align-items: center;
+    justify-content: center;
+    overflow: auto;
+}
+
+.appointment-detail-modal-content, .adm-reschedule-content {
+    background: #fff;
+    border-radius: 22px;
+    max-width: 400px;
+    margin: 40px auto;
+    padding: 28px 20px 20px 20px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+    font-family: 'Poppins', sans-serif;
+    position: relative;
+    animation: modalSlideIn 0.3s ease;
+}
+
+@media (max-width: 600px) {
+    .appointment-detail-modal-content, .adm-reschedule-content {
+        width: 98vw;
+        min-height: auto;
+        max-height: 95vh;
+        overflow-y: auto;
+        border-radius: 15px;
+        padding: 18px 8px;
+        font-size: 1.1rem;
+    }
+    
+    .adm-actions {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .adm-btn {
+        width: 100%;
+    }
+}
+
+/* Mobile-friendly notification system */
+.adm-notification {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-100px);
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+    z-index: 2100;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    opacity: 0;
+    max-width: 90%;
+    min-width: 300px;
+    display: flex;
+    align-items: center;
+}
+
+.adm-notification-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.adm-notification-content i {
+    font-size: 20px;
+}
+
+.adm-notification-show {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+}
+
+.adm-notification-success {
+    border-left: 5px solid #28a745;
+}
+
+.adm-notification-success i {
+    color: #28a745;
+}
+
+.adm-notification-error {
+    border-left: 5px solid #dc3545;
+}
+
+.adm-notification-error i {
+    color: #dc3545;
+}
+
+.adm-notification-info {
+    border-left: 5px solid #17a2b8;
+}
+
+.adm-notification-info i {
+    color: #17a2b8;
+}
+
+/* Confirmation link styles */
+.adm-confirmation-link {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    border: 1px solid #e0e0e0;
+}
+
+.adm-link-header {
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.adm-link-container {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 5px;
+}
+
+.adm-link-input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+    background: #fff;
+    color: #333;
+}
+
+.adm-copy-btn {
+    padding: 10px 20px;
+    background: #ff7f42;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.adm-copy-btn:hover {
+    background: #ff9562;
+}
+
+.adm-link-help {
+    font-size: 13px;
+    color: #666;
+    margin-top: 5px;
+}
+
+/* Appointment detail modal styles */
+.adm-flex {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+}
+
+.appointment-detail-modal-content {
+    background: white;
+    margin: 5% auto;
+    width: 90%;
+    max-width: 600px;
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+@media (max-width: 600px) {
+    .appointment-detail-modal-content {
+        margin: 10px;
+        width: 95%;
+        padding: 20px;
+    }
+}
+
+/* Appointment Detail Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+}

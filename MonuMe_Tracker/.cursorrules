@@ -1,0 +1,10 @@
+# Cursor Configuration for MonuMe Tracker
+# Python interpreter and package paths
+
+python.interpreter.path = "C:\\Users\\MonumeQueens\\AppData\\Local\\Programs\\Python\\Python313\\python.exe"
+python.analysis.extraPaths = [
+    "C:\\Users\\MonumeQueens\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages"
+]
+
+# Disable virtual environment activation for this project
+python.terminal.activateEnvironment = false 
