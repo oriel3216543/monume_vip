@@ -22,6 +22,10 @@ if ROOT_DIR not in sys.path:
 from MonuMe_Tracker.server import app  # noqa: E402 (import after sys.path tweak)
 
 if __name__ == '__main__':
-    # Default to port 5000 and host 0.0.0.0 so it behaves exactly
-    # like `python MonuMe_Tracker/server.py`.
-    app.run(host='0.0.0.0', port=5000, debug=False) 
+    # In production environments (e.g., Railway) a PORT is provided.
+    # If present, exec Gunicorn instead of the Flask dev server.
+    port = os.environ.get('PORT')
+    if port:
+        os.execvp('sh', ['sh', '-c', f"exec gunicorn MonuMe_Tracker.server:app --bind 0.0.0.0:{port} --workers 2 --timeout 120 --access-logfile - --error-logfile -"])
+    else:
+        app.run(host='0.0.0.0', port=5000, debug=False)
