@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TeamHub - User Management</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #f5a069;
+            --primary-dark: #e8944d;
+            --primary-light: #f8b587;
+            --secondary: #2c3e50;
+            --success: #27ae60;
+            --danger: #e74c3c;
+            --warning: #f39c12;
+            --dark: #2c3e50;
+            --light: #ecf0f1;
+            --white: #ffffff;
+            --gray-100: #f8f9fa;
+            --gray-200: #e9ecef;
+            --gray-300: #dee2e6;
+            --gray-400: #ced4da;
+            --gray-500: #adb5bd;
+            --shadow: 0 4px 15px rgba(245, 160, 105, 0.15);
+            --shadow-hover: 0 8px 25px rgba(245, 160, 105, 0.25);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #f5a069 0%, #f8b587 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 40px;
+            text-align: center;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+            border: 2px solid var(--primary);
+        }
+
+        .header h1 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            color: var(--secondary);
+            font-weight: 500;
+        }
+
+        /* Navigation */
+        .nav-section {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+            border: 2px solid var(--gray-200);
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            background: var(--primary);
+            color: var(--white);
+            border: none;
+            border-radius: 12px;
+            padding: 12px 20px;
+            font-size: 1rem;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .btn.secondary {
+            background: var(--secondary);
+        }
+
+        .btn.secondary:hover {
+            background: #34495e;
+        }
+
+        .btn.success {
+            background: var(--success);
+        }
+
+        .btn.success:hover {
+            background: #229954;
+        }
+
+        .btn.danger {
+            background: var(--danger);
+        }
+
+        .btn.danger:hover {
+            background: #c0392b;
+        }
+
+        /* Card */
+        .card {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 25px;
+            box-shadow: var(--shadow);
+            border: 2px solid var(--gray-200);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+            border-color: var(--primary);
+        }
+
+        .card-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 10px;
+        }
+
+        .card-title .icon {
+            font-size: 1.5rem;
+        }
+
+        /* Location Management */
+        .location-grid {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 25px;
+            align-items: start;
+        }
+
+        .locations-display {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .location-card {
+            background: var(--white);
+            border: 2px solid var(--primary);
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .location-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .location-info h4 {
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 5px;
+        }
+
+        .location-info .count {
+            font-size: 0.9rem;
+            color: var(--gray-500);
+        }
+
+        .location-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .action-btn {
+            background: var(--danger);
+            color: var(--white);
+            border: none;
+            border-radius: 8px;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+        }
+
+        .action-btn:hover {
+            background: #c0392b;
+            transform: scale(1.1);
+        }
+
+        .action-btn:disabled {
+            background: var(--gray-400);
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .add-location-card {
+            background: rgba(245, 160, 105, 0.1);
+            border: 2px dashed var(--primary);
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .add-location-card:hover {
+            background: rgba(245, 160, 105, 0.2);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .add-icon {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        /* Users Grid */
+        .users-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 25px;
+        }
+
+        .user-card {
+            background: var(--white);
+            border: 2px solid var(--gray-200);
+            border-radius: 16px;
+            padding: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .user-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-hover);
+            border-color: var(--primary);
+        }
+
+        .user-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .user-info h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 5px;
+        }
+
+        .user-location {
+            font-size: 0.9rem;
+            color: var(--white);
+            font-weight: 500;
+            background: var(--primary);
+            padding: 4px 12px;
+            border-radius: 12px;
+            display: inline-block;
+        }
+
+        .user-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .user-actions .action-btn {
+            padding: 6px 10px;
+            font-size: 0.8rem;
+        }
+
+        .tiers-preview {
+            margin-top: 15px;
+            padding: 15px;
+            background: rgba(245, 160, 105, 0.1);
+            border-radius: 12px;
+            border: 2px solid var(--primary);
+        }
+
+        .tiers-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 10px;
+        }
+
+        .tier-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .tier-item {
+            background: var(--white);
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            border: 1px solid var(--primary);
+        }
+
+        .add-user-card {
+            background: rgba(245, 160, 105, 0.1);
+            border: 2px dashed var(--primary);
+            border-radius: 16px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 200px;
+        }
+
+        .add-user-card:hover {
+            background: rgba(245, 160, 105, 0.2);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow);
+        }
+
+        .add-user-icon {
+            font-size: 3.5rem;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        .add-user-text {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 8px;
+        }
+
+        .add-user-hint {
+            font-size: 0.9rem;
+            color: var(--gray-500);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            animation: modalFadeIn 0.3s ease;
+        }
+
+        @keyframes modalFadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background: var(--white);
+            margin: 3% auto;
+            padding: 0;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow: hidden;
+            box-shadow: var(--shadow-hover);
+            border: 2px solid var(--primary);
+            animation: modalSlideIn 0.4s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from { transform: translateY(-50px) scale(0.9); opacity: 0; }
+            to { transform: translateY(0) scale(1); opacity: 1; }
+        }
+
+        .modal-header {
+            background: var(--primary);
+            padding: 25px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--white);
+            margin: 0;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.8rem;
+            cursor: pointer;
+            color: var(--white);
+            transition: all 0.3s ease;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .close-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: rotate(90deg);
+        }
+
+        .modal-body {
+            padding: 30px;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+
+        .form-input, .form-select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid var(--gray-300);
+            border-radius: 12px;
+            font-size: 1rem;
+            font-family: inherit;
+            background: var(--white);
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(245, 160, 105, 0.1);
+        }
+
+        /* Tier Editor */
+        .tiers-container {
+            margin-top: 25px;
+        }
+
+        .tiers-container h4 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .tier-editor {
+            background: rgba(245, 160, 105, 0.05);
+            border: 2px solid var(--gray-200);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr auto;
+            gap: 15px;
+            align-items: end;
+            transition: all 0.3s ease;
+        }
+
+        .tier-editor:hover {
+            background: rgba(245, 160, 105, 0.1);
+            border-color: var(--primary);
+        }
+
+        .tier-input {
+            padding: 10px 14px;
+            border: 2px solid var(--gray-300);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-family: inherit;
+            background: var(--white);
+            transition: all 0.3s ease;
+        }
+
+        .tier-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(245, 160, 105, 0.1);
+        }
+
+        .remove-tier {
+            background: var(--danger);
+            color: var(--white);
+            border: none;
+            border-radius: 8px;
+            padding: 10px 14px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .remove-tier:hover {
+            background: #c0392b;
+            transform: scale(1.1);
+        }
+
+        .add-tier-btn {
+            background: var(--success);
+            color: var(--white);
+            border: none;
+            border-radius: 12px;
+            padding: 12px 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .add-tier-btn:hover {
+            background: #229954;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        /* Messages */
+        .message {
+            padding: 15px 20px;
+            border-radius: 12px;
+            margin: 15px 0;
+            font-weight: 500;
+            border-left: 4px solid;
+            animation: slideIn 0.4s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(-20px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .message.success {
+            background: rgba(39, 174, 96, 0.1);
+            border-color: var(--success);
+            color: #27ae60;
+        }
+
+        .message.error {
+            background: rgba(231, 76, 60, 0.1);
+            border-color: var(--danger);
+            color: #e74c3c;
+        }
+
+        .message.info {
+            background: rgba(245, 160, 105, 0.1);
+            border-color: var(--primary);
+            color: var(--primary-dark);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2.2rem;
+            }
+            
+            .location-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .locations-display {
+                grid-template-columns: 1fr;
+            }
+            
+            .users-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .tier-editor {
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+            }
+            
+            .tier-editor .remove-tier {
+                grid-column: span 2;
+                justify-self: center;
+            }
+            
+            .nav-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--gray-200);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-dark);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>👥 TeamHub</h1>
+            <p>Professional User & Location Management System</p>
+        </div>
+
+        <!-- Navigation -->
+        <div class="nav-section">
+            <div class="nav-buttons">
+                <a href="/" class="btn">🏠 Calculator</a>
+                <a href="/history" class="btn secondary">📊 History</a>
+                <button class="btn success" onclick="exportAllUsers()">📊 Export All</button>
+            </div>
+        </div>
+
+        <!-- Location Management -->
+        <div class="card">
+            <div class="card-title">
+                <span class="icon">📍</span>
+                Location Management
+            </div>
+            <div class="location-grid">
+                <div class="locations-display" id="locationsList">
+                    <!-- Locations will be populated here -->
+                </div>
+                <div class="add-location-card" onclick="openLocationModal()">
+                    <div class="add-icon">➕</div>
+                    <div style="font-size: 1.1rem; font-weight: 600; color: var(--dark);">Add Location</div>
+                    <div style="font-size: 0.9rem; color: var(--gray-500); margin-top: 5px;">Create a new location</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- User Management -->
+        <div class="card">
+            <div class="card-title">
+                <span class="icon">👥</span>
+                Team Members
+            </div>
+            <div class="users-grid" id="usersContainer">
+                <!-- Add User Card -->
+                <div class="add-user-card" onclick="openUserModal()">
+                    <div class="add-user-icon">👤</div>
+                    <div class="add-user-text">Add Team Member</div>
+                    <div class="add-user-hint">Create a new user with custom commission tiers</div>
+                </div>
+                <!-- User cards will be populated here -->
+            </div>
+        </div>
+
+        <!-- Messages -->
+        <div id="messages"></div>
+    </div>
+
+    <!-- User Modal -->
+    <div id="userModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Add New Team Member</h3>
+                <button class="close-btn" onclick="closeUserModal()">&times;</button>
+            </div>
+            
+            <div class="modal-body">
+                <form id="userForm">
+                    <div class="form-group">
+                        <label for="userName">Full Name</label>
+                        <input type="text" id="userName" class="form-input" placeholder="Enter full name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="userLocation">Location</label>
+                        <select id="userLocation" class="form-select" required>
+                            <option value="">Select a location</option>
+                        </select>
+                    </div>
+                    
+                    <div class="tiers-container">
+                        <h4>💰 Commission Tiers</h4>
+                        
+                        <!-- Copy Tiers Section -->
+                        <div class="copy-tiers-section" style="margin-bottom: 20px; padding: 15px; background: rgba(245, 160, 105, 0.1); border-radius: 8px; border: 1px solid var(--primary);">
+                            <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 10px;">
+                                <label style="font-weight: 600; color: var(--dark); font-size: 0.9rem;">📋 Copy Tiers From:</label>
+                                <select id="copyFromUser" class="form-select" style="flex: 1; max-width: 250px;">
+                                    <option value="">Select team member...</option>
+                                </select>
+                                <button type="button" class="btn" onclick="copyTiersFromUser()" style="padding: 8px 16px; font-size: 0.9rem;">📋 Copy</button>
+                            </div>
+                            <div style="font-size: 0.8rem; color: var(--gray-500);">💡 Quickly duplicate commission structure from another team member</div>
+                        </div>
+                        
+                        <div id="tiersEditor"></div>
+                        <button type="button" class="add-tier-btn" onclick="addTierEditor()">➕ Add Tier</button>
+                    </div>
+                    
+                    <div style="margin-top: 30px; text-align: center; display: flex; gap: 15px; justify-content: center;">
+                        <button type="button" class="btn success" onclick="saveUser()">💾 Save User</button>
+                        <button type="button" class="btn" onclick="closeUserModal()">❌ Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Location Modal -->
+    <div id="locationModal" class="modal">
+        <div class="modal-content" style="max-width: 400px;">
+            <div class="modal-header">
+                <h3>📍 Add New Location</h3>
+                <button class="close-btn" onclick="closeLocationModal()">&times;</button>
+            </div>
+            
+            <div class="modal-body">
+                <form id="locationForm">
+                    <div class="form-group">
+                        <label for="locationName">Location Name</label>
+                        <input type="text" id="locationName" class="form-input" placeholder="Enter location name" required>
+                    </div>
+
+                    <div style="margin-top: 25px; text-align: center; display: flex; gap: 15px; justify-content: center;">
+                        <button type="button" class="btn success" onclick="saveLocation()">💾 Add Location</button>
+                        <button type="button" class="btn" onclick="closeLocationModal()">❌ Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="users.js"></script>
+</body>
+</html> 

@@ -1,0 +1,2177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics Dashboard - Salary History & Reports</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.21/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --primary-hover: #5b5de8;
+            --primary-light: #eef2ff;
+            --secondary: #64748b;
+            --success: #10b981;
+            --success-light: #ecfdf5;
+            --danger: #ef4444;
+            --danger-light: #fef2f2;
+            --warning: #f59e0b;
+            --warning-light: #fffbeb;
+            --dark: #0f172a;
+            --light: #f8fafc;
+            --white: #ffffff;
+            --gray-50: #f8fafc;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-300: #cbd5e1;
+            --gray-400: #94a3b8;
+            --gray-500: #64748b;
+            --gray-600: #475569;
+            --gray-700: #334155;
+            --gray-800: #1e293b;
+            --gray-900: #0f172a;
+            --border-radius: 12px;
+            --border-radius-lg: 16px;
+            --border-radius-xl: 20px;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--gray-50);
+            color: var(--gray-900);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
+            color: white;
+            padding: 2rem 0;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: var(--border-radius);
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Controls Bar */
+        .controls-bar {
+            background: var(--white);
+            border-radius: var(--border-radius-lg);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+            display: grid;
+            grid-template-columns: 1fr auto auto;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .search-filter-group {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .search-input, .filter-select {
+            background: var(--gray-50);
+            border: 2px solid var(--gray-200);
+            border-radius: var(--border-radius);
+            padding: 0.75rem 1rem;
+            font-family: inherit;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            min-width: 200px;
+        }
+
+        .search-input:focus, .filter-select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .action-group {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        /* Modern Buttons */
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            padding: 0.75rem 1.25rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+
+        .btn:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        }
+
+        .btn.success {
+            background: var(--success);
+        }
+
+        .btn.success:hover {
+            background: #059669;
+        }
+
+        .btn.danger {
+            background: var(--danger);
+        }
+
+        .btn.danger:hover {
+            background: #dc2626;
+        }
+
+        .btn.secondary {
+            background: var(--gray-500);
+            color: white;
+        }
+
+        .btn.secondary:hover {
+            background: var(--gray-600);
+        }
+
+        /* Statistics Dashboard */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--white);
+            border-radius: var(--border-radius-lg);
+            padding: 2rem;
+            box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+            transition: all 0.3s ease;
+            border-left: 4px solid var(--primary);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+        }
+
+        .stat-card .icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        .stat-card .value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--gray-900);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card .label {
+            color: var(--gray-600);
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Location Tabs */
+        .location-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            overflow-x: auto;
+            padding: 0.5rem 0;
+        }
+
+        .location-tab {
+            background: var(--white);
+            border: 2px solid var(--gray-200);
+            border-radius: var(--border-radius-lg);
+            padding: 1rem 1.5rem;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .location-tab:hover {
+            border-color: var(--primary);
+            transform: translateY(-1px);
+        }
+
+        .location-tab.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .location-tab .count {
+            background: var(--gray-100);
+            color: var(--gray-700);
+            padding: 0.25rem 0.75rem;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+
+        .location-tab.active .count {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
+        /* Sessions Container */
+        .sessions-container {
+            background: var(--white);
+            border-radius: var(--border-radius-lg);
+            padding: 2rem;
+            box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+        }
+
+        .sessions-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--gray-100);
+        }
+
+        .sessions-header h3 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--gray-900);
+        }
+
+        .sessions-meta {
+            color: var(--gray-600);
+            font-size: 0.95rem;
+        }
+
+        .sessions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 1.5rem;
+        }
+
+        /* Session Card */
+        .session-card {
+            background: var(--gray-50);
+            border: 2px solid var(--gray-200);
+            border-radius: var(--border-radius-lg);
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .session-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        }
+
+        .session-card.selected {
+            border-color: var(--primary);
+            background: var(--primary-light);
+        }
+
+        .session-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+        }
+
+        .session-info h4 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 0.5rem;
+        }
+
+        .session-info .meta {
+            color: var(--gray-600);
+            font-size: 0.9rem;
+        }
+
+        .session-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .action-btn {
+            background: var(--gray-100);
+            border: 1px solid var(--gray-200);
+            border-radius: var(--border-radius);
+            padding: 0.5rem;
+            cursor: pointer;
+            font-size: 0.8rem;
+            color: var(--gray-600);
+            transition: all 0.3s ease;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .action-btn:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        /* Session Stats */
+        .session-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+        }
+
+        .session-stat {
+            text-align: center;
+            padding: 1rem 0.5rem;
+            background: var(--white);
+            border-radius: var(--border-radius);
+            border: 1px solid var(--gray-200);
+        }
+
+        .session-stat .value {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 0.25rem;
+        }
+
+        .session-stat .label {
+            font-size: 0.75rem;
+            color: var(--gray-600);
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--gray-500);
+        }
+
+        .empty-state .icon {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            color: var(--gray-400);
+        }
+
+        .empty-state h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--gray-700);
+        }
+
+        .empty-state p {
+            font-size: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: var(--white);
+            margin: 5% auto;
+            border-radius: var(--border-radius-lg);
+            width: 90%;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow: hidden;
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+        }
+
+        .modal-header {
+            background: var(--primary);
+            color: white;
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .close-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .modal-body {
+            padding: 2rem;
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+
+        .modal-footer {
+            padding: 1rem 2rem;
+            border-top: 1px solid var(--gray-200);
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        /* Data Table */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1.5rem;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+        }
+
+        .data-table th {
+            background: var(--gray-100);
+            color: var(--gray-900);
+            padding: 1rem 0.75rem;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .data-table td {
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--gray-200);
+            color: var(--gray-800);
+        }
+
+        .data-table tr:hover td {
+            background: var(--gray-50);
+        }
+
+        .data-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Messages */
+        .message {
+            padding: 1rem 1.5rem;
+            border-radius: var(--border-radius);
+            margin: 1rem 0;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .message.success {
+            background: var(--success-light);
+            color: var(--success);
+            border: 1px solid #a7f3d0;
+        }
+
+        .message.error {
+            background: var(--danger-light);
+            color: var(--danger);
+            border: 1px solid #fecaca;
+        }
+
+        .message.info {
+            background: var(--primary-light);
+            color: var(--primary);
+            border: 1px solid #c7d2fe;
+        }
+
+        /* Loading */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 3rem;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--gray-200);
+            border-top: 3px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+
+            .controls-bar {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .search-filter-group {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .search-input, .filter-select {
+                width: 100%;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .sessions-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .session-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .location-tabs {
+                flex-wrap: wrap;
+            }
+        }
+
+        /* Custom Date Range */
+        .custom-date-range {
+            display: none;
+            gap: 1rem;
+            margin-left: 1rem;
+        }
+
+        .custom-date-range.show {
+            display: flex;
+        }
+
+        /* Compare Panel */
+        .compare-panel {
+            background: var(--white);
+            border: 2px solid var(--primary);
+            border-radius: var(--border-radius-lg);
+            padding: 1.5rem;
+            margin: 1rem 0;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            display: none;
+        }
+
+        .compare-panel.show {
+            display: block;
+        }
+
+        .compare-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .compare-header h3 {
+            color: var(--primary);
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .selected-sessions {
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background: var(--gray-50);
+            border-radius: var(--border-radius);
+            color: var(--gray-600);
+        }
+
+        .compare-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+        <div class="header">
+        <div class="header-content">
+            <div>
+                <h1>📊 Analytics Dashboard</h1>
+            <p>Advanced Salary Intelligence & Performance Insights</p>
+        </div>
+                <div class="nav-buttons">
+                    <a href="/" class="nav-btn">🏠 Calculator</a>
+                    <a href="/users" class="nav-btn">👥 Users</a>
+            </div>
+        </div>
+            </div>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Controls Bar -->
+        <div class="controls-bar">
+            <div class="search-filter-group">
+                    <input type="text" id="searchInput" class="search-input" placeholder="🔍 Search sessions..." onkeyup="filterSessions()">
+                    <select id="dateFilter" class="filter-select" onchange="filterSessions()">
+                        <option value="">📅 All Time</option>
+                        <option value="today">📍 Today</option>
+                        <option value="week">📊 This Week</option>
+                        <option value="month">📈 This Month</option>
+                        <option value="quarter">🎯 This Quarter</option>
+                        <option value="custom">📆 Custom Range</option>
+                    </select>
+                <div id="customDateRange" class="custom-date-range">
+                    <input type="date" id="startDate" class="filter-select">
+                    <input type="date" id="endDate" class="filter-select">
+                    </div>
+                </div>
+
+            <div class="action-group">
+                <button class="btn" onclick="refreshData()">🔄 Refresh</button>
+                <button class="btn secondary" onclick="toggleSelectMode()">☑️ Select</button>
+                <button class="btn secondary" onclick="toggleCompareMode()">📊 Compare</button>
+            </div>
+
+            <div class="action-group">
+                <button class="btn success" onclick="exportAllSessions()">📋 Export All</button>
+                <button class="btn success" onclick="exportByLocation()">📍 By Location</button>
+                <button class="btn danger" onclick="clearAllSessions()">🗑️ Clear All</button>
+        </div>
+    </div>
+
+        <!-- Statistics Dashboard -->
+        <div class="stats-grid" id="statsGrid">
+                <!-- Dynamic stats will be populated here -->
+            </div>
+
+        <!-- Location Tabs -->
+            <div class="location-tabs" id="locationTabs">
+                <!-- Dynamic location tabs will be populated here -->
+            </div>
+
+        <!-- Select Panel -->
+        <div id="selectPanel" class="compare-panel">
+            <div class="compare-header">
+                <h3>☑️ Select Sessions for Export</h3>
+                <button class="btn secondary" onclick="toggleSelectMode()">❌ Close</button>
+            </div>
+            <div id="selectedSessionsForExport" class="selected-sessions">
+                Select sessions to export together (click on session cards)
+            </div>
+            <div class="compare-actions">
+                <button class="btn success" onclick="exportSelectedSessionsPDF()" id="exportSelectedBtn" disabled>📄 Export Selected PDF</button>
+                <button class="btn success" onclick="exportSelectedSessionsXLS()" id="exportSelectedXLSBtn" disabled>📊 Export Selected Excel</button>
+            </div>
+        </div>
+
+        <!-- Compare Panel -->
+        <div id="comparePanel" class="compare-panel">
+            <div class="compare-header">
+                <h3>📊 Session Comparison</h3>
+                <button class="btn secondary" onclick="toggleCompareMode()">❌ Close</button>
+            </div>
+            <div id="selectedSessions" class="selected-sessions">
+                Select sessions to compare (click on session cards)
+            </div>
+            <div class="compare-actions">
+                <button class="btn success" onclick="generateComparison()" id="compareBtn" disabled>📊 Generate Comparison</button>
+                <button class="btn" onclick="exportComparisonPDF()" id="exportCompareBtn" disabled>📄 Export PDF</button>
+            </div>
+        </div>
+
+            <!-- Loading State -->
+            <div id="loading" class="loading">
+                <div class="spinner"></div>
+                <p>Loading analytics data...</p>
+            </div>
+
+            <!-- Messages -->
+            <div id="messages"></div>
+
+        <!-- Sessions Container -->
+            <div class="sessions-container">
+                <div class="sessions-header">
+                <div>
+                    <h3 id="sessionsTitle">📊 All Sessions</h3>
+                    <div class="sessions-meta" id="sessionsMeta">Initializing...</div>
+                    </div>
+                </div>
+                
+                <div class="sessions-grid" id="sessionsGrid">
+                    <!-- Dynamic session cards will be populated here -->
+                </div>
+
+            <!-- Empty State -->
+                <div class="empty-state" id="emptyState" style="display: none;">
+                <div class="icon">📊</div>
+                <h3>No Sessions Found</h3>
+                    <p>Start creating salary calculations to unlock powerful analytics and insights.</p>
+                <a href="/" class="btn">🎯 Launch Calculator</a>
+                </div>
+            </div>
+        </div>
+
+    <!-- Session Details Modal -->
+    <div id="sessionModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="sessionModalTitle">📊 Session Details</h3>
+                <button class="close-btn" onclick="closeSessionModal()">&times;</button>
+    </div>
+
+            <div class="modal-body" id="sessionModalContent">
+                <!-- Dynamic session details will be populated here -->
+        </div>
+            
+            <div class="modal-footer">
+                <button class="btn success" onclick="exportSessionPDF()">📄 Export PDF</button>
+                <button class="btn success" onclick="exportSessionXLS()">📊 Export Excel</button>
+                <button class="btn" onclick="loadSessionInCalculator()">🔄 Load Session</button>
+                <button class="btn danger" onclick="deleteSession()">🗑️ Delete</button>
+        </div>
+        </div>
+    </div>
+
+    <!-- Location Export Modal -->
+    <div id="locationModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>📍 Location Export</h3>
+                <button class="close-btn" onclick="closeLocationModal()">&times;</button>
+            </div>
+            
+            <div class="modal-body">
+                <div style="margin-bottom: 1.5rem;">
+                    <label style="font-weight: 600; color: var(--gray-900); margin-bottom: 0.5rem; display: block;">Select Location:</label>
+                    <select id="locationSelect" class="filter-select" style="width: 100%;">
+                        <option value="">Choose location...</option>
+                    </select>
+                </div>
+                
+                <div id="locationSessions" style="max-height: 300px; overflow-y: auto; border: 1px solid var(--gray-200); border-radius: var(--border-radius); padding: 1rem;">
+                    <!-- Sessions will be populated here -->
+                </div>
+                </div>
+                
+            <div class="modal-footer">
+                    <button class="btn success" onclick="exportLocationPDF()">📄 Export Location Report</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global Variables
+        let allSessions = [];
+        let filteredSessions = [];
+        let users = [];
+        let locations = [];
+        let currentLocation = 'all';
+        let currentSession = null;
+        let compareMode = false;
+        let selectMode = false;
+        let selectedForComparison = [];
+        let selectedForExport = [];
+        let comparisonData = null;
+
+        // Initialize System
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeAnalytics();
+            setupEventListeners();
+        });
+
+        function initializeAnalytics() {
+            loadData();
+            renderDashboard();
+            showLoading();
+            
+            setTimeout(() => {
+                hideLoading();
+            }, 1000);
+        }
+
+        function setupEventListeners() {
+            // Modal close on outside click
+            document.getElementById('sessionModal').addEventListener('click', (e) => {
+                if (e.target.id === 'sessionModal') {
+                    closeSessionModal();
+                }
+            });
+
+            document.getElementById('locationModal').addEventListener('click', (e) => {
+                if (e.target.id === 'locationModal') {
+                    closeLocationModal();
+                }
+            });
+
+            // Custom date range listeners
+            document.getElementById('startDate').addEventListener('change', filterSessions);
+            document.getElementById('endDate').addEventListener('change', filterSessions);
+
+            // Keyboard shortcuts
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    closeSessionModal();
+                    closeLocationModal();
+                    if (compareMode) toggleCompareMode();
+                }
+                if (e.key === 'r' && e.ctrlKey) {
+                    e.preventDefault();
+                    refreshData();
+                }
+            });
+        }
+
+        // Data Management
+        function loadData() {
+            try {
+                const savedSessions = localStorage.getItem('salaryCalc_sessions');
+                if (savedSessions) {
+                    allSessions = JSON.parse(savedSessions);
+                }
+
+                const savedUsers = localStorage.getItem('salaryCalc_users');
+                if (savedUsers) {
+                    users = JSON.parse(savedUsers);
+                }
+
+                const savedLocations = localStorage.getItem('salaryCalc_locations');
+                if (savedLocations) {
+                    locations = JSON.parse(savedLocations);
+                }
+
+                filteredSessions = [...allSessions];
+            } catch (error) {
+                console.error('Error loading data:', error);
+                showMessage('⚠️ Error loading data', 'error');
+            }
+        }
+
+        function renderDashboard() {
+            renderStats();
+            renderLocationTabs();
+            renderSessions();
+        }
+
+        // Statistics Rendering
+        function renderStats() {
+            const container = document.getElementById('statsGrid');
+            const analytics = calculateAnalytics();
+            
+            container.innerHTML = `
+                <div class="stat-card">
+                    <div class="icon">📊</div>
+                    <div class="value">${analytics.totalSessions}</div>
+                    <div class="label">Total Sessions</div>
+                            </div>
+                <div class="stat-card">
+                    <div class="icon">💰</div>
+                    <div class="value">$${analytics.totalSales.toLocaleString()}</div>
+                    <div class="label">Revenue Generated</div>
+                        </div>
+                <div class="stat-card">
+                    <div class="icon">💵</div>
+                    <div class="value">$${analytics.totalSalary.toLocaleString()}</div>
+                    <div class="label">Total Compensation</div>
+                                </div>
+                <div class="stat-card">
+                    <div class="icon">⚡</div>
+                    <div class="value">${formatHours(analytics.totalHours)}</div>
+                    <div class="label">Work Hours</div>
+                                </div>
+                <div class="stat-card">
+                    <div class="icon">👥</div>
+                    <div class="value">${analytics.activeUsers}</div>
+                    <div class="label">Active Users</div>
+                                </div>
+                                <div class="stat-card">
+                    <div class="icon">📈</div>
+                    <div class="value">${analytics.employeeCost}%</div>
+                    <div class="label">Employee Cost</div>
+                </div>
+            `;
+        }
+
+        function calculateAnalytics() {
+            const totalSessions = filteredSessions.length;
+            const totalSales = filteredSessions.reduce((sum, session) => sum + (session.summary?.totalSales || 0), 0);
+            const totalSalary = filteredSessions.reduce((sum, session) => sum + (session.summary?.totalSalary || 0), 0);
+            const totalHours = filteredSessions.reduce((sum, session) => sum + (session.summary?.totalHours || 0), 0);
+            const activeUsers = [...new Set(filteredSessions.map(s => s.userId))].length;
+            const employeeCost = totalSales > 0 ? Math.round((totalSalary / totalSales) * 100) : 0;
+
+            return {
+                totalSessions,
+                totalSales,
+                totalSalary,
+                totalHours,
+                activeUsers,
+                employeeCost
+            };
+        }
+
+        // Location Tabs
+        function renderLocationTabs() {
+            const container = document.getElementById('locationTabs');
+            
+            const locationAnalytics = {};
+            allSessions.forEach(session => {
+                const location = session.userLocation || 'Unknown';
+                if (!locationAnalytics[location]) {
+                    locationAnalytics[location] = { count: 0, revenue: 0 };
+                }
+                locationAnalytics[location].count++;
+                locationAnalytics[location].revenue += session.summary?.totalSales || 0;
+            });
+
+            let html = `
+                <div class="location-tab ${currentLocation === 'all' ? 'active' : ''}" onclick="selectLocation('all')">
+                    🌐 All Locations
+                    <span class="count">${allSessions.length}</span>
+                            </div>
+            `;
+
+            Object.entries(locationAnalytics).forEach(([location, data]) => {
+                html += `
+                    <div class="location-tab ${currentLocation === location ? 'active' : ''}" onclick="selectLocation('${location}')">
+                        📍 ${location}
+                        <span class="count">${data.count}</span>
+                                </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        function selectLocation(location) {
+            currentLocation = location;
+            renderLocationTabs();
+            filterSessions();
+        }
+
+        // Session Management
+        function renderSessions() {
+            const container = document.getElementById('sessionsGrid');
+            const emptyState = document.getElementById('emptyState');
+            const title = document.getElementById('sessionsTitle');
+            const meta = document.getElementById('sessionsMeta');
+
+            if (filteredSessions.length === 0) {
+                container.style.display = 'none';
+                emptyState.style.display = 'block';
+                title.textContent = '🔍 No Sessions Found';
+                meta.textContent = '';
+                return;
+            }
+
+            container.style.display = 'grid';
+            emptyState.style.display = 'none';
+            
+            title.textContent = currentLocation === 'all' ? '📊 All Sessions' : `📍 ${currentLocation} Sessions`;
+            meta.textContent = `${filteredSessions.length} session(s) • Last updated: ${new Date().toLocaleTimeString()}`;
+
+                        container.innerHTML = filteredSessions.map(session => {
+                const createdDate = new Date(session.createdAt).toLocaleDateString();
+                const summary = session.summary || {};
+                const employeeCost = summary.totalSales > 0 ? ((summary.totalSalary / summary.totalSales) * 100) : 0;
+                
+                return `
+                    <div class="session-card" data-session-id="${session.id}" onclick="handleSessionClick('${session.id}')">
+                        <div class="session-header">
+                            <div class="session-info">
+                                <h4>🎯 ${session.userName}</h4>
+                                <div class="meta">📍 ${session.userLocation} • 📅 ${createdDate}</div>
+                            </div>
+                            <div class="session-actions" onclick="event.stopPropagation()">
+                                <button class="action-btn" onclick="exportSessionPDF('${session.id}')" title="Export PDF">📄</button>
+                                <button class="action-btn" onclick="exportSessionXLS('${session.id}')" title="Export Excel">📊</button>
+                                <button class="action-btn" onclick="loadSessionInCalculator('${session.id}')" title="Load">🔄</button>
+                                <button class="action-btn" onclick="deleteSessionConfirm('${session.id}')" title="Delete">🗑️</button>
+                            </div>
+                        </div>
+                        
+                        <div class="session-stats">
+                            <div class="session-stat">
+                                <div class="value">$${(summary.totalSales || 0).toLocaleString()}</div>
+                                <div class="label">Revenue</div>
+                            </div>
+                            <div class="session-stat">
+                                <div class="value">${formatHours(summary.totalHours || 0)}</div>
+                                <div class="label">Hours</div>
+                            </div>
+                            <div class="session-stat">
+                                <div class="value">$${(summary.totalSalary || 0).toLocaleString()}</div>
+                                <div class="label">Salary</div>
+                            </div>
+                            <div class="session-stat">
+                                <div class="value">${employeeCost.toFixed(0)}%</div>
+                                <div class="label">Cost %</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Filtering
+        function filterSessions() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const dateFilter = document.getElementById('dateFilter').value;
+            const customDateRange = document.getElementById('customDateRange');
+            
+            // Handle custom date range
+            if (dateFilter === 'custom') {
+                customDateRange.classList.add('show');
+            } else {
+                customDateRange.classList.remove('show');
+            }
+            
+            filteredSessions = allSessions.filter(session => {
+                // Location filter
+                if (currentLocation !== 'all' && session.userLocation !== currentLocation) {
+                    return false;
+                }
+                
+                // Search filter
+                if (searchTerm) {
+                    const searchableText = `${session.userName} ${session.userLocation}`.toLowerCase();
+                    if (!searchableText.includes(searchTerm)) {
+                        return false;
+                    }
+                }
+                
+                // Date filter
+                if (dateFilter) {
+                    const sessionDate = new Date(session.sessionDate || session.createdAt);
+                    const now = new Date();
+                    
+                    switch (dateFilter) {
+                        case 'today':
+                            if (sessionDate.toDateString() !== now.toDateString()) return false;
+                            break;
+                        case 'week':
+                            const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+                            if (sessionDate < weekAgo) return false;
+                            break;
+                        case 'month':
+                            if (sessionDate.getMonth() !== now.getMonth() || sessionDate.getFullYear() !== now.getFullYear()) return false;
+                            break;
+                        case 'quarter':
+                            const quarterStart = new Date(now.getFullYear(), Math.floor(now.getMonth() / 3) * 3, 1);
+                            if (sessionDate < quarterStart) return false;
+                            break;
+                        case 'custom':
+                            const startDate = document.getElementById('startDate').value;
+                            const endDate = document.getElementById('endDate').value;
+                            if (startDate && sessionDate < new Date(startDate)) return false;
+                            if (endDate && sessionDate > new Date(endDate)) return false;
+                            break;
+                    }
+                }
+                
+                return true;
+            });
+            
+            renderDashboard();
+        }
+
+        function handleSessionClick(sessionId) {
+            if (compareMode) {
+                selectSessionForComparison(sessionId);
+            } else if (selectMode) {
+                selectSessionForExport(sessionId);
+            } else {
+                openSessionDetails(sessionId);
+            }
+        }
+
+        // Session Details
+        function openSessionDetails(sessionId) {
+            const session = allSessions.find(s => s.id === sessionId);
+            if (!session) return;
+            
+            currentSession = session;
+            
+            const modal = document.getElementById('sessionModal');
+            const title = document.getElementById('sessionModalTitle');
+            const content = document.getElementById('sessionModalContent');
+            
+            title.textContent = `🎯 ${session.userName} - Session Details`;
+            
+            const summary = session.summary || {};
+            const createdDate = new Date(session.createdAt).toLocaleDateString();
+            const employeeCost = summary.totalSales > 0 ? ((summary.totalSalary / summary.totalSales) * 100) : 0;
+            
+            content.innerHTML = `
+                <div style="margin-bottom: 2rem; padding: 1.5rem; background: var(--gray-50); border-radius: var(--border-radius); border: 1px solid var(--gray-200);">
+                    <h4 style="color: var(--primary); margin-bottom: 1rem; font-size: 1.25rem;">📊 Session Overview</h4>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                        <div><strong>🎯 Employee:</strong> ${session.userName}</div>
+                        <div><strong>📍 Location:</strong> ${session.userLocation}</div>
+                        <div><strong>📅 Created:</strong> ${createdDate}</div>
+                        <div><strong>📊 Records:</strong> ${summary.recordCount || 0}</div>
+                        <div><strong>💰 Revenue:</strong> $${(summary.totalSales || 0).toLocaleString()}</div>
+                        <div><strong>⚡ Hours:</strong> ${formatHours(summary.totalHours || 0)}</div>
+                        <div><strong>💵 Compensation:</strong> $${(summary.totalSalary || 0).toLocaleString()}</div>
+                        <div><strong>📈 Employee Cost:</strong> ${employeeCost.toFixed(1)}%</div>
+                        </div>
+                    </div>
+                    
+                ${session.data && session.data.length > 0 ? renderSessionDataTable(session.data) : '<div style="text-align: center; padding: 2rem; color: var(--gray-500);">📊 No detailed data available for this session.</div>'}
+            `;
+            
+            modal.style.display = 'block';
+        }
+
+        function renderSessionDataTable(data) {
+            let html = `
+                <h4 style="color: var(--primary); margin-bottom: 1rem; font-size: 1.25rem;">📋 Detailed Performance Data</h4>
+                <table class="data-table">
+                                <thead>
+                                    <tr>
+                            <th>📅 Date</th>
+                            <th>💰 Revenue</th>
+                            <th>⚡ Hours</th>
+                            <th>💼 Rate</th>
+                            <th>💵 Salary</th>
+                            <th>📊 Cost %</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                    `;
+                    
+            data.forEach(row => {
+                const employeeCost = row.sales > 0 ? (row.salary / row.sales * 100) : 0;
+                const rateDisplay = row.tierType === 'commission' ? `${((row.salary / row.sales) * 100).toFixed(1)}%` : `$${row.rate.toFixed(2)}/hr`;
+                
+                        html += `
+                            <tr>
+                        <td>${row.date}</td>
+                                <td>$${row.sales.toFixed(2)}</td>
+                        <td>${formatHours(row.hours)}</td>
+                        <td>${rateDisplay}</td>
+                                <td>$${row.salary.toFixed(2)}</td>
+                        <td>${employeeCost.toFixed(1)}%</td>
+                            </tr>
+                        `;
+                    });
+                    
+            const totals = calculateSessionTotals(data);
+            
+            html += `
+                <tr style="background: var(--primary); color: white; font-weight: 700;">
+                        <td>📊 TOTAL</td>
+                        <td>$${totals.totalSales.toFixed(2)}</td>
+                    <td>${formatHours(totals.totalHours)}</td>
+                        <td>$${totals.avgRate.toFixed(2)}/hr</td>
+                        <td>$${totals.totalSalary.toFixed(2)}</td>
+                        <td>${totals.totalCost.toFixed(1)}%</td>
+                    </tr>
+                </tbody>
+            </table>
+            `;
+            
+            return html;
+        }
+
+        function calculateSessionTotals(data) {
+            const totalSales = data.reduce((sum, row) => sum + row.sales, 0);
+            const totalHours = data.reduce((sum, row) => sum + row.hours, 0);
+            const totalSalary = data.reduce((sum, row) => sum + row.salary, 0);
+            const avgRate = totalHours > 0 ? (totalSalary / totalHours) : 0;
+            const totalCost = totalSales > 0 ? (totalSalary / totalSales * 100) : 0;
+
+            return { totalSales, totalHours, totalSalary, avgRate, totalCost };
+        }
+
+        // Export Functions
+        function exportSessionPDF(sessionId) {
+            const session = sessionId ? allSessions.find(s => s.id === sessionId) : currentSession;
+            
+            if (!session) {
+                showMessage('❌ Session not found', 'error');
+                return;
+            }
+
+            try {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+                
+                // Header
+                doc.setFontSize(20);
+                doc.setTextColor(99, 102, 241);
+                doc.text(`📊 ${session.userName} - Salary Report`, 20, 30);
+                
+                doc.setFontSize(12);
+                doc.setTextColor(15, 23, 42);
+                doc.text(`Location: ${session.userLocation}`, 20, 45);
+                doc.text(`Date: ${new Date(session.createdAt).toLocaleDateString()}`, 20, 55);
+                doc.text(`Generated: ${new Date().toLocaleString()}`, 20, 65);
+                
+                const summary = session.summary || {};
+                
+                // Summary table
+                doc.autoTable({
+                    startY: 80,
+                    head: [['Metric', 'Value']],
+                    body: [
+                        ['Total Sales', `$${(summary.totalSales || 0).toFixed(2)}`],
+                        ['Total Hours', formatHours(summary.totalHours || 0)],
+                        ['Total Salary', `$${(summary.totalSalary || 0).toFixed(2)}`],
+                        ['Records Count', `${summary.recordCount || 0}`],
+                        ['Employee Cost %', `${summary.totalSales > 0 ? ((summary.totalSalary / summary.totalSales) * 100).toFixed(1) : 0}%`]
+                    ],
+                    theme: 'grid',
+                    headStyles: { fillColor: [99, 102, 241] }
+                });
+                
+                // Details table if data exists
+                if (session.data && session.data.length > 0) {
+                    doc.autoTable({
+                        startY: doc.lastAutoTable.finalY + 20,
+                        head: [['Date', 'Sales', 'Hours', 'Rate', 'Salary', 'Cost %']],
+                        body: session.data.map(row => [
+                            row.date,
+                            `$${row.sales.toFixed(2)}`,
+                            formatHours(row.hours),
+                            row.tierType === 'commission' ? 
+                                `${((row.salary / row.sales) * 100).toFixed(1)}%` : 
+                                `$${row.rate.toFixed(2)}/hr`,
+                            `$${row.salary.toFixed(2)}`,
+                            `${row.sales > 0 ? (row.salary / row.sales * 100).toFixed(1) : '0.0'}%`
+                        ]),
+                        theme: 'grid',
+                        headStyles: { fillColor: [99, 102, 241] }
+                    });
+                }
+                
+                const sanitizedUserName = session.userName.replace(/[^a-zA-Z0-9]/g, '_');
+                const dateString = new Date(session.createdAt).toISOString().split('T')[0];
+                const filename = `${sanitizedUserName}_SalaryReport_${dateString}.pdf`;
+                
+                doc.save(filename);
+                showMessage(`✅ PDF exported: ${filename}`, 'success');
+                
+            } catch (error) {
+                console.error('PDF Export Error:', error);
+                showMessage('❌ Error exporting PDF', 'error');
+            }
+        }
+
+        function exportSessionXLS(sessionId) {
+            const session = sessionId ? allSessions.find(s => s.id === sessionId) : currentSession;
+            
+            if (!session) {
+                showMessage('❌ Session not found', 'error');
+                return;
+            }
+
+            if (!session.data || session.data.length === 0) {
+                showMessage('❌ No data available to export', 'error');
+                return;
+            }
+
+            try {
+                const workbook = XLSX.utils.book_new();
+                
+                const exportData = session.data.map(row => ({
+                    'Date': row.date,
+                    'Sales ($)': row.sales.toFixed(2),
+                    'Hours': formatHours(row.hours),
+                    'Rate': row.tierType === 'commission' ? 
+                        `${((row.salary / row.sales) * 100).toFixed(1)}%` : 
+                        `$${row.rate.toFixed(2)}/hr`,
+                    'Salary ($)': row.salary.toFixed(2),
+                    'Employee Cost (%)': row.sales > 0 ? (row.salary / row.sales * 100).toFixed(1) : '0.0'
+                }));
+
+                const totals = calculateSessionTotals(session.data);
+                exportData.push({
+                    'Date': 'TOTAL',
+                    'Sales ($)': totals.totalSales.toFixed(2),
+                    'Hours': formatHours(totals.totalHours),
+                    'Rate': `$${totals.avgRate.toFixed(2)}/hr`,
+                    'Salary ($)': totals.totalSalary.toFixed(2),
+                    'Employee Cost (%)': totals.totalCost.toFixed(1)
+                });
+
+                const worksheet = XLSX.utils.json_to_sheet(exportData);
+                worksheet['!cols'] = [
+                    { wch: 12 }, { wch: 12 }, { wch: 10 }, 
+                    { wch: 15 }, { wch: 12 }, { wch: 18 }
+                ];
+
+                XLSX.utils.book_append_sheet(workbook, worksheet, 'Salary Report');
+
+                const sanitizedUserName = session.userName.replace(/[^a-zA-Z0-9]/g, '_');
+                const dateString = new Date(session.createdAt).toISOString().split('T')[0];
+                const filename = `${sanitizedUserName}_SalaryReport_${dateString}.xlsx`;
+
+                XLSX.writeFile(workbook, filename);
+                showMessage(`✅ Excel file exported: ${filename}`, 'success');
+                
+            } catch (error) {
+                console.error('XLS Export Error:', error);
+                showMessage('❌ Error exporting to Excel', 'error');
+            }
+        }
+
+        function exportAllSessions() {
+            if (allSessions.length === 0) {
+                showMessage('❌ No sessions available to export', 'error');
+                return;
+            }
+
+            const exportChoice = confirm('Choose export format:\n\nOK = Export All as Excel (XLS)\nCancel = Export All as PDF');
+            
+            if (exportChoice) {
+                exportAllSessionsXLS();
+            } else {
+                exportAllSessionsPDF();
+            }
+        }
+
+        function exportAllSessionsXLS() {
+            try {
+                const workbook = XLSX.utils.book_new();
+                
+                const summaryData = allSessions.map(session => {
+                    const summary = session.summary || {};
+                    const createdDate = new Date(session.createdAt).toLocaleDateString();
+                    const efficiency = summary.totalSales > 0 ? ((1 - (summary.totalSalary / summary.totalSales)) * 100) : 0;
+                    
+                    return {
+                        'Employee': session.userName,
+                        'Location': session.userLocation,
+                        'Date Created': createdDate,
+                        'Records': summary.recordCount || 0,
+                        'Total Sales ($)': (summary.totalSales || 0).toFixed(2),
+                        'Total Hours': formatHours(summary.totalHours || 0),
+                        'Total Salary ($)': (summary.totalSalary || 0).toFixed(2),
+                        'Efficiency (%)': efficiency.toFixed(1)
+                    };
+                });
+
+                const grandTotals = {
+                    'Employee': 'GRAND TOTAL',
+                    'Location': `${[...new Set(allSessions.map(s => s.userLocation))].length} Locations`,
+                    'Date Created': `${allSessions.length} Sessions`,
+                    'Records': allSessions.reduce((sum, s) => sum + (s.summary?.recordCount || 0), 0),
+                    'Total Sales ($)': allSessions.reduce((sum, s) => sum + (s.summary?.totalSales || 0), 0).toFixed(2),
+                    'Total Hours': formatHours(allSessions.reduce((sum, s) => sum + (s.summary?.totalHours || 0), 0)),
+                    'Total Salary ($)': allSessions.reduce((sum, s) => sum + (s.summary?.totalSalary || 0), 0).toFixed(2),
+                    'Efficiency (%)': '---'
+                };
+                summaryData.push(grandTotals);
+
+                const summarySheet = XLSX.utils.json_to_sheet(summaryData);
+                summarySheet['!cols'] = [
+                    { wch: 20 }, { wch: 18 }, { wch: 15 }, { wch: 10 },
+                    { wch: 15 }, { wch: 12 }, { wch: 15 }, { wch: 12 }
+                ];
+                XLSX.utils.book_append_sheet(workbook, summarySheet, 'Summary');
+
+                const dateString = new Date().toISOString().split('T')[0];
+                const filename = `All_Salary_Sessions_${dateString}.xlsx`;
+
+                XLSX.writeFile(workbook, filename);
+                showMessage(`✅ Excel file exported: ${filename}`, 'success');
+                
+            } catch (error) {
+                console.error('XLS Export Error:', error);
+                showMessage('❌ Error exporting to Excel', 'error');
+            }
+        }
+
+        function exportAllSessionsPDF() {
+            try {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+                
+                // Header
+                doc.setFontSize(20);
+                doc.setTextColor(99, 102, 241);
+                doc.text('📊 All Sessions Report', 20, 30);
+                
+                doc.setFontSize(12);
+                doc.setTextColor(15, 23, 42);
+                doc.text(`Generated: ${new Date().toLocaleString()}`, 20, 45);
+                doc.text(`Total Sessions: ${allSessions.length}`, 20, 55);
+                
+                // Summary table
+                const totals = allSessions.reduce((acc, session) => {
+                    const summary = session.summary || {};
+                    acc.sales += summary.totalSales || 0;
+                    acc.hours += summary.totalHours || 0;
+                    acc.salary += summary.totalSalary || 0;
+                    return acc;
+                }, { sales: 0, hours: 0, salary: 0 });
+
+                doc.autoTable({
+                    startY: 70,
+                    head: [['Summary Metric', 'Value']],
+                    body: [
+                        ['Total Sales', `$${totals.sales.toFixed(2)}`],
+                        ['Total Hours', formatHours(totals.hours)],
+                        ['Total Salary', `$${totals.salary.toFixed(2)}`],
+                        ['Average per Session', `$${(totals.sales / allSessions.length).toFixed(2)}`],
+                        ['Cost Percentage', `${totals.sales > 0 ? ((totals.salary / totals.sales) * 100).toFixed(1) : 0}%`]
+                    ],
+                    theme: 'grid',
+                    headStyles: { fillColor: [99, 102, 241] }
+                });
+                
+                // Sessions table
+                doc.autoTable({
+                    startY: doc.lastAutoTable.finalY + 20,
+                    head: [['Employee', 'Location', 'Date', 'Sales', 'Hours', 'Salary']],
+                    body: allSessions.slice(0, 50).map(session => {
+                        const summary = session.summary || {};
+                        return [
+                            session.userName,
+                            session.userLocation,
+                            new Date(session.sessionDate || session.createdAt).toLocaleDateString(),
+                            `$${(summary.totalSales || 0).toFixed(2)}`,
+                            formatHours(summary.totalHours || 0),
+                            `$${(summary.totalSalary || 0).toFixed(2)}`
+                        ];
+                    }),
+                    theme: 'grid',
+                    headStyles: { fillColor: [99, 102, 241] }
+                });
+                
+                if (allSessions.length > 50) {
+                    doc.text(`Note: Showing first 50 sessions of ${allSessions.length} total`, 20, doc.lastAutoTable.finalY + 10);
+                }
+                
+                const filename = `All_Sessions_Report_${new Date().toISOString().split('T')[0]}.pdf`;
+                doc.save(filename);
+                
+                showMessage(`✅ PDF exported: ${filename}`, 'success');
+                
+            } catch (error) {
+                console.error('PDF Export Error:', error);
+                showMessage('❌ Error exporting PDF', 'error');
+            }
+        }
+
+        function exportByLocation() {
+            const modal = document.getElementById('locationModal');
+            const select = document.getElementById('locationSelect');
+            
+            select.innerHTML = '<option value="">Choose location...</option>';
+            [...new Set(allSessions.map(s => s.userLocation))].forEach(location => {
+                const option = document.createElement('option');
+                option.value = location;
+                option.textContent = location;
+                select.appendChild(option);
+            });
+            
+            modal.style.display = 'block';
+        }
+
+        function exportLocationPDF() {
+            const selectedLocation = document.getElementById('locationSelect').value;
+            if (!selectedLocation) {
+                showMessage('❌ Please select a location', 'error');
+                return;
+            }
+
+            const locationSessions = allSessions.filter(s => s.userLocation === selectedLocation);
+            if (locationSessions.length === 0) {
+                showMessage('❌ No sessions found for this location', 'error');
+                return;
+            }
+
+            try {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+                
+                doc.setFontSize(20);
+                doc.setTextColor(99, 102, 241);
+                doc.text(`📍 ${selectedLocation} - Location Report`, 20, 30);
+                
+                doc.setFontSize(12);
+                doc.setTextColor(15, 23, 42);
+                doc.text(`Generated: ${new Date().toLocaleString()}`, 20, 45);
+                doc.text(`Total Sessions: ${locationSessions.length}`, 20, 55);
+                
+                const totals = locationSessions.reduce((acc, session) => {
+                    const summary = session.summary || {};
+                    acc.sales += summary.totalSales || 0;
+                    acc.hours += summary.totalHours || 0;
+                    acc.salary += summary.totalSalary || 0;
+                    return acc;
+                }, { sales: 0, hours: 0, salary: 0 });
+                
+                doc.autoTable({
+                    startY: 70,
+                    head: [['Summary Metric', 'Value']],
+                    body: [
+                        ['Total Sales', `$${totals.sales.toFixed(2)}`],
+                        ['Total Hours', formatHours(totals.hours)],
+                        ['Total Salary', `$${totals.salary.toFixed(2)}`],
+                        ['Cost Percentage', `${totals.sales > 0 ? ((totals.salary / totals.sales) * 100).toFixed(1) : 0}%`]
+                    ],
+                    theme: 'grid',
+                    headStyles: { fillColor: [99, 102, 241] }
+                });
+                
+                doc.autoTable({
+                    startY: doc.lastAutoTable.finalY + 20,
+                    head: [['Employee', 'Date', 'Sales', 'Hours', 'Salary']],
+                    body: locationSessions.map(session => {
+                        const summary = session.summary || {};
+                        return [
+                            session.userName,
+                            new Date(session.sessionDate || session.createdAt).toLocaleDateString(),
+                            `$${(summary.totalSales || 0).toFixed(2)}`,
+                            formatHours(summary.totalHours || 0),
+                            `$${(summary.totalSalary || 0).toFixed(2)}`
+                        ];
+                    }),
+                    theme: 'grid',
+                    headStyles: { fillColor: [99, 102, 241] }
+                });
+                
+                const filename = `${selectedLocation.replace(/[^a-zA-Z0-9]/g, '_')}_Location_Report_${new Date().toISOString().split('T')[0]}.pdf`;
+                doc.save(filename);
+                
+                closeLocationModal();
+                showMessage(`✅ Location report exported: ${filename}`, 'success');
+                
+            } catch (error) {
+                console.error('PDF Export Error:', error);
+                showMessage('❌ Error exporting location report', 'error');
+            }
+        }
+
+        // Select Mode Functions
+        function toggleSelectMode() {
+            selectMode = !selectMode;
+            selectedForExport = [];
+            
+            // Disable compare mode if active
+            if (compareMode) {
+                toggleCompareMode();
+            }
+            
+            const panel = document.getElementById('selectPanel');
+            if (selectMode) {
+                panel.classList.add('show');
+                showMessage('☑️ Selection mode enabled. Click on session cards to select them for export.', 'info');
+            } else {
+                panel.classList.remove('show');
+                document.querySelectorAll('.session-card.selected').forEach(card => {
+                    card.classList.remove('selected');
+                });
+            }
+            updateSelectUI();
+        }
+
+        function selectSessionForExport(sessionId) {
+            if (!selectMode) return;
+            
+            const index = selectedForExport.indexOf(sessionId);
+            const card = document.querySelector(`[data-session-id="${sessionId}"]`);
+            
+            if (index === -1) {
+                selectedForExport.push(sessionId);
+                if (card) card.classList.add('selected');
+            } else {
+                selectedForExport.splice(index, 1);
+                if (card) card.classList.remove('selected');
+            }
+            
+            updateSelectUI();
+        }
+
+        function updateSelectUI() {
+            const selectedDiv = document.getElementById('selectedSessionsForExport');
+            const exportBtn = document.getElementById('exportSelectedBtn');
+            const exportXLSBtn = document.getElementById('exportSelectedXLSBtn');
+            
+            if (selectedForExport.length === 0) {
+                selectedDiv.innerHTML = 'Select sessions to export together (click on session cards)';
+                exportBtn.disabled = true;
+                exportXLSBtn.disabled = true;
+            } else {
+                const sessionNames = selectedForExport.map(id => {
+                    const session = allSessions.find(s => s.id === id);
+                    return session ? `${session.userName} (${new Date(session.sessionDate || session.createdAt).toLocaleDateString()})` : 'Unknown';
+                });
+                selectedDiv.innerHTML = `<strong>Selected Sessions (${selectedForExport.length}):</strong> ${sessionNames.join(', ')}`;
+                exportBtn.disabled = false;
+                exportXLSBtn.disabled = false;
+            }
+        }
+
+        function exportSelectedSessionsPDF() {
+            if (selectedForExport.length === 0) {
+                showMessage('❌ No sessions selected', 'error');
+                return;
+            }
+
+            const selectedSessions = selectedForExport.map(id => allSessions.find(s => s.id === id)).filter(Boolean);
+            
+            try {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+                
+                // Header
+                doc.setFontSize(20);
+                doc.setTextColor(99, 102, 241);
+                doc.text(`📊 Selected Sessions Report (${selectedSessions.length} sessions)`, 20, 30);
+                
+                doc.setFontSize(12);
+                doc.setTextColor(15, 23, 42);
+                doc.text(`Generated: ${new Date().toLocaleString()}`, 20, 45);
+                doc.text(`Sessions: ${selectedSessions.map(s => s.userName).join(', ')}`, 20, 55);
+                
+                // Calculate totals for selected sessions
+                const totals = selectedSessions.reduce((acc, session) => {
+                    const summary = session.summary || {};
+                    acc.sales += summary.totalSales || 0;
+                    acc.hours += summary.totalHours || 0;
+                    acc.salary += summary.totalSalary || 0;
+                    return acc;
+                }, { sales: 0, hours: 0, salary: 0 });
+
+                // Summary table
+                doc.autoTable({
+                    startY: 70,
+                    head: [['Summary Metric', 'Value']],
+                    body: [
+                        ['Total Sessions', `${selectedSessions.length}`],
+                        ['Total Sales', `$${totals.sales.toFixed(2)}`],
+                        ['Total Hours', formatHours(totals.hours)],
+                        ['Total Salary', `$${totals.salary.toFixed(2)}`],
+                        ['Employee Cost %', `${totals.sales > 0 ? ((totals.salary / totals.sales) * 100).toFixed(1) : 0}%`],
+                        ['Average per Session', `$${(totals.sales / selectedSessions.length).toFixed(2)}`]
+                    ],
+                    theme: 'grid',
+                    headStyles: { fillColor: [99, 102, 241] }
+                });
+                
+                // Sessions table
+                doc.autoTable({
+                    startY: doc.lastAutoTable.finalY + 20,
+                    head: [['Employee', 'Location', 'Date', 'Sales', 'Hours', 'Salary', 'Cost %']],
+                    body: selectedSessions.map(session => {
+                        const summary = session.summary || {};
+                        const employeeCost = summary.totalSales > 0 ? ((summary.totalSalary / summary.totalSales) * 100) : 0;
+                        return [
+                            session.userName,
+                            session.userLocation,
+                            new Date(session.sessionDate || session.createdAt).toLocaleDateString(),
+                            `$${(summary.totalSales || 0).toFixed(2)}`,
+                            formatHours(summary.totalHours || 0),
+                            `$${(summary.totalSalary || 0).toFixed(2)}`,
+                            `${employeeCost.toFixed(1)}%`
+                        ];
+                    }),
+                    theme: 'grid',
+                    headStyles: { fillColor: [99, 102, 241] }
+                });
+                
+                // Add detailed data if available
+                let currentY = doc.lastAutoTable.finalY + 30;
+                selectedSessions.forEach((session, index) => {
+                    if (session.data && session.data.length > 0 && currentY < 250) { // Only add if there's space
+                        if (index > 0) {
+                            doc.addPage();
+                            currentY = 30;
+                        }
+                        
+                        doc.setFontSize(14);
+                        doc.setTextColor(99, 102, 241);
+                        doc.text(`📋 ${session.userName} - Detailed Data`, 20, currentY);
+                        
+                        doc.autoTable({
+                            startY: currentY + 10,
+                            head: [['Date', 'Sales', 'Hours', 'Rate', 'Salary', 'Cost %']],
+                            body: session.data.map(row => [
+                                row.date,
+                                `$${row.sales.toFixed(2)}`,
+                                formatHours(row.hours),
+                                row.tierType === 'commission' ? 
+                                    `${((row.salary / row.sales) * 100).toFixed(1)}%` : 
+                                    `$${row.rate.toFixed(2)}/hr`,
+                                `$${row.salary.toFixed(2)}`,
+                                `${row.sales > 0 ? (row.salary / row.sales * 100).toFixed(1) : '0.0'}%`
+                            ]),
+                            theme: 'grid',
+                            headStyles: { fillColor: [99, 102, 241] }
+                        });
+                        
+                        currentY = doc.lastAutoTable.finalY + 20;
+                    }
+                });
+                
+                const filename = `Selected_Sessions_Report_${new Date().toISOString().split('T')[0]}.pdf`;
+                doc.save(filename);
+                
+                showMessage(`✅ Selected sessions PDF exported: ${filename}`, 'success');
+                
+            } catch (error) {
+                console.error('PDF Export Error:', error);
+                showMessage('❌ Error exporting selected sessions PDF', 'error');
+            }
+        }
+
+        function exportSelectedSessionsXLS() {
+            if (selectedForExport.length === 0) {
+                showMessage('❌ No sessions selected', 'error');
+                return;
+            }
+
+            const selectedSessions = selectedForExport.map(id => allSessions.find(s => s.id === id)).filter(Boolean);
+            
+            try {
+                const workbook = XLSX.utils.book_new();
+                
+                // Summary sheet
+                const summaryData = selectedSessions.map(session => {
+                    const summary = session.summary || {};
+                    const createdDate = new Date(session.createdAt).toLocaleDateString();
+                    const employeeCost = summary.totalSales > 0 ? ((summary.totalSalary / summary.totalSales) * 100) : 0;
+                    
+                    return {
+                        'Employee': session.userName,
+                        'Location': session.userLocation,
+                        'Date Created': createdDate,
+                        'Records': summary.recordCount || 0,
+                        'Total Sales ($)': (summary.totalSales || 0).toFixed(2),
+                        'Total Hours': formatHours(summary.totalHours || 0),
+                        'Total Salary ($)': (summary.totalSalary || 0).toFixed(2),
+                        'Employee Cost (%)': employeeCost.toFixed(1)
+                    };
+                });
+
+                // Add totals row
+                const totals = selectedSessions.reduce((acc, session) => {
+                    const summary = session.summary || {};
+                    acc.sales += summary.totalSales || 0;
+                    acc.hours += summary.totalHours || 0;
+                    acc.salary += summary.totalSalary || 0;
+                    acc.records += summary.recordCount || 0;
+                    return acc;
+                }, { sales: 0, hours: 0, salary: 0, records: 0 });
+
+                const grandTotals = {
+                    'Employee': 'SELECTED TOTAL',
+                    'Location': `${[...new Set(selectedSessions.map(s => s.userLocation))].length} Locations`,
+                    'Date Created': `${selectedSessions.length} Sessions`,
+                    'Records': totals.records,
+                    'Total Sales ($)': totals.sales.toFixed(2),
+                    'Total Hours': formatHours(totals.hours),
+                    'Total Salary ($)': totals.salary.toFixed(2),
+                    'Employee Cost (%)': totals.sales > 0 ? ((totals.salary / totals.sales) * 100).toFixed(1) : '0.0'
+                };
+                summaryData.push(grandTotals);
+
+                const summarySheet = XLSX.utils.json_to_sheet(summaryData);
+                summarySheet['!cols'] = [
+                    { wch: 20 }, { wch: 18 }, { wch: 15 }, { wch: 10 },
+                    { wch: 15 }, { wch: 12 }, { wch: 15 }, { wch: 18 }
+                ];
+                XLSX.utils.book_append_sheet(workbook, summarySheet, 'Selected Summary');
+
+                // Add individual session sheets
+                selectedSessions.forEach((session, index) => {
+                    if (session.data && session.data.length > 0) {
+                        const sessionData = session.data.map(row => ({
+                            'Date': row.date,
+                            'Sales ($)': row.sales.toFixed(2),
+                            'Hours': formatHours(row.hours),
+                            'Rate': row.tierType === 'commission' ? 
+                                `${((row.salary / row.sales) * 100).toFixed(1)}%` : 
+                                `$${row.rate.toFixed(2)}/hr`,
+                            'Salary ($)': row.salary.toFixed(2),
+                            'Employee Cost (%)': row.sales > 0 ? (row.salary / row.sales * 100).toFixed(1) : '0.0'
+                        }));
+
+                        const sessionSheet = XLSX.utils.json_to_sheet(sessionData);
+                        sessionSheet['!cols'] = [
+                            { wch: 12 }, { wch: 12 }, { wch: 10 }, 
+                            { wch: 15 }, { wch: 12 }, { wch: 18 }
+                        ];
+                        
+                        const sanitizedName = session.userName.replace(/[^a-zA-Z0-9]/g, '_').substring(0, 20);
+                        XLSX.utils.book_append_sheet(workbook, sessionSheet, `${index + 1}_${sanitizedName}`);
+                    }
+                });
+
+                const filename = `Selected_Sessions_${new Date().toISOString().split('T')[0]}.xlsx`;
+                XLSX.writeFile(workbook, filename);
+                
+                showMessage(`✅ Selected sessions Excel exported: ${filename}`, 'success');
+                
+            } catch (error) {
+                console.error('XLS Export Error:', error);
+                showMessage('❌ Error exporting selected sessions to Excel', 'error');
+            }
+        }
+
+        // Comparison Functions
+        function toggleCompareMode() {
+            compareMode = !compareMode;
+            selectedForComparison = [];
+            
+            // Disable select mode if active
+            if (selectMode) {
+                toggleSelectMode();
+            }
+            
+            const panel = document.getElementById('comparePanel');
+            if (compareMode) {
+                panel.classList.add('show');
+                showMessage('📊 Comparison mode enabled. Click on session cards to select them.', 'info');
+            } else {
+                panel.classList.remove('show');
+                document.querySelectorAll('.session-card.selected').forEach(card => {
+                    card.classList.remove('selected');
+                });
+            }
+            updateCompareUI();
+        }
+
+        function selectSessionForComparison(sessionId) {
+            if (!compareMode) return;
+            
+            const index = selectedForComparison.indexOf(sessionId);
+            const card = document.querySelector(`[data-session-id="${sessionId}"]`);
+            
+            if (index === -1) {
+                selectedForComparison.push(sessionId);
+                if (card) card.classList.add('selected');
+            } else {
+                selectedForComparison.splice(index, 1);
+                if (card) card.classList.remove('selected');
+            }
+            
+            updateCompareUI();
+        }
+
+        function updateCompareUI() {
+            const selectedDiv = document.getElementById('selectedSessions');
+            const compareBtn = document.getElementById('compareBtn');
+            const exportBtn = document.getElementById('exportCompareBtn');
+            
+            if (selectedForComparison.length === 0) {
+                selectedDiv.innerHTML = 'Select sessions to compare (click on session cards)';
+                compareBtn.disabled = true;
+                exportBtn.disabled = true;
+            } else {
+                const sessionNames = selectedForComparison.map(id => {
+                    const session = allSessions.find(s => s.id === id);
+                    return session ? `${session.userName} (${new Date(session.sessionDate || session.createdAt).toLocaleDateString()})` : 'Unknown';
+                });
+                selectedDiv.innerHTML = `<strong>Selected Sessions:</strong> ${sessionNames.join(', ')}`;
+                compareBtn.disabled = selectedForComparison.length < 2;
+                exportBtn.disabled = !comparisonData;
+            }
+        }
+
+        function generateComparison() {
+            if (selectedForComparison.length < 2) return;
+            
+            const sessions = selectedForComparison.map(id => allSessions.find(s => s.id === id)).filter(Boolean);
+            comparisonData = {
+                sessions: sessions,
+                comparison: calculateComparison(sessions),
+                generatedAt: new Date()
+            };
+            
+            showMessage(`✅ Comparison generated for ${sessions.length} sessions!`, 'success');
+            document.getElementById('exportCompareBtn').disabled = false;
+        }
+
+        function calculateComparison(sessions) {
+            const comparison = {
+                totalSessions: sessions.length,
+                totals: {},
+                averages: {},
+                details: []
+            };
+            
+            let totalSales = 0, totalHours = 0, totalSalary = 0;
+            
+            sessions.forEach(session => {
+                const summary = session.summary || {};
+                totalSales += summary.totalSales || 0;
+                totalHours += summary.totalHours || 0;
+                totalSalary += summary.totalSalary || 0;
+                
+                comparison.details.push({
+                    userName: session.userName,
+                    location: session.userLocation,
+                    date: new Date(session.sessionDate || session.createdAt).toLocaleDateString(),
+                    sales: summary.totalSales || 0,
+                    hours: summary.totalHours || 0,
+                    salary: summary.totalSalary || 0,
+                    employeeCost: summary.totalSales > 0 ? ((summary.totalSalary / summary.totalSales) * 100) : 0
+                });
+            });
+            
+            comparison.totals = { totalSales, totalHours, totalSalary };
+            comparison.averages = {
+                avgSales: totalSales / sessions.length,
+                avgHours: totalHours / sessions.length,
+                avgSalary: totalSalary / sessions.length
+            };
+            
+            return comparison;
+        }
+
+        function exportComparisonPDF() {
+            if (!comparisonData) return;
+            
+            try {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+                
+                doc.setFontSize(20);
+                doc.setTextColor(99, 102, 241);
+                doc.text('📊 Session Comparison Report', 20, 30);
+                
+                doc.setFontSize(12);
+                doc.setTextColor(15, 23, 42);
+                doc.text(`Generated: ${comparisonData.generatedAt.toLocaleString()}`, 20, 45);
+                doc.text(`Comparing ${comparisonData.sessions.length} sessions`, 20, 55);
+                
+                doc.autoTable({
+                    startY: 70,
+                    head: [['Metric', 'Total', 'Average']],
+                    body: [
+                        ['Sales', `$${comparisonData.comparison.totals.totalSales.toFixed(2)}`, `$${comparisonData.comparison.averages.avgSales.toFixed(2)}`],
+                        ['Hours', formatHours(comparisonData.comparison.totals.totalHours), formatHours(comparisonData.comparison.averages.avgHours)],
+                        ['Salary', `$${comparisonData.comparison.totals.totalSalary.toFixed(2)}`, `$${comparisonData.comparison.averages.avgSalary.toFixed(2)}`]
+                    ],
+                    theme: 'grid',
+                    headStyles: { fillColor: [99, 102, 241] }
+                });
+                
+                doc.autoTable({
+                    startY: doc.lastAutoTable.finalY + 20,
+                    head: [['Employee', 'Location', 'Date', 'Sales', 'Hours', 'Salary', 'Cost %']],
+                    body: comparisonData.comparison.details.map(detail => [
+                        detail.userName,
+                        detail.location,
+                        detail.date,
+                        `$${detail.sales.toFixed(2)}`,
+                        formatHours(detail.hours),
+                        `$${detail.salary.toFixed(2)}`,
+                        `${detail.employeeCost.toFixed(1)}%`
+                    ]),
+                    theme: 'grid',
+                    headStyles: { fillColor: [99, 102, 241] }
+                });
+                
+                const filename = `Session_Comparison_${comparisonData.generatedAt.toISOString().split('T')[0]}.pdf`;
+                doc.save(filename);
+                
+                showMessage(`✅ Comparison PDF exported: ${filename}`, 'success');
+                
+            } catch (error) {
+                console.error('PDF Export Error:', error);
+                showMessage('❌ Error exporting comparison PDF', 'error');
+            }
+        }
+
+        // Utility Functions
+        function formatHours(hours) {
+            if (!hours || hours === 0) return '0:00';
+            const wholeHours = Math.floor(hours);
+            const minutes = Math.round((hours - wholeHours) * 60);
+            return `${wholeHours}:${minutes.toString().padStart(2, '0')}`;
+        }
+
+        function showMessage(text, type) {
+            const messagesDiv = document.getElementById('messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}`;
+            messageDiv.innerHTML = `<span>${text}</span>`;
+            messagesDiv.appendChild(messageDiv);
+            
+            setTimeout(() => {
+                messageDiv.remove();
+            }, 5000);
+        }
+
+        function showLoading() {
+            document.getElementById('loading').style.display = 'block';
+        }
+
+        function hideLoading() {
+            document.getElementById('loading').style.display = 'none';
+        }
+
+        // Action Functions
+        function refreshData() {
+            showLoading();
+            showMessage('🔄 Refreshing analytics data...', 'info');
+            
+            setTimeout(() => {
+                loadData();
+                renderDashboard();
+                hideLoading();
+                showMessage('✅ Analytics data refreshed successfully!', 'success');
+            }, 800);
+        }
+
+        function clearAllSessions() {
+            if (allSessions.length === 0) {
+                showMessage('❌ No sessions to clear', 'error');
+                return;
+            }
+            
+            if (confirm('⚠️ Are you sure you want to delete ALL sessions? This action cannot be undone.')) {
+                localStorage.removeItem('salaryCalc_sessions');
+                allSessions = [];
+                filteredSessions = [];
+                renderDashboard();
+                showMessage('✅ All sessions cleared successfully', 'success');
+            }
+        }
+
+        function deleteSessionConfirm(sessionId) {
+            if (confirm('⚠️ Are you sure you want to delete this session?')) {
+                deleteSession(sessionId);
+            }
+        }
+
+        function deleteSession(sessionId) {
+            if (!sessionId && currentSession) {
+                sessionId = currentSession.id;
+            }
+            
+            allSessions = allSessions.filter(s => s.id !== sessionId);
+            localStorage.setItem('salaryCalc_sessions', JSON.stringify(allSessions));
+            
+            loadData();
+            renderDashboard();
+            closeSessionModal();
+            showMessage('✅ Session deleted successfully', 'success');
+        }
+
+        function loadSessionInCalculator(sessionId) {
+            sessionStorage.setItem('loadSessionId', sessionId);
+            window.location.href = '/';
+        }
+
+        function closeSessionModal() {
+            document.getElementById('sessionModal').style.display = 'none';
+            currentSession = null;
+        }
+
+        function closeLocationModal() {
+            document.getElementById('locationModal').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
+</html> 

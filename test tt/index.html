@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XLS File Viewer</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .upload-section {
+            padding: 40px;
+            text-align: center;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            display: inline-block;
+            margin: 20px 0;
+        }
+
+        .file-input {
+            position: absolute;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+
+        .file-input-label {
+            display: inline-block;
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .file-input-label:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+        }
+
+        .file-info {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            display: none;
+        }
+
+        .file-info.show {
+            display: block;
+        }
+
+        .table-container {
+            padding: 20px;
+            overflow-x: auto;
+            display: none;
+        }
+
+        .table-container.show {
+            display: block;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .data-table th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .data-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+            font-size: 0.9rem;
+        }
+
+        .data-table tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .data-table tr:nth-child(even) {
+            background-color: #fafbfc;
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        .sheet-selector {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            display: none;
+        }
+
+        .sheet-selector.show {
+            display: block;
+        }
+
+        .sheet-selector select {
+            padding: 10px 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            background: white;
+            cursor: pointer;
+        }
+
+        .sheet-selector select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .container {
+                margin: 10px;
+                border-radius: 15px;
+            }
+            
+            .upload-section {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 XLS File Viewer</h1>
+            <p>Upload and view your Excel files with style</p>
+        </div>
+
+        <div class="upload-section">
+            <div class="file-input-wrapper">
+                <input type="file" id="fileInput" class="file-input" accept=".xls,.xlsx" />
+                <label for="fileInput" class="file-input-label">
+                    📁 Choose XLS/XLSX File
+                </label>
+            </div>
+
+            <div class="file-info" id="fileInfo">
+                <strong>Selected file:</strong> <span id="fileName"></span>
+            </div>
+
+            <div class="sheet-selector" id="sheetSelector">
+                <label for="sheetSelect"><strong>Select Sheet:</strong></label>
+                <select id="sheetSelect"></select>
+            </div>
+
+            <div class="loading" id="loading" style="display: none;">
+                <div class="spinner"></div>
+                <p>Processing file...</p>
+            </div>
+        </div>
+
+        <div class="table-container" id="tableContainer">
+            <div class="no-data" id="noData">
+                No data to display. Please upload an XLS/XLSX file.
+            </div>
+            <table class="data-table" id="dataTable" style="display: none;"></table>
+        </div>
+    </div>
+
+    <script>
+        let workbook = null;
+        let currentSheet = null;
+
+        document.getElementById('fileInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                // Show file info
+                document.getElementById('fileName').textContent = file.name;
+                document.getElementById('fileInfo').classList.add('show');
+                
+                // Show loading
+                document.getElementById('loading').style.display = 'block';
+                document.getElementById('tableContainer').classList.add('show');
+                document.getElementById('noData').style.display = 'none';
+                document.getElementById('dataTable').style.display = 'none';
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const data = new Uint8Array(e.target.result);
+                        workbook = XLSX.read(data, { type: 'array' });
+                        
+                        // Populate sheet selector
+                        const sheetSelect = document.getElementById('sheetSelect');
+                        sheetSelect.innerHTML = '';
+                        workbook.SheetNames.forEach((sheetName, index) => {
+                            const option = document.createElement('option');
+                            option.value = index;
+                            option.textContent = sheetName;
+                            sheetSelect.appendChild(option);
+                        });
+
+                        // Show sheet selector
+                        document.getElementById('sheetSelector').classList.add('show');
+                        
+                        // Load first sheet
+                        loadSheet(0);
+                        
+                        // Hide loading
+                        document.getElementById('loading').style.display = 'none';
+                    } catch (error) {
+                        console.error('Error reading file:', error);
+                        alert('Error reading file. Please make sure it\'s a valid XLS/XLSX file.');
+                        document.getElementById('loading').style.display = 'none';
+                    }
+                };
+                reader.readAsArrayBuffer(file);
+            }
+        });
+
+        document.getElementById('sheetSelect').addEventListener('change', function(e) {
+            loadSheet(parseInt(e.target.value));
+        });
+
+        function loadSheet(sheetIndex) {
+            if (!workbook || sheetIndex >= workbook.SheetNames.length) return;
+
+            currentSheet = workbook.Sheets[workbook.SheetNames[sheetIndex]];
+            const jsonData = XLSX.utils.sheet_to_json(currentSheet, { header: 1 });
+
+            if (jsonData.length === 0) {
+                document.getElementById('noData').style.display = 'block';
+                document.getElementById('dataTable').style.display = 'none';
+                return;
+            }
+
+            // Create table
+            const table = document.getElementById('dataTable');
+            table.innerHTML = '';
+
+            // Create header
+            const thead = document.createElement('thead');
+            const headerRow = document.createElement('tr');
+            
+            if (jsonData.length > 0) {
+                jsonData[0].forEach((cell, index) => {
+                    const th = document.createElement('th');
+                    th.textContent = cell || `Column ${index + 1}`;
+                    headerRow.appendChild(th);
+                });
+            }
+            
+            thead.appendChild(headerRow);
+            table.appendChild(thead);
+
+            // Create body
+            const tbody = document.createElement('tbody');
+            for (let i = 1; i < jsonData.length; i++) {
+                const row = document.createElement('tr');
+                jsonData[i].forEach(cell => {
+                    const td = document.createElement('td');
+                    td.textContent = cell || '';
+                    row.appendChild(td);
+                });
+                tbody.appendChild(row);
+            }
+            table.appendChild(tbody);
+
+            // Show table
+            document.getElementById('noData').style.display = 'none';
+            table.style.display = 'table';
+        }
+    </script>
+</body>
+</html> 

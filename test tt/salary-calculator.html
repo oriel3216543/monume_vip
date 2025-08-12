@@ -1,0 +1,2419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SalaryPro - Professional Calculator</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #f5a069;
+            --primary-dark: #e8944d;
+            --primary-light: #f8b587;
+            --secondary: #2c3e50;
+            --success: #27ae60;
+            --danger: #e74c3c;
+            --warning: #f39c12;
+            --dark: #2c3e50;
+            --light: #ecf0f1;
+            --white: #ffffff;
+            --gray-100: #f8f9fa;
+            --gray-200: #e9ecef;
+            --gray-300: #dee2e6;
+            --gray-400: #ced4da;
+            --gray-500: #adb5bd;
+            --shadow: 0 4px 15px rgba(245, 160, 105, 0.15);
+            --shadow-hover: 0 8px 25px rgba(245, 160, 105, 0.25);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #f5a069 0%, #f8b587 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 40px;
+            text-align: center;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+            border: 2px solid var(--primary);
+        }
+
+        .header h1 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            color: var(--secondary);
+            font-weight: 500;
+        }
+
+        /* Card */
+        .card {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 25px;
+            box-shadow: var(--shadow);
+            border: 2px solid var(--gray-200);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+            border-color: var(--primary);
+        }
+
+        .card-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 10px;
+        }
+
+        .card-title .icon {
+            font-size: 1.5rem;
+        }
+
+        /* User Selection */
+        .user-selection {
+            display: grid;
+            grid-template-columns: 1fr auto auto;
+            gap: 15px;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .form-select, .form-input {
+            background: var(--white);
+            border: 2px solid var(--gray-300);
+            border-radius: 12px;
+            padding: 12px 16px;
+            font-size: 1rem;
+            font-weight: 500;
+            font-family: inherit;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .form-select:focus, .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(245, 160, 105, 0.1);
+        }
+
+        /* Buttons */
+        .btn {
+            background: var(--primary);
+            color: var(--white);
+            border: none;
+            border-radius: 12px;
+            padding: 12px 20px;
+            font-size: 1rem;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .btn:disabled {
+            background: var(--gray-400);
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Session Selection Styles */
+        .session-select-card input[type="checkbox"]:checked + div {
+            background: rgba(245, 160, 105, 0.1) !important;
+            border-color: var(--primary) !important;
+        }
+
+        .session-select-card:hover > div {
+            border-color: var(--primary) !important;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow) !important;
+        }
+
+        .btn.secondary {
+            background: var(--secondary);
+        }
+
+        .btn.secondary:hover {
+            background: #34495e;
+        }
+
+        .btn.success {
+            background: var(--success);
+        }
+
+        .btn.success:hover {
+            background: #229954;
+        }
+
+        .btn.danger {
+            background: var(--danger);
+        }
+
+        .btn.danger:hover {
+            background: #c0392b;
+        }
+
+        /* File Upload */
+        .upload-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-bottom: 25px;
+        }
+
+        .upload-area {
+            background: var(--gray-100);
+            border: 2px dashed var(--primary);
+            border-radius: 16px;
+            padding: 40px 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .upload-area:hover {
+            background: rgba(245, 160, 105, 0.1);
+            border-color: var(--primary-dark);
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        .upload-text {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 8px;
+        }
+
+        .upload-hint {
+            font-size: 0.9rem;
+            color: var(--gray-500);
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .file-selected {
+            background: rgba(245, 160, 105, 0.2);
+            border-color: var(--primary);
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .stat-card {
+            background: var(--white);
+            border: 2px solid var(--primary);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .stat-icon {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--gray-500);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Tables */
+        .table-container {
+            background: var(--white);
+            border-radius: 12px;
+            border: 2px solid var(--primary);
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table th {
+            background: var(--primary);
+            color: var(--white);
+            padding: 15px 12px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .table td {
+            padding: 12px;
+            text-align: center;
+            border-bottom: 1px solid var(--gray-200);
+            background: var(--white);
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .table tbody tr:hover td {
+            background: var(--gray-100);
+        }
+
+        .table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Editable Cells */
+        .editable-cell {
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .editable-cell:hover {
+            background: rgba(245, 160, 105, 0.1) !important;
+            color: var(--primary);
+        }
+
+        .editing {
+            background: rgba(245, 160, 105, 0.2) !important;
+        }
+
+        .cell-input {
+            width: 100%;
+            border: 2px solid var(--primary);
+            border-radius: 6px;
+            padding: 6px 10px;
+            font-size: 0.9rem;
+            font-family: inherit;
+            background: var(--white);
+            outline: none;
+        }
+
+        /* User Info Display */
+        .user-info {
+            background: rgba(245, 160, 105, 0.1);
+            border: 2px solid var(--primary);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .tier-display {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .tier-card {
+            background: var(--white);
+            border: 1px solid var(--primary);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .tier-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+
+        /* Messages */
+        .message {
+            padding: 15px 20px;
+            border-radius: 12px;
+            margin: 15px 0;
+            font-weight: 500;
+            border-left: 4px solid;
+            animation: slideIn 0.4s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(-20px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .message.success {
+            background: rgba(39, 174, 96, 0.1);
+            border-color: var(--success);
+            color: #27ae60;
+        }
+
+        .message.error {
+            background: rgba(231, 76, 60, 0.1);
+            border-color: var(--danger);
+            color: #e74c3c;
+        }
+
+        .message.info {
+            background: rgba(245, 160, 105, 0.1);
+            border-color: var(--primary);
+            color: var(--primary-dark);
+        }
+
+        .message.warning {
+            background: rgba(243, 156, 18, 0.1);
+            border-color: var(--warning);
+            color: #f39c12;
+        }
+
+        /* Loading */
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 30px;
+            background: var(--gray-100);
+            border-radius: 12px;
+            border: 2px solid var(--primary);
+        }
+
+        .spinner {
+            width: 30px;
+            height: 30px;
+            border: 3px solid var(--gray-300);
+            border-top: 3px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Hidden */
+        .hidden {
+            display: none !important;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2.2rem;
+            }
+            
+            .upload-section {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .user-selection {
+                grid-template-columns: 1fr;
+            gap: 15px;
+        }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .card {
+                padding: 20px;
+            }
+            
+            .tier-display {
+                grid-template-columns: 1fr;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--gray-200);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-dark);
+        }
+
+        /* Calculation Mode Selector */
+        .mode-option {
+            background: var(--white);
+            border: 2px solid var(--gray-200);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .mode-option:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .mode-option.active {
+            border-color: var(--primary);
+            background: rgba(245, 160, 105, 0.1);
+            box-shadow: var(--shadow);
+        }
+        
+        .btn.success {
+            background: var(--success);
+            color: var(--white);
+        }
+        
+        .btn.success:hover {
+            background: #219a52;
+        }
+
+        .mode-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .mode-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 8px;
+        }
+
+        .mode-description {
+            font-size: 0.9rem;
+            color: var(--gray-500);
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+
+        .mode-status {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--success);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>💼 SalaryPro</h1>
+            <p>Professional Salary Calculator & Analytics Platform</p>
+        </div>
+
+        <!-- User Selection -->
+        <div class="card">
+            <div class="card-title">
+                <span class="icon">👤</span>
+                Employee Selection
+            </div>
+            <div class="user-selection">
+                <select id="userSelect" class="form-select" required>
+                    <option value="">Choose an employee to continue...</option>
+                </select>
+                <a href="/users" class="btn secondary">⚙️ Manage Users</a>
+                <a href="/history" class="btn">📊 History</a>
+            </div>
+            </div>
+
+        <!-- User Info Display -->
+        <div class="card hidden" id="userInfoSection">
+            <div class="card-title">
+                <span class="icon">⭐</span>
+                Selected Employee Profile
+                <button class="btn" onclick="toggleEmployeeProfile()" id="profileToggleBtn" style="margin-left: auto; font-size: 0.9rem;">👁️ Show Profile</button>
+            </div>
+            <div id="userInfoDisplay" class="user-info hidden"></div>
+        </div>
+
+        <!-- Calculation Mode Selector -->
+        <div class="card" id="calculationModeSection">
+            <div class="card-title">
+                <span class="icon">⚙️</span>
+                Calculation Method
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                <div class="mode-option" onclick="selectCalculationMode('hourly')" id="hourlyMode">
+                    <div class="mode-icon">💵</div>
+                    <div class="mode-title">H Rate</div>
+                    <div class="mode-description">Hourly rate calculation based on tiers</div>
+                    <div class="mode-status" id="hourlyStatus">✅ Selected</div>
+                </div>
+                <div class="mode-option" onclick="selectCalculationMode('commission')" id="commissionMode">
+                    <div class="mode-icon">📊</div>
+                    <div class="mode-title">Comm + H Pay</div>
+                    <div class="mode-description">Commission from Nove + Hourly pay from Connecteam</div>
+                    <div class="mode-status" id="commissionStatus"></div>
+                </div>
+                    </div>
+
+            <!-- Hourly Pay Input (hidden by default) -->
+            <div id="hourlyPaySection" class="hidden" style="background: rgba(245, 160, 105, 0.1); border: 2px solid var(--primary); border-radius: 12px; padding: 20px;">
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <label style="font-weight: 600; color: var(--dark); font-size: 1rem;">💰 Base Hourly Pay:</label>
+                    <input type="number" id="baseHourlyPay" class="form-input" placeholder="18.00" value="18.00" step="0.01" min="0" style="width: 120px;">
+                    <span style="color: var(--dark); font-weight: 500;">$/hour</span>
+                </div>
+                <div style="font-size: 0.9rem; color: var(--gray-500); margin-top: 8px;">💡 This rate will be multiplied by hours from Connecteam file</div>
+            </div>
+                    </div>
+
+        <!-- File Upload -->
+        <div class="card">
+            <div class="card-title">
+                <span class="icon">📁</span>
+                Data Import Center
+            </div>
+            <div class="upload-section">
+                <!-- Nove Sheet Upload -->
+                <div class="upload-area" onclick="document.getElementById('noveFile').click()">
+                    <div class="upload-icon">📊</div>
+                    <div class="upload-text">Nove Sheet</div>
+                    <div class="upload-hint">Sales & Revenue Data</div>
+                    <input type="file" id="noveFile" class="file-input" accept=".xlsx,.xls">
+                    </div>
+
+                <!-- Connecteam Sheet Upload -->
+                <div class="upload-area" onclick="document.getElementById('connecteamFile').click()">
+                    <div class="upload-icon">⏰</div>
+                    <div class="upload-text">Connecteam Sheet</div>
+                    <div class="upload-hint">Time & Hours Data</div>
+                    <input type="file" id="connecteamFile" class="file-input" accept=".xlsx,.xls">
+                    </div>
+                </div>
+
+            <div class="stats-grid" id="fileStats">
+                <div class="stat-card">
+                    <div class="stat-icon">📄</div>
+                    <div class="stat-value" id="noveRows">0</div>
+                    <div class="stat-label">Nove Records</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🕒</div>
+                    <div class="stat-value" id="connecteamRows">0</div>
+                    <div class="stat-label">Time Records</div>
+                    </div>
+                </div>
+            </div>
+
+        <!-- Processing Section -->
+        <div class="card">
+            <div class="card-title">
+                <span class="icon">⚙️</span>
+                Data Processing
+            </div>
+            <div style="text-align: center;">
+                <button id="processBtn" class="btn success" disabled onclick="processAndCombineData()">
+                    📁 Upload both files first
+                </button>
+                    </div>
+                </div>
+
+        <!-- Combined Data Preview -->
+        <div class="card hidden" id="combinedDataSection">
+            <div class="card-title">
+                <span class="icon">🔄</span>
+                Data Preview
+                <button class="btn" onclick="toggleDataPreview()" id="previewToggleBtn" style="margin-left: auto; font-size: 0.9rem;">👁️ Show Details</button>
+                    </div>
+            <div id="dataPreviewContent" class="hidden">
+                <!-- Nove Data Section -->
+                <div style="margin-bottom: 30px;">
+                    <h4 style="color: var(--primary); margin-bottom: 15px; font-size: 1.2rem; border-bottom: 2px solid var(--primary); padding-bottom: 8px;">📊 Nove Sheet Data (Sales & Revenue)</h4>
+                    <div class="table-container">
+                        <table class="table" id="noveDataTable">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Sales Total ($)</th>
+                                    <th>Refund ($)</th>
+                                    <th>Net Sales ($)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="noveDataBody">
+                            </tbody>
+                        </table>
+                </div>
+                </div>
+
+                <!-- Connecteam Data Section -->
+                <div style="margin-bottom: 30px;">
+                    <h4 style="color: var(--primary); margin-bottom: 15px; font-size: 1.2rem; border-bottom: 2px solid var(--primary); padding-bottom: 8px;">⏰ Connecteam Sheet Data (Time & Hours)</h4>
+                    <div class="table-container">
+                        <table class="table" id="connecteamDataTable">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Hours Worked</th>
+                                </tr>
+                            </thead>
+                            <tbody id="connecteamDataBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Combined Final Data -->
+                <div>
+                    <h4 style="color: var(--primary); margin-bottom: 15px; font-size: 1.2rem; border-bottom: 2px solid var(--primary); padding-bottom: 8px;">🔄 Combined Final Data</h4>
+                    <div class="table-container">
+                        <table class="table" id="combinedDataTable">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Sales ($)</th>
+                            <th>Hours</th>
+                        </tr>
+                    </thead>
+                            <tbody id="combinedDataBody">
+                    </tbody>
+                </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+        <!-- Salary Results -->
+        <div class="card hidden" id="salaryResultsSection">
+            <div class="card-title">
+                <span class="icon">💰</span>
+                Salary Calculation Results
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <button class="btn" onclick="recalculateSalaries()">🔄 Recalculate</button>
+                <button class="btn secondary" onclick="saveSession()">💾 Save Session</button>
+                <button class="btn" onclick="openCompareModal()">📊 Compare</button>
+                <button class="btn success" onclick="exportResults()">📄 Export</button>
+                <button class="btn" onclick="copyResults()">📋 Copy</button>
+            </div>
+
+            <!-- Results Table -->
+            <div class="table-container">
+                <table class="table" id="salaryResultsTable">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Sales ($)</th>
+                            <th>Rate</th>
+                            <th>Hours</th>
+                            <th>Salary ($)</th>
+                            <th>Cost (%)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="salaryResultsBody">
+                    </tbody>
+                </table>
+                </div>
+
+            <!-- Summary Stats -->
+            <div class="stats-grid" id="summaryStats">
+                <!-- Stats will be populated here -->
+            </div>
+                </div>
+
+        <!-- Messages -->
+        <div id="messages"></div>
+    </div>
+
+    <!-- Compare Sessions Modal -->
+    <div id="compareModal" class="modal" style="display: none;">
+        <div class="modal-content" style="max-width: 800px; max-height: 90vh; overflow-y: auto;">
+            <div class="modal-header">
+                <h3>📊 Compare Sessions</h3>
+                <button class="close-btn" onclick="closeCompareModal()">&times;</button>
+            </div>
+            
+            <div class="modal-body">
+                <!-- Session Selection -->
+                <div style="margin-bottom: 30px;">
+                    <h4 style="color: var(--primary); margin-bottom: 15px;">Select Sessions to Compare:</h4>
+                    <div id="sessionsList" style="max-height: 200px; overflow-y: auto; border: 1px solid var(--gray-200); border-radius: 8px; padding: 15px;">
+                        <!-- Sessions will be populated here -->
+                    </div>
+                    <div style="margin-top: 15px; text-align: center;">
+                        <button class="btn" onclick="generateComparison()" id="generateCompareBtn" disabled>📊 Generate Comparison</button>
+                        <button class="btn success" onclick="exportComparisonPDF()" id="exportCompareBtn" disabled>📄 Export PDF</button>
+                    </div>
+                </div>
+                
+                <!-- Comparison Results -->
+                <div id="comparisonResults" style="display: none;">
+                    <h4 style="color: var(--primary); margin-bottom: 15px;">📈 Comparison Results:</h4>
+                    <div id="comparisonContent">
+                        <!-- Comparison content will be populated here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let currentUser = null;
+        let users = [];
+        let locations = [];
+        let noveData = [];
+        let connecteamData = [];
+        let combinedData = [];
+        let calculationMode = 'hourly'; // 'hourly' or 'commission'
+        
+        // Global error handling
+        window.addEventListener('error', function(e) {
+            console.error('💥 JavaScript Error:', e.error);
+            if (typeof showMessage === 'function') {
+                showMessage('❌ An error occurred. Check console for details.', 'error');
+            }
+        });
+
+        // Calculation Mode Functions
+        function selectCalculationMode(mode) {
+            calculationMode = mode;
+            
+            // Update UI
+            const hourlyMode = document.getElementById('hourlyMode');
+            const commissionMode = document.getElementById('commissionMode');
+            const hourlyStatus = document.getElementById('hourlyStatus');
+            const commissionStatus = document.getElementById('commissionStatus');
+            const hourlyPaySection = document.getElementById('hourlyPaySection');
+            
+            if (mode === 'hourly') {
+                hourlyMode.classList.add('active');
+                commissionMode.classList.remove('active');
+                hourlyStatus.textContent = '✅ Selected';
+                commissionStatus.textContent = '';
+                hourlyPaySection.classList.add('hidden');
+            } else {
+                hourlyMode.classList.remove('active');
+                commissionMode.classList.add('active');
+                hourlyStatus.textContent = '';
+                commissionStatus.textContent = '✅ Selected';
+                hourlyPaySection.classList.remove('hidden');
+            }
+            
+            // Update table headers and recalculate if data exists
+            setTimeout(() => {
+                updateTableHeaders();
+                if (combinedData.length > 0) {
+                    calculateSalaries();
+                }
+            }, 100);
+        }
+
+        function updateTableHeaders() {
+            const table = document.getElementById('salaryResultsTable');
+            if (!table) {
+                console.warn('⚠️ Salary results table not found');
+                return;
+            }
+            
+            const thead = table.querySelector('thead tr');
+            if (!thead) {
+                console.warn('⚠️ Table header not found');
+                return;
+            }
+
+            console.log(`🔄 Updating table headers for mode: ${calculationMode}`);
+            
+            if (calculationMode === 'commission') {
+                thead.innerHTML = `
+                    <th>Date</th>
+                    <th>Sales ($)</th>
+                    <th>Hours</th>
+                    <th>Hourly Pay ($)</th>
+                    <th>Comm ($)</th>
+                    <th>Salary ($)</th>
+                    <th>Cost (%)</th>
+                `;
+            } else {
+                thead.innerHTML = `
+                    <th>Date</th>
+                    <th>Sales ($)</th>
+                    <th>Rate ($/hr)</th>
+                    <th>Hours</th>
+                    <th>Salary ($)</th>
+                    <th>Cost (%)</th>
+                `;
+            }
+            console.log('✅ Table headers updated successfully');
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            try {
+                console.log('🚀 Initializing salary calculator...');
+                loadUsers();
+                renderUserSelect();
+                setupEventListeners();
+                checkProcessReady();
+                
+                // Initialize calculation mode with delay to ensure DOM is ready
+                setTimeout(() => {
+                    selectCalculationMode('hourly');
+                    const hourlyMode = document.getElementById('hourlyMode');
+                    if (hourlyMode) {
+                        hourlyMode.classList.add('active');
+                    }
+                }, 50);
+                
+                console.log('✅ Calculator initialized successfully');
+            } catch (error) {
+                console.error('❌ Error during initialization:', error);
+            }
+        });
+
+        function setupEventListeners() {
+            // User selection
+            document.getElementById('userSelect').addEventListener('change', handleUserSelection);
+            
+            // File uploads
+            document.getElementById('noveFile').addEventListener('change', (e) => handleFileUpload(e, 'nove'));
+            document.getElementById('connecteamFile').addEventListener('change', (e) => handleFileUpload(e, 'connecteam'));
+            
+            // Base hourly pay input listener
+            document.getElementById('baseHourlyPay').addEventListener('input', function() {
+                if (combinedData.length > 0 && calculationMode === 'commission') {
+                    calculateSalaries();
+                }
+            });
+
+            // Window focus event for user data refresh
+            window.addEventListener('focus', function() {
+                loadUsers();
+                renderUserSelect();
+                if (currentUser) {
+                    const userStillExists = users.find(u => u.id === currentUser.id);
+                    if (userStillExists) {
+                        document.getElementById('userSelect').value = currentUser.id;
+                        currentUser = userStillExists;
+                        displayUserInfo();
+                    } else {
+                        currentUser = null;
+                        hideUserInfo();
+                        showMessage('Previously selected user no longer exists', 'info');
+                    }
+                    checkProcessReady();
+                }
+            });
+        }
+
+        // User Management Functions
+        function loadUsers() {
+            const savedUsers = localStorage.getItem('salaryCalc_users');
+            if (savedUsers) {
+                users = JSON.parse(savedUsers);
+            }
+            
+            const savedLocations = localStorage.getItem('salaryCalc_locations');
+            if (savedLocations) {
+                locations = JSON.parse(savedLocations);
+            }
+        }
+
+        function renderUserSelect() {
+            const select = document.getElementById('userSelect');
+            const currentValue = select.value;
+            
+            select.innerHTML = '<option value="">Choose an employee to continue...</option>';
+            
+            users.forEach(user => {
+                const option = document.createElement('option');
+                option.value = user.id;
+                option.textContent = `${user.name} (${user.location})`;
+                select.appendChild(option);
+            });
+            
+            if (currentValue) {
+                select.value = currentValue;
+            }
+        }
+
+        function handleUserSelection() {
+            const userId = document.getElementById('userSelect').value;
+            if (userId) {
+                currentUser = users.find(u => u.id === userId);
+                showMessage(`Selected employee: ${currentUser.name}`, 'success');
+                displayUserInfo();
+                checkProcessReady();
+            } else {
+                currentUser = null;
+                hideUserInfo();
+                checkProcessReady();
+            }
+        }
+
+        function displayUserInfo() {
+            const container = document.getElementById('userInfoDisplay');
+            const section = document.getElementById('userInfoSection');
+            
+            if (!currentUser) {
+                section.classList.add('hidden');
+                return;
+            }
+            
+            let tiersHtml = '';
+            if (currentUser.tiers && currentUser.tiers.length > 0) {
+                tiersHtml = `
+                    <div class="tier-display">
+                        ${currentUser.tiers.map(tier => `
+                            <div class="tier-card">
+                                <div style="font-weight: 600; color: var(--primary); margin-bottom: 5px;">
+                                    $${tier.threshold}+ Sales
+                                </div>
+                                <div style="font-size: 1.1rem; font-weight: 700;">
+                                    ${tier.type === 'commission' ? `${tier.rate}%` : `$${tier.rate}/hr`}
+                                </div>
+                                <div style="font-size: 0.8rem; color: var(--gray-500);">
+                                    ${tier.type === 'commission' ? 'Commission' : 'Hourly Rate'}
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+            
+            container.innerHTML = `
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 15px;">
+                    <div><strong>👤 Name:</strong> ${currentUser.name}</div>
+                    <div><strong>📍 Location:</strong> ${currentUser.location}</div>
+                    <div><strong>⭐ Tiers:</strong> ${currentUser.tiers?.length || 0} configured</div>
+                </div>
+                ${tiersHtml}
+            `;
+            
+            section.classList.remove('hidden');
+            
+            // Keep the profile content hidden by default
+            const profileToggleBtn = document.getElementById('profileToggleBtn');
+            if (profileToggleBtn && !profileToggleBtn.innerHTML.includes('Hide')) {
+                container.classList.add('hidden');
+            }
+        }
+
+        function hideUserInfo() {
+            document.getElementById('userInfoSection').classList.add('hidden');
+        }
+
+        // File Upload Functions
+        function handleFileUpload(event, type) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const uploadArea = event.target.closest('.upload-area');
+            uploadArea.classList.add('file-selected');
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const firstSheetName = workbook.SheetNames[0];
+                    const worksheet = workbook.Sheets[firstSheetName];
+                    const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+                    
+                    if (type === 'nove') {
+                        processNoveData(jsonData);
+                    } else if (type === 'connecteam') {
+                        processConnecteamData(jsonData);
+                    }
+                    
+                    updateFileStats();
+                    checkProcessReady();
+                    showMessage(`✅ ${type} file uploaded successfully`, 'success');
+                } catch (error) {
+                    showMessage(`❌ Error processing ${type} file: ${error.message}`, 'error');
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        function processNoveData(jsonData) {
+            noveData = [];
+            const processedDates = new Set(); // Track processed dates to avoid duplicates
+            
+            console.log('🔵 PROCESSING NOVE DATA');
+            
+            for (let i = 1; i < jsonData.length; i++) {
+                const row = jsonData[i];
+                if (row[0] && row[2] !== undefined && row[4] !== undefined) {
+                    console.log(`Raw Nove date from Excel: ${row[0]} (type: ${typeof row[0]})`);
+                    const date = convertExcelDate(row[0]);
+                    console.log(`Converted Nove date: "${date}"`);
+                    
+                    const commission = parseFloat(row[1]) || 0; // Column B - Commission
+                    const salesTotal = parseFloat(row[2]) || 0; // Column C - Sales Total
+                    const refund = parseFloat(row[4]) || 0;     // Column E - Refund
+                    const sales = salesTotal - refund;
+                    
+                    // Only take the FIRST occurrence of each date (avoid duplicates)
+                    if (!processedDates.has(date)) {
+                        processedDates.add(date);
+                        noveData.push({
+                            date: date,
+                            commission: commission,    // NEW: Column B
+                            salesTotal: salesTotal,
+                            refund: refund,
+                            sales: sales
+                        });
+                        console.log(`✅ NOVE: Added "${date}" with $${sales} sales, $${commission} commission`);
+                    } else {
+                        console.log(`⚠️ NOVE: Skipped duplicate date "${date}"`);
+                    }
+                }
+            }
+            console.log(`📊 NOVE: Final processed dates:`, noveData.map(d => d.date));
+            console.log(`📊 NOVE: Processed ${noveData.length} unique dates`);
+        }
+
+        function processConnecteamData(jsonData) {
+            connecteamData = [];
+            const processedDates = new Set(); // Track processed dates to avoid duplicates
+            
+            console.log('🟠 PROCESSING CONNECTEAM DATA');
+            
+            for (let i = 1; i < jsonData.length; i++) {
+                const row = jsonData[i];
+                // Only process if BOTH G (date) and L (hours) exist and are not missing
+                if (row[6] && row[11] !== undefined && row[11] !== null && row[11] !== '') {
+                    console.log(`Raw Connecteam date from Excel: ${row[6]} (type: ${typeof row[6]})`);
+                    const date = convertExcelDate(row[6]);
+                    console.log(`Converted Connecteam date: "${date}"`);
+                    
+                    const hours = parseHoursInput(row[11]);
+                    
+                    // Only take the FIRST occurrence of each date (avoid duplicates)
+                    if (!processedDates.has(date)) {
+                        processedDates.add(date);
+                        connecteamData.push({
+                    date: date,
+                    hours: hours
+                        });
+                        console.log(`✅ CONNECTEAM: Added "${date}" with ${hours} hours`);
+                    } else {
+                        console.log(`⚠️ CONNECTEAM: Skipped duplicate date "${date}"`);
+                    }
+                }
+            }
+            console.log(`📊 CONNECTEAM: Final processed dates:`, connecteamData.map(d => d.date));
+            console.log(`📊 CONNECTEAM: Processed ${connecteamData.length} unique dates`);
+        }
+
+        function updateFileStats() {
+            document.getElementById('noveRows').textContent = noveData.length;
+            document.getElementById('connecteamRows').textContent = connecteamData.length;
+        }
+
+        function checkProcessReady() {
+            const btn = document.getElementById('processBtn');
+            if (noveData.length > 0 && connecteamData.length > 0 && currentUser) {
+                btn.disabled = false;
+                btn.textContent = '🔄 Process & Combine Data';
+                btn.classList.remove('disabled');
+            } else {
+                btn.disabled = true;
+                if (!currentUser) {
+                    btn.textContent = '❌ Select an employee first';
+                } else {
+                    btn.textContent = '📁 Upload both files first';
+                }
+            }
+        }
+
+        // Data Processing Functions
+        function processAndCombineData() {
+            if (!currentUser || noveData.length === 0 || connecteamData.length === 0) {
+                showMessage('❌ Please select a user and upload both files', 'error');
+                return;
+            }
+
+            // COMPLETELY CLEAR all previous data
+            combinedData = [];
+            
+            console.log('🔄 STARTING FRESH DATA COMBINATION PROCESS');
+            console.log('🧹 Cleared previous combined data');
+            
+            // Create date maps for faster lookup
+            const noveByDate = {};
+            const connecteamByDate = {};
+            
+            // Map Nove data by date
+            noveData.forEach(row => {
+                noveByDate[row.date] = {
+                    sales: row.sales,
+                    commission: row.commission
+                };
+            });
+            
+            // Map Connecteam data by date
+            connecteamData.forEach(row => {
+                connecteamByDate[row.date] = row.hours;
+            });
+            
+            // Get ALL unique dates from BOTH files
+            const allDates = new Set([
+                ...Object.keys(noveByDate),
+                ...Object.keys(connecteamByDate)
+            ]);
+            
+            console.log('🔍 NOVE DATES:', Object.keys(noveByDate));
+            console.log('🔍 CONNECTEAM DATES:', Object.keys(connecteamByDate)); 
+            console.log('🔍 ALL UNIQUE DATES:', Array.from(allDates));
+            
+            // Check for date format differences
+            const noveDatesArray = Object.keys(noveByDate);
+            const connecteamDatesArray = Object.keys(connecteamByDate);
+            
+            console.log('🔍 DETAILED DATE COMPARISON:');
+            noveDatesArray.forEach(noveDate => {
+                const match = connecteamDatesArray.find(connDate => connDate === noveDate);
+                if (match) {
+                    console.log(`✅ MATCH FOUND: "${noveDate}" appears in both files`);
+                } else {
+                    console.log(`❌ NO MATCH: "${noveDate}" only in Nove`);
+                    // Check for similar dates
+                    connecteamDatesArray.forEach(connDate => {
+                        if (connDate.includes(noveDate.substring(0, 8))) {
+                            console.log(`🔍 SIMILAR: Nove "${noveDate}" vs Connecteam "${connDate}"`);
+                        }
+                    });
+                }
+            });
+            
+            connecteamDatesArray.forEach(connDate => {
+                const match = noveDatesArray.find(noveDate => noveDate === connDate);
+                if (!match) {
+                    console.log(`❌ NO MATCH: "${connDate}" only in Connecteam`);
+                }
+            });
+
+                        // Create ONE ROW per unique date, combining data from both files
+            Array.from(allDates).sort().forEach((date, index) => {
+                const noveEntry = noveByDate[date] || { sales: 0, commission: 0 };
+                const hoursFromConnecteam = connecteamByDate[date] || 0; // Hours from Connecteam file (or 0)
+                
+                console.log(`📊 COMBINING DATE ${index + 1}: ${date}`);
+                console.log(`   Sales from Nove: $${noveEntry.sales}`);
+                console.log(`   Commission from Nove: $${noveEntry.commission}`);
+                console.log(`   Hours from Connecteam: ${hoursFromConnecteam}`);
+                
+                // Double-check: ensure this date isn't already in combinedData
+                const existingEntry = combinedData.find(row => row.date === date);
+                if (existingEntry) {
+                    console.error(`❌ DUPLICATE DATE DETECTED: ${date} - SKIPPING!`);
+                return;
+            }
+
+                combinedData.push({
+                    date: date,
+                    sales: noveEntry.sales,
+                    commission: noveEntry.commission,  // NEW: Commission data
+                    hours: hoursFromConnecteam
+                });
+                
+                console.log(`✅ Added combined row ${combinedData.length}: ${date}`);
+            });
+
+            console.log('✅ FINAL COMBINED DATA (one row per date):', combinedData);
+            console.log(`✅ Total rows created: ${combinedData.length}`);
+
+            displayCombinedData();
+            calculateSalaries();
+            showMessage(`✅ Combined ${combinedData.length} unique dates from both files`, 'success');
+        }
+
+        function displayCombinedData() {
+            const section = document.getElementById('combinedDataSection');
+            
+            // Populate Nove data table
+            const noveBody = document.getElementById('noveDataBody');
+            noveBody.innerHTML = '';
+            noveData.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${formatDateForDisplay(row.date)}</td>
+                    <td>$${row.salesTotal.toFixed(2)}</td>
+                    <td>$${row.refund.toFixed(2)}</td>
+                    <td>$${row.sales.toFixed(2)}</td>
+                `;
+                noveBody.appendChild(tr);
+            });
+
+            // Populate Connecteam data table
+            const connecteamBody = document.getElementById('connecteamDataBody');
+            connecteamBody.innerHTML = '';
+            connecteamData.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${formatDateForDisplay(row.date)}</td>
+                    <td>${formatHoursForDisplay(row.hours)}</td>
+                `;
+                connecteamBody.appendChild(tr);
+            });
+
+            // Populate combined data table
+            const combinedBody = document.getElementById('combinedDataBody');
+            combinedBody.innerHTML = '';
+            combinedData.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${formatDateForDisplay(row.date)}</td>
+                    <td>$${row.sales.toFixed(2)}</td>
+                    <td>${formatHoursForDisplay(row.hours)}</td>
+                `;
+                combinedBody.appendChild(tr);
+            });
+            
+            section.classList.remove('hidden');
+        }
+
+        function calculateSalaries() {
+            if (!currentUser || !currentUser.tiers) {
+                console.error('❌ No user selected or no tiers configured');
+                return;
+            }
+            
+            // Check for base hourly pay in commission mode
+            if (calculationMode === 'commission') {
+                const baseHourlyPayInput = document.getElementById('baseHourlyPay');
+                const baseHourlyPay = baseHourlyPayInput ? parseFloat(baseHourlyPayInput.value) || 0 : 0;
+                if (baseHourlyPay === 0) {
+                    showMessage('⚠️ Please enter Base Hourly Pay for Comm + H Pay mode', 'warning');
+                }
+            }
+
+            console.log('💰 CALCULATING SALARIES FOR COMBINED DATA:');
+            console.log('User:', currentUser.name);
+            console.log('Tiers:', currentUser.tiers);
+            console.log('Data to process:', combinedData);
+
+            combinedData.forEach((row, index) => {
+                const tierResult = calculateTierResult(row.sales, row.hours, row.commission || 0);
+                row.rate = tierResult.rate;
+                row.salary = tierResult.salary;
+                row.tierType = tierResult.type;
+                
+                // Store additional data for commission mode
+                if (tierResult.hourlyPay !== undefined) {
+                    row.hourlyPay = tierResult.hourlyPay;
+                    row.commissionAmount = tierResult.commission;
+                }
+                
+                console.log(`📋 ROW ${index + 1}: ${row.date}`);
+                console.log(`   Sales: $${row.sales} | Hours: ${row.hours} | Commission: $${row.commission || 0}`);
+                const rateText = row.tierType === 'commission_hourly' ? '$' + row.rate + '/hr + Comm' : 
+                               (row.tierType === 'commission' ? row.rate + '%' : '$' + row.rate + '/hr');
+                console.log(`   Applied Rate: ${rateText}`);
+                console.log(`   Calculated Salary: $${row.salary}`);
+            });
+
+            console.log('✅ SALARY CALCULATION COMPLETE');
+            displaySalaryResults();
+        }
+
+        function calculateTierResult(sales, hours, commission = 0) {
+            if (calculationMode === 'commission') {
+                // New "Comm + H Pay" calculation method
+                const baseHourlyPayInput = document.getElementById('baseHourlyPay');
+                const baseHourlyPay = baseHourlyPayInput ? parseFloat(baseHourlyPayInput.value) || 0 : 0;
+                const hourlyPayTotal = hours * baseHourlyPay;
+                const totalSalary = commission + hourlyPayTotal;
+                
+                console.log(`💰 Comm + H Pay Calculation:`);
+                console.log(`   Base Hourly Pay: $${baseHourlyPay}`);
+                console.log(`   Hours: ${hours}`);
+                console.log(`   Hourly Pay: ${hours} × $${baseHourlyPay} = $${hourlyPayTotal}`);
+                console.log(`   Commission: $${commission}`);
+                console.log(`   Total Salary: $${commission} + $${hourlyPayTotal} = $${totalSalary}`);
+                
+                return {
+                    rate: baseHourlyPay, // Show the base hourly rate
+                    salary: totalSalary, // Commission + Hourly Pay
+                    hourlyPay: hourlyPayTotal, // Hours × Base Hourly Pay
+                    commission: commission, // Commission from Nove file
+                    type: 'commission_hourly'
+                };
+            } else {
+                // Original "H Rate" calculation method
+                if (!currentUser || !currentUser.tiers || currentUser.tiers.length === 0) {
+                    return { rate: 15, salary: hours * 15, type: 'hourly' };
+                }
+
+                let applicableTier = currentUser.tiers[0];
+                for (let tier of currentUser.tiers) {
+                    if (sales >= tier.threshold) {
+                        applicableTier = tier;
+                    }
+                }
+
+                if (applicableTier.type === 'commission') {
+                    const salary = sales * (applicableTier.rate / 100);
+                return {
+                        rate: hours > 0 ? (salary / hours) : 0,
+                        salary: salary,
+                        type: 'commission'
+                    };
+                } else {
+                    return {
+                        rate: applicableTier.rate,
+                        salary: hours * applicableTier.rate,
+                        type: 'hourly'
+                    };
+                }
+            }
+        }
+
+        function displaySalaryResults() {
+            const section = document.getElementById('salaryResultsSection');
+            const tbody = document.getElementById('salaryResultsBody');
+            
+            // Clear previous results
+            tbody.innerHTML = '';
+
+            console.log('📊 DISPLAYING SALARY RESULTS TABLE:');
+            console.log(`Total rows to display: ${combinedData.length}`);
+
+            if (combinedData.length === 0) {
+                console.error('❌ No combined data to display!');
+                return;
+            }
+
+            combinedData.forEach((row, index) => {
+                const employeeCost = row.sales > 0 ? (row.salary / row.sales * 100) : 0;
+                
+                if (calculationMode === 'commission') {
+                    // Comm + H Pay mode (NEW STRUCTURE)
+                    const hourlyPay = row.hourlyPay || 0; // Hours × Base Hourly Pay
+                    const commAmount = row.commissionAmount || 0;
+                    const baseRate = row.rate || 0;
+                    
+                    console.log(`🔢 TABLE ROW ${index + 1} (Comm + H Pay):`);
+                    console.log(`   Date: ${row.date}`);
+                    console.log(`   Sales: $${row.sales.toFixed(2)} (from Nove)`);
+                    console.log(`   Hours: ${formatHoursForDisplay(row.hours)} (from Connecteam)`);
+                    console.log(`   Hourly Pay: $${hourlyPay.toFixed(2)} (${formatHoursForDisplay(row.hours)} × $${baseRate})`);
+                    console.log(`   Commission: $${commAmount.toFixed(2)} (from Nove)`);
+                    console.log(`   Salary: $${row.salary.toFixed(2)} (${commAmount.toFixed(2)} + ${hourlyPay.toFixed(2)})`);
+                    console.log(`   Cost%: ${employeeCost.toFixed(1)}%`);
+                    
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${formatDateForDisplay(row.date)}</td>
+                        <td>$${row.sales.toFixed(2)}</td>
+                        <td class="editable-cell" onclick="editCell(this, ${index}, 'hours')">${formatHoursForDisplay(row.hours)}</td>
+                        <td>$${hourlyPay.toFixed(2)}</td>
+                        <td>$${commAmount.toFixed(2)}</td>
+                        <td>$${row.salary.toFixed(2)}</td>
+                        <td>${employeeCost.toFixed(1)}%</td>
+                    `;
+                    tbody.appendChild(tr);
+                } else {
+                    // H Rate mode (original structure)
+                    const rateDisplay = row.tierType === 'commission' ? 
+                        `${((row.salary / row.sales) * 100).toFixed(1)}%` : 
+                        `$${row.rate.toFixed(2)}/hr`;
+                    
+                    console.log(`🔢 TABLE ROW ${index + 1} (H Rate):`);
+                    console.log(`   Date: ${row.date}`);
+                    console.log(`   Sales: $${row.sales.toFixed(2)} (from Nove)`);
+                    console.log(`   Hours: ${formatHoursForDisplay(row.hours)} (from Connecteam)`);
+                    console.log(`   Rate: ${rateDisplay}`);
+                    console.log(`   Salary: $${row.salary.toFixed(2)}`);
+                    console.log(`   Cost%: ${employeeCost.toFixed(1)}%`);
+                
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                        <td>${formatDateForDisplay(row.date)}</td>
+                    <td>$${row.sales.toFixed(2)}</td>
+                        <td>${rateDisplay}</td>
+                        <td class="editable-cell" onclick="editCell(this, ${index}, 'hours')">${formatHoursForDisplay(row.hours)}</td>
+                        <td>$${row.salary.toFixed(2)}</td>
+                        <td>${employeeCost.toFixed(1)}%</td>
+                `;
+                tbody.appendChild(tr);
+                }
+            });
+
+            console.log('✅ SALARY RESULTS TABLE DISPLAYED SUCCESSFULLY');
+            updateSummaryStats();
+            section.classList.remove('hidden');
+        }
+
+        function updateSummaryStats() {
+            const container = document.getElementById('summaryStats');
+            
+            const totalSales = combinedData.reduce((sum, row) => sum + row.sales, 0);
+            const totalHours = combinedData.reduce((sum, row) => sum + row.hours, 0);
+            const totalSalary = combinedData.reduce((sum, row) => sum + row.salary, 0);
+            const totalCost = totalSales > 0 ? (totalSalary / totalSales * 100) : 0; // CORRECT: Total cost percentage
+            
+            if (calculationMode === 'commission') {
+                // Commission + Hourly mode stats
+                const totalHourlyPay = combinedData.reduce((sum, row) => sum + (row.hourlyPay || 0), 0);
+                const totalCommission = combinedData.reduce((sum, row) => sum + (row.commissionAmount || 0), 0);
+                
+                container.innerHTML = `
+                    <div class="stat-card">
+                        <div class="stat-icon">💰</div>
+                        <div class="stat-value">$${totalSales.toLocaleString()}</div>
+                        <div class="stat-label">Total Sales</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">⏰</div>
+                        <div class="stat-value">${formatHoursForDisplay(totalHours)}</div>
+                        <div class="stat-label">Total Hours</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🕒</div>
+                        <div class="stat-value">$${totalHourlyPay.toLocaleString()}</div>
+                        <div class="stat-label">Hourly Pay</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">📊</div>
+                        <div class="stat-value">$${totalCommission.toLocaleString()}</div>
+                        <div class="stat-label">Total Comm</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">💵</div>
+                        <div class="stat-value">$${totalSalary.toLocaleString()}</div>
+                        <div class="stat-label">Total Salary</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">📉</div>
+                        <div class="stat-value">${totalCost.toFixed(1)}%</div>
+                        <div class="stat-label">Total Cost</div>
+                    </div>
+                `;
+            } else {
+                // H Rate mode stats (original)
+                const avgRate = totalHours > 0 ? (totalSalary / totalHours) : 0;
+                
+                container.innerHTML = `
+                    <div class="stat-card">
+                        <div class="stat-icon">💰</div>
+                        <div class="stat-value">$${totalSales.toLocaleString()}</div>
+                        <div class="stat-label">Total Sales</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">⏰</div>
+                        <div class="stat-value">${formatHoursForDisplay(totalHours)}</div>
+                        <div class="stat-label">Total Hours</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">💵</div>
+                        <div class="stat-value">$${totalSalary.toLocaleString()}</div>
+                        <div class="stat-label">Total Salary</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">📊</div>
+                        <div class="stat-value">${totalCost.toFixed(1)}%</div>
+                        <div class="stat-label">Total Cost</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">📈</div>
+                        <div class="stat-value">$${avgRate.toFixed(2)}</div>
+                        <div class="stat-label">Avg Rate/hr</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">📝</div>
+                        <div class="stat-value">${combinedData.length}</div>
+                        <div class="stat-label">Records</div>
+                    </div>
+                `;
+            }
+        }
+
+        // Cell Editing Functions
+        function editCell(cell, index, field) {
+            if (cell.classList.contains('editing')) return;
+            
+            const currentValue = field === 'hours' ? 
+                formatHoursForDisplay(combinedData[index][field]) : 
+                combinedData[index][field];
+            
+            cell.classList.add('editing');
+            const originalContent = cell.innerHTML;
+            
+            cell.innerHTML = `<input type="text" class="cell-input" value="${currentValue}" onblur="saveEdit(this, ${index}, &quot;${field}&quot;)" onkeydown="handleCellKeydown(event, this, ${index}, &quot;${field}&quot;)">`;
+            
+            const input = cell.querySelector('.cell-input');
+            input.focus();
+            input.select();
+        }
+
+        function saveEdit(input, index, field) {
+            const cell = input.parentElement;
+            const newValue = input.value.trim();
+            
+            try {
+                if (field === 'hours') {
+                    const parsedHours = parseHoursInput(newValue);
+                    combinedData[index][field] = parsedHours;
+                    cell.innerHTML = formatHoursForDisplay(parsedHours);
+                } else {
+                    const parsedValue = parseFloat(newValue) || 0;
+                    combinedData[index][field] = parsedValue;
+                    cell.innerHTML = parsedValue.toFixed(2);
+                }
+                
+                // Recalculate salary for this row
+                const tierResult = calculateTierResult(combinedData[index].sales, combinedData[index].hours);
+                combinedData[index].rate = tierResult.rate;
+                combinedData[index].salary = tierResult.salary;
+                combinedData[index].tierType = tierResult.type;
+                
+                // Update the entire row
+                displaySalaryResults();
+                showMessage('✅ Value updated successfully', 'success');
+            } catch (error) {
+                cell.innerHTML = field === 'hours' ? 
+                    formatHoursForDisplay(combinedData[index][field]) : 
+                    combinedData[index][field];
+                showMessage('❌ Invalid value entered', 'error');
+            }
+            
+            cell.classList.remove('editing');
+        }
+
+        function handleCellKeydown(event, input, index, field) {
+            if (event.key === 'Enter') {
+                saveEdit(input, index, field);
+            } else if (event.key === 'Escape') {
+                const cell = input.parentElement;
+                const originalValue = field === 'hours' ? 
+                    formatHoursForDisplay(combinedData[index][field]) : 
+                    combinedData[index][field];
+                cell.innerHTML = originalValue;
+                cell.classList.remove('editing');
+            }
+        }
+
+        // Action Functions
+        function recalculateSalaries() {
+            if (combinedData.length === 0) {
+                showMessage('❌ No data to recalculate', 'error');
+                return;
+            }
+            
+            // Clear any potential duplicate data and reprocess
+            console.log('🔄 RECALCULATING - Starting fresh');
+            processAndCombineData();
+            showMessage('✅ Data reprocessed and salaries recalculated', 'success');
+        }
+
+        function saveSession() {
+            if (!currentUser || combinedData.length === 0) {
+                showMessage('❌ No data to save', 'error');
+                return;
+            }
+
+            // Show session date modal
+            showSessionDateModal();
+        }
+
+        function showSessionDateModal() {
+            // Create modal HTML
+            const modalHTML = `
+                <div id="sessionDateModal" class="modal" style="display: block;">
+                    <div class="modal-content" style="max-width: 500px;">
+                        <div class="modal-header">
+                            <h3>📅 Session Date</h3>
+                            <button class="close-btn" onclick="closeSessionDateModal()">&times;</button>
+                        </div>
+                        
+                        <div class="modal-body">
+                            <div style="margin-bottom: 20px;">
+                                <label style="font-weight: 600; color: var(--dark); margin-bottom: 10px; display: block;">Select session date:</label>
+                                <input type="date" id="sessionDate" class="form-input" style="width: 100%;" value="${new Date().toISOString().split('T')[0]}">
+                            </div>
+                            <div style="font-size: 0.9rem; color: var(--gray-500); margin-bottom: 20px;">
+                                💡 This date will be used for filtering and organizing sessions in history
+                            </div>
+                            
+                            <div style="text-align: center;">
+                                <button class="btn success" onclick="confirmSaveSession()">💾 Save Session</button>
+                                <button class="btn" onclick="closeSessionDateModal()" style="margin-left: 10px;">❌ Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Remove existing modal if present
+            const existingModal = document.getElementById('sessionDateModal');
+            if (existingModal) existingModal.remove();
+            
+            // Add modal to body
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+        }
+
+        function closeSessionDateModal() {
+            const modal = document.getElementById('sessionDateModal');
+            if (modal) modal.remove();
+        }
+
+        function confirmSaveSession() {
+            const sessionDate = document.getElementById('sessionDate').value;
+            if (!sessionDate) {
+                showMessage('❌ Please select a session date', 'error');
+                return;
+            }
+            
+            // Calculate additional summary data based on calculation mode
+            const baseHourlyPay = calculationMode === 'commission' ? 
+                parseFloat(document.getElementById('baseHourlyPay').value) || 0 : 0;
+            
+            const totalCommission = calculationMode === 'commission' ?
+                combinedData.reduce((sum, row) => sum + (row.commissionAmount || 0), 0) : 0;
+            
+            const totalHourlyPay = calculationMode === 'commission' ?
+                combinedData.reduce((sum, row) => sum + (row.hourlyPay || 0), 0) : 0;
+
+            const session = {
+                id: 'session-' + Date.now(),
+                userId: currentUser.id,
+                userName: currentUser.name,
+                userLocation: currentUser.location,
+                userTiers: currentUser.tiers,
+                sessionDate: sessionDate, // Session work date
+                calculationMode: calculationMode, // 'hourly' or 'commission'
+                baseHourlyPay: baseHourlyPay, // Base hourly pay for commission mode
+                createdAt: new Date().toISOString(),
+                data: [...combinedData],
+                summary: {
+                    totalSales: combinedData.reduce((sum, row) => sum + row.sales, 0),
+                    totalHours: combinedData.reduce((sum, row) => sum + row.hours, 0),
+                    totalSalary: combinedData.reduce((sum, row) => sum + row.salary, 0),
+                    totalCommission: totalCommission,
+                    totalHourlyPay: totalHourlyPay,
+                    recordCount: combinedData.length
+                }
+            };
+
+            const sessions = JSON.parse(localStorage.getItem('salaryCalc_sessions') || '[]');
+            sessions.push(session);
+            localStorage.setItem('salaryCalc_sessions', JSON.stringify(sessions));
+
+            closeSessionDateModal();
+            showMessage('✅ Session saved successfully', 'success');
+        }
+
+        // Compare Sessions Functions
+        let selectedSessions = [];
+        let comparisonData = null;
+
+        function openCompareModal() {
+            const sessions = JSON.parse(localStorage.getItem('salaryCalc_sessions') || '[]');
+            if (sessions.length < 2) {
+                showMessage('❌ Need at least 2 saved sessions to compare', 'error');
+                return;
+            }
+            
+            selectedSessions = [];
+            populateSessionsList(sessions);
+            document.getElementById('compareModal').style.display = 'block';
+        }
+
+        function closeCompareModal() {
+            document.getElementById('compareModal').style.display = 'none';
+            selectedSessions = [];
+            comparisonData = null;
+            document.getElementById('comparisonResults').style.display = 'none';
+        }
+
+        function populateSessionsList(sessions) {
+            const container = document.getElementById('sessionsList');
+            container.innerHTML = '';
+            
+            if (sessions.length === 0) {
+                container.innerHTML = '<div style="color: var(--gray-500); text-align: center;">No saved sessions found</div>';
+                return;
+            }
+            
+            sessions.forEach(session => {
+                const sessionDate = new Date(session.sessionDate || session.createdAt).toLocaleDateString();
+                const createdDate = new Date(session.createdAt).toLocaleDateString();
+                const modeText = session.calculationMode === 'commission' ? 'Comm + H Pay' : 'H Rate';
+                
+                const sessionCard = document.createElement('div');
+                sessionCard.className = 'session-select-card';
+                sessionCard.innerHTML = `
+                    <div style="display: flex; align-items: center; gap: 15px; padding: 15px; border: 2px solid var(--gray-200); border-radius: 8px; margin-bottom: 10px; cursor: pointer; transition: all 0.3s ease;">
+                        <input type="checkbox" onchange="toggleSessionSelection('${session.id}')" id="session_${session.id}">
+                        <div style="flex: 1;">
+                            <div style="font-weight: 600; color: var(--dark);">${session.userName} - ${session.userLocation}</div>
+                            <div style="font-size: 0.9rem; color: var(--gray-500);">
+                                📅 Work Date: ${sessionDate} | 🔧 Mode: ${modeText} | 💰 $${session.summary.totalSalary.toFixed(2)}
+                            </div>
+                            <div style="font-size: 0.8rem; color: var(--gray-400);">Created: ${createdDate}</div>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(sessionCard);
+            });
+        }
+
+        function toggleSessionSelection(sessionId) {
+            const checkbox = document.getElementById(`session_${sessionId}`);
+            
+            if (checkbox.checked) {
+                if (!selectedSessions.includes(sessionId)) {
+                    selectedSessions.push(sessionId);
+                }
+            } else {
+                selectedSessions = selectedSessions.filter(id => id !== sessionId);
+            }
+            
+            // Update button states
+            const generateBtn = document.getElementById('generateCompareBtn');
+            generateBtn.disabled = selectedSessions.length < 2;
+            
+            console.log('Selected sessions:', selectedSessions);
+        }
+
+        function generateComparison() {
+            if (selectedSessions.length < 2) {
+                showMessage('❌ Please select at least 2 sessions to compare', 'error');
+                return;
+            }
+            
+            const allSessions = JSON.parse(localStorage.getItem('salaryCalc_sessions') || '[]');
+            const sessionsToCompare = selectedSessions.map(id => 
+                allSessions.find(s => s.id === id)
+            ).filter(Boolean);
+            
+            if (sessionsToCompare.length < 2) {
+                showMessage('❌ Some selected sessions could not be found', 'error');
+                return;
+            }
+            
+            comparisonData = {
+                sessions: sessionsToCompare,
+                generatedAt: new Date()
+            };
+            
+            displayComparison(sessionsToCompare);
+            document.getElementById('exportCompareBtn').disabled = false;
+        }
+
+        function displayComparison(sessions) {
+            const container = document.getElementById('comparisonContent');
+            
+            // Summary comparison table
+            let html = `
+                <div style="margin-bottom: 30px;">
+                    <h5 style="color: var(--primary); margin-bottom: 15px;">📊 Summary Comparison</h5>
+                    <div class="table-container">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Employee</th>
+                                    <th>Work Date</th>
+                                    <th>Mode</th>
+                                    <th>Sales ($)</th>
+                                    <th>Hours</th>
+                                    <th>Salary ($)</th>
+                                    <th>Cost (%)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+            `;
+            
+            sessions.forEach(session => {
+                const workDate = new Date(session.sessionDate || session.createdAt).toLocaleDateString();
+                const modeText = session.calculationMode === 'commission' ? 'Comm + H Pay' : 'H Rate';
+                const costPercent = session.summary.totalSales > 0 ? 
+                    (session.summary.totalSalary / session.summary.totalSales * 100) : 0;
+                
+                html += `
+                    <tr>
+                        <td>${session.userName}</td>
+                        <td>${workDate}</td>
+                        <td>${modeText}</td>
+                        <td>$${session.summary.totalSales.toFixed(2)}</td>
+                        <td>${formatHoursForDisplay(session.summary.totalHours)}</td>
+                        <td>$${session.summary.totalSalary.toFixed(2)}</td>
+                        <td>${costPercent.toFixed(1)}%</td>
+                    </tr>
+                `;
+            });
+            
+            html += `
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+            
+            // Side-by-side detailed comparison
+            html += `
+                <div>
+                    <h5 style="color: var(--primary); margin-bottom: 15px;">📋 Detailed Side-by-Side Comparison</h5>
+                    <div style="display: grid; grid-template-columns: repeat(${Math.min(sessions.length, 3)}, 1fr); gap: 20px; max-height: 400px; overflow-y: auto;">
+            `;
+            
+            sessions.forEach(session => {
+                const workDate = new Date(session.sessionDate || session.createdAt).toLocaleDateString();
+                const modeText = session.calculationMode === 'commission' ? 'Comm + H Pay' : 'H Rate';
+                
+                html += `
+                    <div style="border: 2px solid var(--primary); border-radius: 12px; padding: 15px;">
+                        <h6 style="color: var(--primary); margin-bottom: 10px; text-align: center;">
+                            ${session.userName}<br>
+                            <small style="color: var(--gray-500);">${workDate} (${modeText})</small>
+                        </h6>
+                        <div style="font-size: 0.9rem;">
+                `;
+                
+                if (session.data && session.data.length > 0) {
+                    session.data.forEach(row => {
+                        const rowDate = new Date(row.date).toLocaleDateString();
+                        html += `
+                            <div style="padding: 5px 0; border-bottom: 1px solid var(--gray-200);">
+                                <strong>${rowDate}</strong><br>
+                                Sales: $${row.sales.toFixed(2)}<br>
+                                Hours: ${formatHoursForDisplay(row.hours)}<br>
+                        `;
+                        
+                        if (session.calculationMode === 'commission') {
+                            html += `
+                                Hourly Pay: $${(row.hourlyPay || 0).toFixed(2)}<br>
+                                Comm: $${(row.commissionAmount || 0).toFixed(2)}<br>
+                            `;
+                        } else {
+                            const rateDisplay = row.tierType === 'commission' ? 
+                                `${((row.salary / row.sales) * 100).toFixed(1)}%` : 
+                                `$${row.rate.toFixed(2)}/hr`;
+                            html += `Rate: ${rateDisplay}<br>`;
+                        }
+                        
+                        html += `
+                                <strong>Salary: $${row.salary.toFixed(2)}</strong>
+                            </div>
+                        `;
+                    });
+                } else {
+                    html += '<div style="color: var(--gray-500);">No detailed data available</div>';
+                }
+                
+                html += `
+                        </div>
+                        <div style="margin-top: 10px; padding-top: 10px; border-top: 2px solid var(--primary); text-align: center; font-weight: 600;">
+                            Total: $${session.summary.totalSalary.toFixed(2)}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            html += `
+                    </div>
+                </div>
+            `;
+            
+            container.innerHTML = html;
+            document.getElementById('comparisonResults').style.display = 'block';
+        }
+
+        function exportComparisonPDF() {
+            if (!comparisonData || !comparisonData.sessions) {
+                showMessage('❌ Please generate comparison first', 'error');
+                return;
+            }
+            
+            try {
+                // We'll use the browser's print functionality to create PDF
+                const printWindow = window.open('', '_blank');
+                const sessions = comparisonData.sessions;
+                
+                let html = `
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                        <title>Session Comparison Report</title>
+                        <style>
+                            body { font-family: Arial, sans-serif; margin: 20px; color: #333; }
+                            .header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid #f5a069; padding-bottom: 15px; }
+                            .header h1 { color: #f5a069; margin: 0; }
+                            .summary-table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
+                            .summary-table th, .summary-table td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+                            .summary-table th { background-color: #f5a069; color: white; }
+                            .session-detail { margin-bottom: 30px; border: 2px solid #f5a069; border-radius: 8px; padding: 15px; }
+                            .session-header { color: #f5a069; margin-bottom: 15px; font-size: 1.2em; font-weight: bold; }
+                            .detail-table { width: 100%; border-collapse: collapse; font-size: 0.9em; }
+                            .detail-table th, .detail-table td { border: 1px solid #ddd; padding: 8px; }
+                            .detail-table th { background-color: #f8f9fa; }
+                            .total-row { font-weight: bold; background-color: #fff3cd; }
+                            @media print { body { margin: 0; } }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="header">
+                            <h1>📊 Session Comparison Report</h1>
+                            <div>Generated: ${comparisonData.generatedAt.toLocaleString()}</div>
+                            <div>Comparing ${sessions.length} sessions</div>
+                        </div>
+                        
+                        <h2>📈 Summary Comparison</h2>
+                        <table class="summary-table">
+                            <thead>
+                                <tr>
+                                    <th>Employee</th>
+                                    <th>Work Date</th>
+                                    <th>Calculation Mode</th>
+                                    <th>Total Sales</th>
+                                    <th>Total Hours</th>
+                                    <th>Total Salary</th>
+                                    <th>Cost %</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                `;
+                
+                sessions.forEach(session => {
+                    const workDate = new Date(session.sessionDate || session.createdAt).toLocaleDateString();
+                    const modeText = session.calculationMode === 'commission' ? 'Comm + H Pay' : 'H Rate';
+                    const costPercent = session.summary.totalSales > 0 ? 
+                        (session.summary.totalSalary / session.summary.totalSales * 100) : 0;
+                    
+                    html += `
+                        <tr>
+                            <td>${session.userName}</td>
+                            <td>${workDate}</td>
+                            <td>${modeText}</td>
+                            <td>$${session.summary.totalSales.toFixed(2)}</td>
+                            <td>${formatHoursForDisplay(session.summary.totalHours)}</td>
+                            <td>$${session.summary.totalSalary.toFixed(2)}</td>
+                            <td>${costPercent.toFixed(1)}%</td>
+                        </tr>
+                    `;
+                });
+                
+                html += `
+                            </tbody>
+                        </table>
+                        
+                        <h2>📋 Detailed Breakdown</h2>
+                `;
+                
+                sessions.forEach(session => {
+                    const workDate = new Date(session.sessionDate || session.createdAt).toLocaleDateString();
+                    const modeText = session.calculationMode === 'commission' ? 'Comm + H Pay' : 'H Rate';
+                    
+                    html += `
+                        <div class="session-detail">
+                            <div class="session-header">
+                                ${session.userName} - ${session.userLocation} | ${workDate} (${modeText})
+                            </div>
+                            <table class="detail-table">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Sales</th>
+                                        <th>Hours</th>
+                    `;
+                    
+                    if (session.calculationMode === 'commission') {
+                        html += `
+                                        <th>Hourly Pay</th>
+                                        <th>Commission</th>
+                        `;
+                    } else {
+                        html += `
+                                        <th>Rate</th>
+                        `;
+                    }
+                    
+                    html += `
+                                        <th>Salary</th>
+                                        <th>Cost %</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                    `;
+                    
+                    if (session.data && session.data.length > 0) {
+                        session.data.forEach(row => {
+                            const rowDate = new Date(row.date).toLocaleDateString();
+                            const costPercent = row.sales > 0 ? (row.salary / row.sales * 100) : 0;
+                            
+                            html += `
+                                <tr>
+                                    <td>${rowDate}</td>
+                                    <td>$${row.sales.toFixed(2)}</td>
+                                    <td>${formatHoursForDisplay(row.hours)}</td>
+                            `;
+                            
+                            if (session.calculationMode === 'commission') {
+                                html += `
+                                    <td>$${(row.hourlyPay || 0).toFixed(2)}</td>
+                                    <td>$${(row.commissionAmount || 0).toFixed(2)}</td>
+                                `;
+                            } else {
+                                const rateDisplay = row.tierType === 'commission' ? 
+                                    `${((row.salary / row.sales) * 100).toFixed(1)}%` : 
+                                    `$${row.rate.toFixed(2)}/hr`;
+                                html += `<td>${rateDisplay}</td>`;
+                            }
+                            
+                            html += `
+                                    <td>$${row.salary.toFixed(2)}</td>
+                                    <td>${costPercent.toFixed(1)}%</td>
+                                </tr>
+                            `;
+                        });
+                        
+                        // Add totals row
+                        const totalCostPercent = session.summary.totalSales > 0 ? 
+                            (session.summary.totalSalary / session.summary.totalSales * 100) : 0;
+                        
+                        html += `
+                            <tr class="total-row">
+                                <td><strong>TOTAL</strong></td>
+                                <td><strong>$${session.summary.totalSales.toFixed(2)}</strong></td>
+                                <td><strong>${formatHoursForDisplay(session.summary.totalHours)}</strong></td>
+                        `;
+                        
+                        if (session.calculationMode === 'commission') {
+                            html += `
+                                <td><strong>$${(session.summary.totalHourlyPay || 0).toFixed(2)}</strong></td>
+                                <td><strong>$${(session.summary.totalCommission || 0).toFixed(2)}</strong></td>
+                            `;
+                        } else {
+                            const avgRate = session.summary.totalHours > 0 ? 
+                                (session.summary.totalSalary / session.summary.totalHours) : 0;
+                            html += `<td><strong>$${avgRate.toFixed(2)}/hr</strong></td>`;
+                        }
+                        
+                        html += `
+                                <td><strong>$${session.summary.totalSalary.toFixed(2)}</strong></td>
+                                <td><strong>${totalCostPercent.toFixed(1)}%</strong></td>
+                            </tr>
+                        `;
+                    }
+                    
+                    html += `
+                                </tbody>
+                            </table>
+                        </div>
+                    `;
+                });
+                
+                html += `
+                    </body>
+                    </html>
+                `;
+                
+                printWindow.document.write(html);
+                printWindow.document.close();
+                
+                // Wait for content to load then print
+                setTimeout(() => {
+                    printWindow.print();
+                    printWindow.close();
+                }, 500);
+                
+                showMessage('✅ PDF export opened. Use your browser\'s print dialog to save as PDF', 'success');
+                
+            } catch (error) {
+                console.error('PDF Export Error:', error);
+                showMessage('❌ Error exporting PDF', 'error');
+            }
+        }
+
+        function exportResults() {
+            if (combinedData.length === 0) {
+                showMessage('❌ No data to export', 'error');
+                return;
+            }
+
+            const html = generateHTMLTable();
+            const blob = new Blob([html], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `salary-report-${currentUser.name}-${new Date().toISOString().split('T')[0]}.html`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            showMessage('✅ Report exported successfully', 'success');
+        }
+
+        function copyResults() {
+            if (combinedData.length === 0) {
+                showMessage('❌ No data to copy', 'error');
+                return;
+            }
+            
+            const text = generateTextTable();
+            navigator.clipboard.writeText(text).then(() => {
+                showMessage('✅ Data copied to clipboard', 'success');
+            }).catch(() => {
+                showMessage('❌ Failed to copy data', 'error');
+            });
+        }
+
+        // Utility Functions
+        function convertExcelDate(excelDate) {
+            let dateObj;
+            
+            if (typeof excelDate === 'string') {
+                // Handle string dates (like "06/01/2025" or "Jun 1, 2025")
+                dateObj = new Date(excelDate);
+            } else {
+                // Handle Excel serial dates (like 45657)
+                const excelEpoch = new Date(1899, 11, 30);
+                dateObj = new Date(excelEpoch.getTime() + (excelDate * 86400 * 1000));
+            }
+            
+            // STANDARDIZE: Always return in YYYY-MM-DD format for consistency
+            const year = dateObj.getFullYear();
+            const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+            const day = String(dateObj.getDate()).padStart(2, '0');
+            
+            const standardDate = `${year}-${month}-${day}`;
+            console.log(`📅 Date standardized: ${excelDate} → "${standardDate}"`);
+            return standardDate;
+        }
+
+        function formatDateForDisplay(standardDate) {
+            // Convert YYYY-MM-DD back to readable format for display
+            const dateObj = new Date(standardDate + 'T00:00:00');
+            return dateObj.toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'short', 
+                day: 'numeric' 
+            });
+        }
+
+        function parseHoursInput(input) {
+            if (typeof input === 'number') return input;
+            
+            const str = input.toString().trim();
+            if (str.includes(':')) {
+                const [hours, minutes] = str.split(':').map(Number);
+                return hours + (minutes / 60);
+            }
+            return parseFloat(str) || 0;
+        }
+
+        function formatHoursForDisplay(hours) {
+            if (!hours || hours === 0) return '0:00';
+            
+            const wholeHours = Math.floor(hours);
+            const minutes = Math.round((hours - wholeHours) * 60);
+            
+            return `${wholeHours}:${minutes.toString().padStart(2, '0')}`;
+        }
+
+        function generateHTMLTable() {
+            return `
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Salary Report - ${currentUser.name}</title>
+                    <style>
+                        body { font-family: Inter, sans-serif; margin: 20px; color: #2c3e50; }
+                        h1 { color: #f5a069; border-bottom: 2px solid #f5a069; padding-bottom: 10px; }
+                        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+                        th, td { padding: 12px; text-align: center; border: 2px solid #f5a069; }
+                        th { background: #f5a069; color: white; font-weight: 600; }
+                        tr:nth-child(even) { background: #f8f9fa; }
+                        .summary { background: #fff3e0; font-weight: bold; }
+                    </style>
+                </head>
+                <body>
+                    <h1>💼 Salary Report - ${currentUser.name}</h1>
+                    <p><strong>Location:</strong> ${currentUser.location}</p>
+                    <p><strong>Generated:</strong> ${new Date().toLocaleDateString()}</p>
+                    ${document.getElementById('salaryResultsTable').outerHTML}
+                </body>
+                </html>
+            `;
+        }
+
+        function generateTextTable() {
+            const headers = ['Date', 'Sales', 'Rate', 'Hours', 'Salary', 'Cost %'];
+            let text = `Salary Report - ${currentUser.name}\n`;
+            text += `Generated: ${new Date().toLocaleDateString()}\n\n`;
+            text += headers.join('\t') + '\n';
+            
+            combinedData.forEach(row => {
+                const employeeCost = row.sales > 0 ? (row.salary / row.sales * 100) : 0;
+                const rateDisplay = row.tierType === 'commission' ? 
+                    `${((row.salary / row.sales) * 100).toFixed(1)}%` : 
+                    `$${row.rate.toFixed(2)}/hr`;
+                
+                text += [
+                    row.date,
+                    `$${row.sales.toFixed(2)}`,
+                    rateDisplay,
+                    formatHoursForDisplay(row.hours),
+                    `$${row.salary.toFixed(2)}`,
+                    `${employeeCost.toFixed(1)}%`
+                ].join('\t') + '\n';
+            });
+            
+            return text;
+        }
+
+        function toggleDataPreview() {
+            const content = document.getElementById('dataPreviewContent');
+            const btn = document.getElementById('previewToggleBtn');
+            
+            if (content.classList.contains('hidden')) {
+                content.classList.remove('hidden');
+                btn.innerHTML = '🙈 Hide Details';
+            } else {
+                content.classList.add('hidden');
+                btn.innerHTML = '👁️ Show Details';
+            }
+        }
+
+        function toggleEmployeeProfile() {
+            const content = document.getElementById('userInfoDisplay');
+            const btn = document.getElementById('profileToggleBtn');
+            
+            if (content.classList.contains('hidden')) {
+                content.classList.remove('hidden');
+                btn.innerHTML = '🙈 Hide Profile';
+            } else {
+                content.classList.add('hidden');
+                btn.innerHTML = '👁️ Show Profile';
+            }
+        }
+
+        // Functions moved earlier in file to fix initialization order
+
+        function showMessage(text, type) {
+            const messagesDiv = document.getElementById('messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}`;
+            messageDiv.textContent = text;
+            messagesDiv.appendChild(messageDiv);
+            
+            setTimeout(() => {
+                messageDiv.remove();
+            }, 5000);
+        }
+
+        // Load session from history if requested
+        window.addEventListener('load', function() {
+            const loadSessionId = sessionStorage.getItem('loadSessionId');
+            if (loadSessionId) {
+                sessionStorage.removeItem('loadSessionId');
+                
+                const sessions = JSON.parse(localStorage.getItem('salaryCalc_sessions') || '[]');
+                const session = sessions.find(s => s.id === loadSessionId);
+                
+                if (session) {
+                    // Load user
+                    currentUser = users.find(u => u.id === session.userId);
+                    if (currentUser) {
+                        document.getElementById('userSelect').value = currentUser.id;
+                        displayUserInfo();
+                        
+                        // Load data
+                        combinedData = [...session.data];
+                        displayCombinedData();
+                        displaySalaryResults();
+                        
+                        showMessage(`✅ Session loaded: ${session.userName}`, 'success');
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html> 

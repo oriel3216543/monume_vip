@@ -10525,3 +10525,567 @@ FROM location]
 2025-07-25 17:59:13,611 - werkzeug - INFO - 127.0.0.1 - - [25/Jul/2025 17:59:13] "[33mGET /static/dashboard.html HTTP/1.1[0m" 404 -
 2025-07-25 17:59:13,621 - __main__ - INFO - GET /favicon.ico - 127.0.0.1
 2025-07-25 17:59:13,622 - werkzeug - INFO - 127.0.0.1 - - [25/Jul/2025 17:59:13] "GET /favicon.ico HTTP/1.1" 200 -
+2025-08-11 20:42:55,525 - __main__ - INFO - Database tables created successfully
+2025-08-11 20:42:55,558 - __main__ - INFO - Database tables created successfully
+2025-08-11 20:42:55,560 - __main__ - INFO - Database initialization completed
+2025-08-11 20:42:55,560 - __main__ - INFO - Database initialized successfully
+2025-08-11 20:42:55,560 - __main__ - INFO - Starting MonuMe Tracker Server on 127.0.0.1:5000
+2025-08-11 20:42:55,569 - werkzeug - WARNING -  * Debugger is active!
+2025-08-11 20:42:55,572 - werkzeug - INFO -  * Debugger PIN: 104-880-079
+2025-08-11 20:42:59,277 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:42:59] "GET /get_current_user HTTP/1.1" 200 -
+2025-08-11 20:43:06,793 - werkzeug - INFO -  * Detected change in 'c:\\Users\\MonumeQueens\\Downloads\\MonuMe_Tracke\\MonuMe_Tracker\\server.py', reloading
+2025-08-11 20:43:07,290 - __main__ - INFO - Database tables created successfully
+2025-08-11 20:43:07,326 - __main__ - INFO - Database tables created successfully
+2025-08-11 20:43:07,328 - __main__ - INFO - Database initialization completed
+2025-08-11 20:43:07,328 - __main__ - INFO - Database initialized successfully
+2025-08-11 20:43:07,328 - __main__ - INFO - Starting MonuMe Tracker Server on 127.0.0.1:5000
+2025-08-11 20:43:07,338 - werkzeug - WARNING -  * Debugger is active!
+2025-08-11 20:43:07,340 - werkzeug - INFO -  * Debugger PIN: 104-880-079
+2025-08-11 20:43:27,645 - werkzeug - INFO -  * Detected change in 'c:\\Users\\MonumeQueens\\Downloads\\MonuMe_Tracke\\MonuMe_Tracker\\email_sender.py', reloading
+2025-08-11 20:43:28,143 - __main__ - INFO - Database tables created successfully
+2025-08-11 20:43:28,180 - __main__ - INFO - Database tables created successfully
+2025-08-11 20:43:28,182 - __main__ - INFO - Database initialization completed
+2025-08-11 20:43:28,182 - __main__ - INFO - Database initialized successfully
+2025-08-11 20:43:28,182 - __main__ - INFO - Starting MonuMe Tracker Server on 127.0.0.1:5000
+2025-08-11 20:43:28,192 - werkzeug - WARNING -  * Debugger is active!
+2025-08-11 20:43:28,193 - werkzeug - INFO -  * Debugger PIN: 104-880-079
+2025-08-11 20:43:29,284 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:43:29] "GET /get_current_user HTTP/1.1" 200 -
+2025-08-11 20:43:30,247 - werkzeug - INFO -  * Detected change in 'c:\\Users\\MonumeQueens\\Downloads\\MonuMe_Tracke\\MonuMe_Tracker\\server.py', reloading
+2025-08-11 20:43:30,740 - __main__ - INFO - Database tables created successfully
+2025-08-11 20:43:30,775 - __main__ - INFO - Database tables created successfully
+2025-08-11 20:43:30,777 - __main__ - INFO - Database initialization completed
+2025-08-11 20:43:30,777 - __main__ - INFO - Database initialized successfully
+2025-08-11 20:43:30,777 - __main__ - INFO - Starting MonuMe Tracker Server on 127.0.0.1:5000
+2025-08-11 20:43:30,787 - werkzeug - WARNING -  * Debugger is active!
+2025-08-11 20:43:30,789 - werkzeug - INFO -  * Debugger PIN: 104-880-079
+2025-08-11 20:43:35,897 - werkzeug - INFO -  * Detected change in 'c:\\Users\\MonumeQueens\\Downloads\\MonuMe_Tracke\\MonuMe_Tracker\\server.py', reloading
+2025-08-11 20:43:36,390 - __main__ - INFO - Database tables created successfully
+2025-08-11 20:43:36,427 - __main__ - INFO - Database tables created successfully
+2025-08-11 20:43:36,430 - __main__ - INFO - Database initialization completed
+2025-08-11 20:43:36,430 - __main__ - INFO - Database initialized successfully
+2025-08-11 20:43:36,430 - __main__ - INFO - Starting MonuMe Tracker Server on 127.0.0.1:5000
+2025-08-11 20:43:36,440 - werkzeug - WARNING -  * Debugger is active!
+2025-08-11 20:43:36,441 - werkzeug - INFO -  * Debugger PIN: 104-880-079
+2025-08-11 20:43:37,480 - werkzeug - INFO -  * Detected change in 'c:\\Users\\MonumeQueens\\Downloads\\MonuMe_Tracke\\MonuMe_Tracker\\server.py', reloading
+2025-08-11 20:43:37,998 - __main__ - INFO - Database tables created successfully
+2025-08-11 20:43:38,034 - __main__ - INFO - Database tables created successfully
+2025-08-11 20:43:38,036 - __main__ - INFO - Database initialization completed
+2025-08-11 20:43:38,036 - __main__ - INFO - Database initialized successfully
+2025-08-11 20:43:38,036 - __main__ - INFO - Starting MonuMe Tracker Server on 127.0.0.1:5000
+2025-08-11 20:43:38,047 - werkzeug - WARNING -  * Debugger is active!
+2025-08-11 20:43:38,049 - werkzeug - INFO -  * Debugger PIN: 104-880-079
+2025-08-11 20:43:47,268 - __main__ - INFO - DEBUG: Regular user: admin (role: admin, location_id: None)
+2025-08-11 20:43:47,279 - __main__ - INFO - get_users_for_tracking: Returning 3 users (admin: True, location_id: None)
+2025-08-11 20:43:47,280 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:43:47] "GET /get_users_for_tracking HTTP/1.1" 200 -
+2025-08-11 20:43:48,579 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:43:48] "GET /salary HTTP/1.1" 200 -
+2025-08-11 20:43:48,588 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:43:48] "[36mGET /static/sidebar-loader.js HTTP/1.1[0m" 304 -
+2025-08-11 20:43:48,617 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:43:48] "[36mGET /sidebar-styles.css HTTP/1.1[0m" 304 -
+2025-08-11 20:43:48,620 - __main__ - INFO - DEBUG: Regular user: admin (role: admin, location_id: None)
+2025-08-11 20:43:48,621 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:43:48] "GET /get_current_user HTTP/1.1" 200 -
+2025-08-11 20:43:48,621 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:43:48] "[36mGET /sidebar-template.html HTTP/1.1[0m" 304 -
+2025-08-11 20:43:48,622 - __main__ - INFO - get_users_for_tracking: Returning 3 users (admin: True, location_id: None)
+2025-08-11 20:43:48,622 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:43:48] "GET /get_users_for_tracking HTTP/1.1" 200 -
+2025-08-11 20:43:48,633 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:43:48] "[36mGET /favicon.ico HTTP/1.1[0m" 304 -
+2025-08-11 20:43:48,634 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:43:48] "[36mGET /static/logo11.png HTTP/1.1[0m" 304 -
+2025-08-11 20:43:49,145 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:43:49] "[36mGET /salary HTTP/1.1[0m" 304 -
+2025-08-11 20:43:49,153 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:43:49] "[36mGET /static/sidebar-loader.js HTTP/1.1[0m" 304 -
+2025-08-11 20:43:49,169 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:43:49] "[36mGET /sidebar-styles.css HTTP/1.1[0m" 304 -
+2025-08-11 20:43:49,175 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:43:49] "GET /get_current_user HTTP/1.1" 200 -
+2025-08-11 20:43:49,175 - __main__ - INFO - DEBUG: Regular user: admin (role: admin, location_id: None)
+2025-08-11 20:43:49,176 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:43:49] "[36mGET /sidebar-template.html HTTP/1.1[0m" 304 -
+2025-08-11 20:43:49,176 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:43:49] "[36mGET /favicon.ico HTTP/1.1[0m" 304 -
+2025-08-11 20:43:49,178 - __main__ - INFO - get_users_for_tracking: Returning 3 users (admin: True, location_id: None)
+2025-08-11 20:43:49,178 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:43:49] "GET /get_users_for_tracking HTTP/1.1" 200 -
+2025-08-11 20:43:49,180 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:43:49] "[36mGET /static/logo11.png HTTP/1.1[0m" 304 -
+2025-08-11 20:43:50,399 - __main__ - INFO - DEBUG: Regular user: admin (role: admin, location_id: None)
+2025-08-11 20:43:50,400 - __main__ - INFO - get_users_for_tracking: Returning 3 users (admin: True, location_id: None)
+2025-08-11 20:43:50,401 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:43:50] "GET /get_users_for_tracking HTTP/1.1" 200 -
+2025-08-11 20:43:55,985 - __main__ - INFO - DEBUG: Regular user: admin (role: admin, location_id: None)
+2025-08-11 20:43:55,987 - __main__ - INFO - get_users_for_tracking: Returning 3 users (admin: True, location_id: None)
+2025-08-11 20:43:55,987 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:43:55] "GET /get_users_for_tracking HTTP/1.1" 200 -
+2025-08-11 20:44:03,833 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:44:03] "GET /api/users/3 HTTP/1.1" 200 -
+2025-08-11 20:44:05,110 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:44:05] "[36mGET /sidebar-styles.css HTTP/1.1[0m" 304 -
+2025-08-11 20:44:05,116 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:44:05] "[31m[1mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 405 -
+2025-08-11 20:44:10,357 - __main__ - INFO - DEBUG: Regular user: admin (role: admin, location_id: None)
+2025-08-11 20:44:10,360 - __main__ - INFO - get_users_for_tracking: Returning 3 users (admin: True, location_id: None)
+2025-08-11 20:44:10,360 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:44:10] "GET /get_users_for_tracking HTTP/1.1" 200 -
+2025-08-11 20:44:19,181 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:44:19] "GET /get_current_user HTTP/1.1" 200 -
+2025-08-11 20:44:19,381 - __main__ - INFO - DEBUG: Regular user: admin (role: admin, location_id: None)
+2025-08-11 20:44:19,383 - __main__ - INFO - get_users_for_tracking: Returning 3 users (admin: True, location_id: None)
+2025-08-11 20:44:19,383 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:44:19] "GET /get_users_for_tracking HTTP/1.1" 200 -
+2025-08-11 20:44:20,733 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:44:20] "[36mGET /salary HTTP/1.1[0m" 304 -
+2025-08-11 20:44:20,742 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:44:20] "[36mGET /static/sidebar-loader.js HTTP/1.1[0m" 304 -
+2025-08-11 20:44:20,763 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:44:20] "[36mGET /sidebar-styles.css HTTP/1.1[0m" 304 -
+2025-08-11 20:44:20,766 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:44:20] "GET /get_current_user HTTP/1.1" 200 -
+2025-08-11 20:44:20,771 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:44:20] "[36mGET /sidebar-template.html HTTP/1.1[0m" 304 -
+2025-08-11 20:44:20,771 - __main__ - INFO - DEBUG: Regular user: admin (role: admin, location_id: None)
+2025-08-11 20:44:20,773 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:44:20] "[36mGET /favicon.ico HTTP/1.1[0m" 304 -
+2025-08-11 20:44:20,774 - __main__ - INFO - get_users_for_tracking: Returning 3 users (admin: True, location_id: None)
+2025-08-11 20:44:20,775 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:44:20] "GET /get_users_for_tracking HTTP/1.1" 200 -
+2025-08-11 20:44:20,777 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:44:20] "[36mGET /static/logo11.png HTTP/1.1[0m" 304 -
+2025-08-11 20:44:25,879 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:44:25] "[36mGET /salary HTTP/1.1[0m" 304 -
+2025-08-11 20:44:25,887 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:44:25] "[36mGET /static/sidebar-loader.js HTTP/1.1[0m" 304 -
+2025-08-11 20:44:25,910 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:44:25] "[36mGET /sidebar-styles.css HTTP/1.1[0m" 304 -
+2025-08-11 20:44:25,911 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:44:25] "GET /get_current_user HTTP/1.1" 200 -
+2025-08-11 20:44:25,916 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:44:25] "[36mGET /sidebar-template.html HTTP/1.1[0m" 304 -
+2025-08-11 20:44:25,918 - __main__ - INFO - DEBUG: Regular user: admin (role: admin, location_id: None)
+2025-08-11 20:44:25,919 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:44:25] "[36mGET /favicon.ico HTTP/1.1[0m" 304 -
+2025-08-11 20:44:25,922 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:44:25] "[36mGET /static/logo11.png HTTP/1.1[0m" 304 -
+2025-08-11 20:44:25,923 - __main__ - INFO - get_users_for_tracking: Returning 3 users (admin: True, location_id: None)
+2025-08-11 20:44:25,924 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:44:25] "GET /get_users_for_tracking HTTP/1.1" 200 -
+2025-08-11 20:44:27,241 - werkzeug - INFO -  * Detected change in 'c:\\Users\\MonumeQueens\\Downloads\\MonuMe_Tracke\\MonuMe_Tracker\\server.py', reloading
+2025-08-11 20:44:27,830 - __main__ - INFO - Database tables created successfully
+2025-08-11 20:44:27,864 - __main__ - INFO - Database tables created successfully
+2025-08-11 20:44:27,866 - __main__ - INFO - Database initialization completed
+2025-08-11 20:44:27,866 - __main__ - INFO - Database initialized successfully
+2025-08-11 20:44:27,866 - __main__ - INFO - Starting MonuMe Tracker Server on 127.0.0.1:5000
+2025-08-11 20:44:27,879 - werkzeug - WARNING -  * Debugger is active!
+2025-08-11 20:44:27,881 - werkzeug - INFO -  * Debugger PIN: 104-880-079
+2025-08-11 20:44:27,902 - __main__ - INFO - DEBUG: Regular user: admin (role: admin, location_id: None)
+2025-08-11 20:44:27,914 - __main__ - INFO - get_users_for_tracking: Returning 3 users (admin: True, location_id: None)
+2025-08-11 20:44:27,914 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:44:27] "GET /get_users_for_tracking HTTP/1.1" 200 -
+2025-08-11 20:44:30,144 - __main__ - INFO - DEBUG: Regular user: admin (role: admin, location_id: None)
+2025-08-11 20:44:30,145 - __main__ - INFO - get_users_for_tracking: Returning 3 users (admin: True, location_id: None)
+2025-08-11 20:44:30,145 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:44:30] "GET /get_users_for_tracking HTTP/1.1" 200 -
+2025-08-11 20:44:31,227 - __main__ - INFO - DEBUG: Regular user: admin (role: admin, location_id: None)
+2025-08-11 20:44:31,229 - __main__ - INFO - get_users_for_tracking: Returning 3 users (admin: True, location_id: None)
+2025-08-11 20:44:31,229 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:44:31] "GET /get_users_for_tracking HTTP/1.1" 200 -
+2025-08-11 20:44:34,248 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:44:34] "GET /api/users/3 HTTP/1.1" 200 -
+2025-08-11 20:44:37,220 - __main__ - INFO - DEBUG: Regular user: admin (role: admin, location_id: None)
+2025-08-11 20:44:37,223 - __main__ - INFO - get_users_for_tracking: Returning 3 users (admin: True, location_id: None)
+2025-08-11 20:44:37,225 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:44:37] "GET /get_users_for_tracking HTTP/1.1" 200 -
+2025-08-11 20:44:41,031 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:44:41] "GET /api/demos?userId=3&start=2025-08-01&end=2025-08-10 HTTP/1.1" 200 -
+2025-08-11 20:44:41,038 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:44:41] "GET /api/users/3/tiers HTTP/1.1" 200 -
+2025-08-11 20:44:50,560 - werkzeug - INFO -  * Detected change in 'c:\\Users\\MonumeQueens\\Downloads\\MonuMe_Tracke\\MonuMe_Tracker\\server.py', reloading
+2025-08-11 20:44:51,064 - __main__ - INFO - Database tables created successfully
+2025-08-11 20:44:51,102 - __main__ - INFO - Database tables created successfully
+2025-08-11 20:44:51,104 - __main__ - INFO - Database initialization completed
+2025-08-11 20:44:51,104 - __main__ - INFO - Database initialized successfully
+2025-08-11 20:44:51,104 - __main__ - INFO - Starting MonuMe Tracker Server on 127.0.0.1:5000
+2025-08-11 20:44:51,115 - werkzeug - WARNING -  * Debugger is active!
+2025-08-11 20:44:51,117 - werkzeug - INFO -  * Debugger PIN: 104-880-079
+2025-08-11 20:44:55,921 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:44:55] "GET /get_current_user HTTP/1.1" 200 -
+2025-08-11 20:45:25,921 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:45:25] "GET /get_current_user HTTP/1.1" 200 -
+2025-08-11 20:45:31,109 - __main__ - INFO - DEBUG: Regular user: admin (role: admin, location_id: None)
+2025-08-11 20:45:31,131 - __main__ - INFO - get_users_for_tracking: Returning 3 users (admin: True, location_id: None)
+2025-08-11 20:45:31,132 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:45:31] "GET /get_users_for_tracking HTTP/1.1" 200 -
+2025-08-11 20:45:32,743 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:45:32] "GET /salary HTTP/1.1" 200 -
+2025-08-11 20:45:32,752 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:45:32] "[36mGET /static/sidebar-loader.js HTTP/1.1[0m" 304 -
+2025-08-11 20:45:32,779 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:45:32] "[36mGET /sidebar-styles.css HTTP/1.1[0m" 304 -
+2025-08-11 20:45:32,781 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:45:32] "GET /get_current_user HTTP/1.1" 200 -
+2025-08-11 20:45:32,784 - __main__ - INFO - DEBUG: Regular user: admin (role: admin, location_id: None)
+2025-08-11 20:45:32,786 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:45:32] "[36mGET /sidebar-template.html HTTP/1.1[0m" 304 -
+2025-08-11 20:45:32,787 - __main__ - INFO - get_users_for_tracking: Returning 3 users (admin: True, location_id: None)
+2025-08-11 20:45:32,788 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:45:32] "GET /get_users_for_tracking HTTP/1.1" 200 -
+2025-08-11 20:45:32,793 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:45:32] "[36mGET /favicon.ico HTTP/1.1[0m" 304 -
+2025-08-11 20:45:32,793 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:45:32] "[36mGET /static/logo11.png HTTP/1.1[0m" 304 -
+2025-08-11 20:45:34,329 - werkzeug - INFO -  * Detected change in 'c:\\Users\\MonumeQueens\\Downloads\\MonuMe_Tracke\\MonuMe_Tracker\\server.py', reloading
+2025-08-11 20:45:34,837 - __main__ - INFO - Database tables created successfully
+2025-08-11 20:45:34,874 - __main__ - INFO - Database tables created successfully
+2025-08-11 20:45:34,876 - __main__ - INFO - Database initialization completed
+2025-08-11 20:45:34,876 - __main__ - INFO - Database initialized successfully
+2025-08-11 20:45:34,876 - __main__ - INFO - Starting MonuMe Tracker Server on 127.0.0.1:5000
+2025-08-11 20:45:34,886 - werkzeug - WARNING -  * Debugger is active!
+2025-08-11 20:45:34,888 - werkzeug - INFO -  * Debugger PIN: 104-880-079
+2025-08-11 20:45:43,007 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:45:43] "[36mGET /salary HTTP/1.1[0m" 304 -
+2025-08-11 20:45:43,015 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:45:43] "[36mGET /static/sidebar-loader.js HTTP/1.1[0m" 304 -
+2025-08-11 20:45:43,036 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:45:43] "[36mGET /sidebar-styles.css HTTP/1.1[0m" 304 -
+2025-08-11 20:45:43,037 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:45:43] "GET /get_current_user HTTP/1.1" 200 -
+2025-08-11 20:45:43,038 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:45:43] "[36mGET /sidebar-template.html HTTP/1.1[0m" 304 -
+2025-08-11 20:45:43,040 - __main__ - INFO - DEBUG: Regular user: admin (role: admin, location_id: None)
+2025-08-11 20:45:43,053 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:45:43] "[36mGET /favicon.ico HTTP/1.1[0m" 304 -
+2025-08-11 20:45:43,054 - __main__ - INFO - get_users_for_tracking: Returning 3 users (admin: True, location_id: None)
+2025-08-11 20:45:43,054 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:45:43] "[36mGET /static/logo11.png HTTP/1.1[0m" 304 -
+2025-08-11 20:45:43,055 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:45:43] "GET /get_users_for_tracking HTTP/1.1" 200 -
+2025-08-11 20:45:56,137 - __main__ - INFO - DEBUG: Regular user: admin (role: admin, location_id: None)
+2025-08-11 20:45:56,138 - __main__ - INFO - get_users_for_tracking: Returning 3 users (admin: True, location_id: None)
+2025-08-11 20:45:56,138 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:45:56] "GET /get_users_for_tracking HTTP/1.1" 200 -
+2025-08-11 20:45:58,207 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:45:58] "GET /api/users/2 HTTP/1.1" 200 -
+2025-08-11 20:46:01,289 - __main__ - INFO - DEBUG: Regular user: admin (role: admin, location_id: None)
+2025-08-11 20:46:01,290 - __main__ - INFO - get_users_for_tracking: Returning 3 users (admin: True, location_id: None)
+2025-08-11 20:46:01,290 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:46:01] "GET /get_users_for_tracking HTTP/1.1" 200 -
+2025-08-11 20:46:11,767 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:46:11] "GET /api/demos?userId=2&start=2025-08-01&end=2025-08-10 HTTP/1.1" 200 -
+2025-08-11 20:46:11,772 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:46:11] "GET /api/users/2/tiers HTTP/1.1" 200 -
+2025-08-11 20:46:13,038 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:46:13] "GET /get_current_user HTTP/1.1" 200 -
+2025-08-11 20:46:32,902 - __main__ - INFO - DEBUG: Regular user: admin (role: admin, location_id: None)
+2025-08-11 20:46:32,903 - __main__ - INFO - get_users_for_tracking: Returning 3 users (admin: True, location_id: None)
+2025-08-11 20:46:32,903 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:46:32] "GET /get_users_for_tracking HTTP/1.1" 200 -
+2025-08-11 20:46:43,045 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:46:43] "GET /get_current_user HTTP/1.1" 200 -
+2025-08-11 20:47:11,657 - __main__ - INFO - DEBUG: Regular user: admin (role: admin, location_id: None)
+2025-08-11 20:47:11,658 - __main__ - INFO - get_users_for_tracking: Returning 3 users (admin: True, location_id: None)
+2025-08-11 20:47:11,658 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:47:11] "GET /get_users_for_tracking HTTP/1.1" 200 -
+2025-08-11 20:47:13,042 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:47:13] "GET /get_current_user HTTP/1.1" 200 -
+2025-08-11 20:47:13,774 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:47:13] "[36mGET /sidebar-styles.css HTTP/1.1[0m" 304 -
+2025-08-11 20:47:13,778 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:47:13] "[31m[1mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 405 -
+2025-08-11 20:47:43,280 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:47:43] "GET /get_current_user HTTP/1.1" 200 -
+2025-08-11 20:48:13,282 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:48:13] "GET /get_current_user HTTP/1.1" 200 -
+2025-08-11 20:48:43,280 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:48:43] "GET /get_current_user HTTP/1.1" 200 -
+2025-08-11 20:49:07,499 - __main__ - INFO - DEBUG: Regular user: admin (role: admin, location_id: None)
+2025-08-11 20:49:07,500 - __main__ - INFO - get_users_for_tracking: Returning 3 users (admin: True, location_id: None)
+2025-08-11 20:49:07,501 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:49:07] "GET /get_users_for_tracking HTTP/1.1" 200 -
+2025-08-11 20:49:13,043 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:49:13] "GET /get_current_user HTTP/1.1" 200 -
+2025-08-11 20:49:29,480 - __main__ - INFO - DEBUG: Regular user: admin (role: admin, location_id: None)
+2025-08-11 20:49:29,480 - __main__ - INFO - get_users_for_tracking: Returning 3 users (admin: True, location_id: None)
+2025-08-11 20:49:29,481 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:49:29] "GET /get_users_for_tracking HTTP/1.1" 200 -
+2025-08-11 20:49:36,029 - __main__ - INFO - DEBUG: Regular user: admin (role: admin, location_id: None)
+2025-08-11 20:49:36,030 - __main__ - INFO - get_users_for_tracking: Returning 3 users (admin: True, location_id: None)
+2025-08-11 20:49:36,031 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:49:36] "GET /get_users_for_tracking HTTP/1.1" 200 -
+2025-08-11 20:49:43,280 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:49:43] "GET /get_current_user HTTP/1.1" 200 -
+2025-08-11 20:50:13,280 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:50:13] "GET /get_current_user HTTP/1.1" 200 -
+2025-08-11 20:50:56,146 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:50:56] "GET /get_current_user HTTP/1.1" 200 -
+2025-08-11 20:50:56,148 - __main__ - INFO - DEBUG: Regular user: admin (role: admin, location_id: None)
+2025-08-11 20:50:56,149 - __main__ - INFO - get_users_for_tracking: Returning 3 users (admin: True, location_id: None)
+2025-08-11 20:50:56,149 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:50:56] "GET /get_users_for_tracking HTTP/1.1" 200 -
+2025-08-11 20:51:13,273 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:51:13] "GET /get_current_user HTTP/1.1" 200 -
+2025-08-11 20:51:43,269 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:51:43] "GET /get_current_user HTTP/1.1" 200 -
+2025-08-11 20:52:27,279 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:52:27] "GET /get_current_user HTTP/1.1" 200 -
+2025-08-11 20:52:52,916 - werkzeug - INFO -  * Detected change in 'c:\\Users\\MonumeQueens\\Downloads\\MonuMe_Tracke\\MonuMe_Tracker\\server.py', reloading
+2025-08-11 20:52:53,413 - __main__ - INFO - Database tables created successfully
+2025-08-11 20:52:53,447 - __main__ - INFO - Database tables created successfully
+2025-08-11 20:52:53,448 - __main__ - INFO - Database initialization completed
+2025-08-11 20:52:53,448 - __main__ - INFO - Database initialized successfully
+2025-08-11 20:52:53,448 - __main__ - INFO - Starting MonuMe Tracker Server on 127.0.0.1:5000
+2025-08-11 20:52:53,460 - werkzeug - WARNING -  * Debugger is active!
+2025-08-11 20:52:53,462 - werkzeug - INFO -  * Debugger PIN: 104-880-079
+2025-08-11 20:52:56,047 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:52:56] "GET /get_current_user HTTP/1.1" 200 -
+2025-08-11 20:52:56,048 - __main__ - INFO - DEBUG: Regular user: admin (role: admin, location_id: None)
+2025-08-11 20:52:56,064 - __main__ - INFO - get_users_for_tracking: Returning 3 users (admin: True, location_id: None)
+2025-08-11 20:52:56,065 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:52:56] "GET /get_users_for_tracking HTTP/1.1" 200 -
+2025-08-11 20:53:00,115 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:53:00] "[36mGET /dashboard HTTP/1.1[0m" 304 -
+2025-08-11 20:53:00,127 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:53:00] "[36mGET /sidebar-loader.js HTTP/1.1[0m" 304 -
+2025-08-11 20:53:00,131 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:53:00] "[36mGET /style.css HTTP/1.1[0m" 304 -
+2025-08-11 20:53:00,133 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:53:00] "[36mGET /static/logo11.png HTTP/1.1[0m" 304 -
+2025-08-11 20:53:00,136 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:53:00] "[36mGET /js/team-monume-activeusers.js HTTP/1.1[0m" 304 -
+2025-08-11 20:53:00,138 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:53:00] "[31m[1mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 405 -
+2025-08-11 20:53:00,141 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:53:00] "[31m[1mGET /sidebar.html HTTP/1.1[0m" 405 -
+2025-08-11 20:53:01,649 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:53:01] "GET /get_current_user HTTP/1.1" 200 -
+2025-08-11 20:53:03,504 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:53:03] "[36mGET /style.css HTTP/1.1[0m" 304 -
+2025-08-11 20:53:03,509 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:53:03] "[31m[1mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 405 -
+2025-08-11 20:53:21,585 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:53:21] "GET /appointment.html HTTP/1.1" 200 -
+2025-08-11 20:53:21,587 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:53:21] "[36mGET /appointment HTTP/1.1[0m" 304 -
+2025-08-11 20:53:21,597 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:53:21] "[36mGET /static/sidebar-loader.js HTTP/1.1[0m" 304 -
+2025-08-11 20:53:21,599 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:53:21] "[36mGET /sidebar-styles.css HTTP/1.1[0m" 304 -
+2025-08-11 20:53:21,600 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:53:21] "[36mGET /static/appointment.js HTTP/1.1[0m" 304 -
+2025-08-11 20:53:21,603 - __main__ - INFO - Check auth called. Session: {'role': 'admin', 'user_id': 1, 'username': 'admin'}
+2025-08-11 20:53:21,605 - __main__ - INFO - User found: admin, Active: True
+2025-08-11 20:53:21,605 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:53:21] "GET /api/check-auth HTTP/1.1" 200 -
+2025-08-11 20:53:21,621 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:53:21] "GET /get_current_user HTTP/1.1" 200 -
+2025-08-11 20:53:21,622 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:53:21] "[36mGET /sidebar-template.html HTTP/1.1[0m" 304 -
+2025-08-11 20:53:21,650 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:53:21] "[36mGET /static/logo11.png HTTP/1.1[0m" 304 -
+2025-08-11 20:53:21,651 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:53:21] "GET /api/appointments HTTP/1.1" 200 -
+2025-08-11 20:53:21,676 - __main__ - INFO - DEBUG: Regular user: admin (role: admin, location_id: None)
+2025-08-11 20:53:21,685 - __main__ - INFO - DEBUG: Found 3 users in query
+2025-08-11 20:53:21,685 - __main__ - INFO - DEBUG: User admin (role: admin) -> No location
+2025-08-11 20:53:21,686 - __main__ - INFO - DEBUG: User ori (role: location_manager) -> queens
+2025-08-11 20:53:21,686 - __main__ - INFO - DEBUG: User nicol (role: user) -> queens
+2025-08-11 20:53:21,687 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:53:21] "GET /api/users?all=false HTTP/1.1" 200 -
+2025-08-11 20:53:42,174 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:53:42] "POST /api/appointments HTTP/1.1" 200 -
+2025-08-11 20:53:42,191 - __main__ - ERROR - api_send_appointment_email error: 'bool' object has no attribute 'lower'
+Traceback (most recent call last):
+  File "c:\Users\MonumeQueens\Downloads\MonuMe_Tracke\MonuMe_Tracker\server.py", line 1404, in api_send_appointment_email
+    result = send_email_smtp(client_email, subject, html_content, pdf_path=None, email_type='appointment', config_override=cfg)
+  File "c:\Users\MonumeQueens\Downloads\MonuMe_Tracke\MonuMe_Tracker\email_sender.py", line 242, in send_email
+    auto_enabled = config.get('auto_email_enabled', 'True').lower() in ('true', '1', 'yes')
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'bool' object has no attribute 'lower'
+2025-08-11 20:53:42,193 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:53:42] "[35m[1mPOST /api/send-appointment-email HTTP/1.1[0m" 500 -
+2025-08-11 20:53:47,547 - __main__ - ERROR - api_send_appointment_email error: 'bool' object has no attribute 'lower'
+Traceback (most recent call last):
+  File "c:\Users\MonumeQueens\Downloads\MonuMe_Tracke\MonuMe_Tracker\server.py", line 1404, in api_send_appointment_email
+    result = send_email_smtp(client_email, subject, html_content, pdf_path=None, email_type='appointment', config_override=cfg)
+  File "c:\Users\MonumeQueens\Downloads\MonuMe_Tracke\MonuMe_Tracker\email_sender.py", line 242, in send_email
+    auto_enabled = config.get('auto_email_enabled', 'True').lower() in ('true', '1', 'yes')
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'bool' object has no attribute 'lower'
+2025-08-11 20:53:47,549 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:53:47] "[35m[1mPOST /api/send-appointment-email HTTP/1.1[0m" 500 -
+2025-08-11 20:53:51,608 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:53:51] "[36mGET /sidebar-styles.css HTTP/1.1[0m" 304 -
+2025-08-11 20:53:51,613 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:53:51] "[31m[1mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 405 -
+2025-08-11 20:53:51,642 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:53:51] "GET /get_current_user HTTP/1.1" 200 -
+2025-08-11 20:54:16,855 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:54:16] "[36mGET /users HTTP/1.1[0m" 304 -
+2025-08-11 20:54:16,868 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:54:16] "[36mGET /static/logo11.png HTTP/1.1[0m" 304 -
+2025-08-11 20:54:16,869 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:54:16] "[36mGET /style.css HTTP/1.1[0m" 304 -
+2025-08-11 20:54:16,871 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:54:16] "[31m[1mGET /test_delete_functionality.js HTTP/1.1[0m" 405 -
+2025-08-11 20:54:16,871 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:54:16] "GET /static/js/users.js HTTP/1.1" 200 -
+2025-08-11 20:54:17,069 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:54:17] "GET /get_current_user HTTP/1.1" 200 -
+2025-08-11 20:54:17,076 - __main__ - INFO - DEBUG: Regular user: admin (role: admin, location_id: None)
+2025-08-11 20:54:17,079 - __main__ - INFO - DEBUG: Found 3 users in query
+2025-08-11 20:54:17,079 - __main__ - INFO - DEBUG: User admin (role: admin) -> No location
+2025-08-11 20:54:17,082 - __main__ - INFO - DEBUG: User ori (role: location_manager) -> queens
+2025-08-11 20:54:17,083 - __main__ - INFO - DEBUG: User nicol (role: user) -> queens
+2025-08-11 20:54:17,083 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:54:17] "GET /api/users?page=1&per_page=10 HTTP/1.1" 200 -
+2025-08-11 20:54:17,086 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:54:17] "GET /api/locations HTTP/1.1" 200 -
+2025-08-11 20:54:18,001 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:54:18] "[36mGET /emails HTTP/1.1[0m" 304 -
+2025-08-11 20:54:18,010 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:54:18] "[36mGET /style.css HTTP/1.1[0m" 304 -
+2025-08-11 20:54:18,012 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:54:18] "[31m[1mGET /GIFT%20CARD.png HTTP/1.1[0m" 405 -
+2025-08-11 20:54:18,012 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:54:18] "[31m[1mGET /logo2.png HTTP/1.1[0m" 405 -
+2025-08-11 20:54:18,016 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:54:18] "[36mGET /js/emails-location.js HTTP/1.1[0m" 304 -
+2025-08-11 20:54:18,029 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:54:18] "[31m[1mGET /get_email_logs HTTP/1.1[0m" 405 -
+2025-08-11 20:54:18,030 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:54:18] "[36mGET /sidebar-template.html HTTP/1.1[0m" 304 -
+2025-08-11 20:54:18,031 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:54:18] "GET /get_email_settings HTTP/1.1" 200 -
+2025-08-11 20:54:18,039 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:54:18] "GET /get-email-config HTTP/1.1" 200 -
+2025-08-11 20:54:18,039 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:54:18] "[36mGET /static/logo11.png HTTP/1.1[0m" 304 -
+2025-08-11 20:54:18,041 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:54:18] "GET /get_email_settings HTTP/1.1" 200 -
+2025-08-11 20:54:50,580 - werkzeug - INFO -  * Detected change in 'c:\\Users\\MonumeQueens\\Downloads\\MonuMe_Tracke\\MonuMe_Tracker\\server.py', reloading
+2025-08-11 20:54:51,125 - __main__ - INFO - Database tables created successfully
+2025-08-11 20:54:51,161 - __main__ - INFO - Database tables created successfully
+2025-08-11 20:54:51,163 - __main__ - INFO - Database initialization completed
+2025-08-11 20:54:51,163 - __main__ - INFO - Database initialized successfully
+2025-08-11 20:54:51,163 - __main__ - INFO - Starting MonuMe Tracker Server on 127.0.0.1:5000
+2025-08-11 20:54:51,173 - werkzeug - WARNING -  * Debugger is active!
+2025-08-11 20:54:51,174 - werkzeug - INFO -  * Debugger PIN: 104-880-079
+2025-08-11 20:55:26,747 - werkzeug - INFO -  * Detected change in 'c:\\Users\\MonumeQueens\\Downloads\\MonuMe_Tracke\\MonuMe_Tracker\\server.py', reloading
+2025-08-11 20:55:27,255 - __main__ - INFO - Database tables created successfully
+2025-08-11 20:55:27,296 - __main__ - INFO - Database tables created successfully
+2025-08-11 20:55:27,298 - __main__ - INFO - Database initialization completed
+2025-08-11 20:55:27,299 - __main__ - INFO - Database initialized successfully
+2025-08-11 20:55:27,299 - __main__ - INFO - Starting MonuMe Tracker Server on 127.0.0.1:5000
+2025-08-11 20:55:27,309 - werkzeug - WARNING -  * Debugger is active!
+2025-08-11 20:55:27,311 - werkzeug - INFO -  * Debugger PIN: 104-880-079
+2025-08-11 20:56:43,901 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:56:43] "[33mGET /icon.png HTTP/1.1[0m" 404 -
+2025-08-11 20:56:47,657 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:56:47] "POST /save-email-config HTTP/1.1" 200 -
+2025-08-11 20:56:47,663 - __main__ - ERROR - test-email-config error: 'bool' object has no attribute 'lower'
+Traceback (most recent call last):
+  File "c:\Users\MonumeQueens\Downloads\MonuMe_Tracke\MonuMe_Tracker\server.py", line 1427, in test_email_config_route
+    result = send_email_smtp(recipient, subject, html_content, config_override=cfg)
+  File "c:\Users\MonumeQueens\Downloads\MonuMe_Tracke\MonuMe_Tracker\email_sender.py", line 242, in send_email
+    auto_enabled = config.get('auto_email_enabled', 'True').lower() in ('true', '1', 'yes')
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'bool' object has no attribute 'lower'
+2025-08-11 20:56:47,665 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:56:47] "[35m[1mPOST /test-email-config HTTP/1.1[0m" 500 -
+2025-08-11 20:56:55,027 - werkzeug - INFO -  * Detected change in 'c:\\Users\\MonumeQueens\\Downloads\\MonuMe_Tracke\\MonuMe_Tracker\\server.py', reloading
+2025-08-11 20:56:55,546 - __main__ - INFO - Database tables created successfully
+2025-08-11 20:56:55,580 - __main__ - INFO - Database tables created successfully
+2025-08-11 20:56:55,582 - __main__ - INFO - Database initialization completed
+2025-08-11 20:56:55,582 - __main__ - INFO - Database initialized successfully
+2025-08-11 20:56:55,582 - __main__ - INFO - Starting MonuMe Tracker Server on 127.0.0.1:5000
+2025-08-11 20:56:55,592 - werkzeug - WARNING -  * Debugger is active!
+2025-08-11 20:56:55,594 - werkzeug - INFO -  * Debugger PIN: 104-880-079
+2025-08-11 20:57:02,721 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:57:02] "[36mGET /emails HTTP/1.1[0m" 304 -
+2025-08-11 20:57:02,733 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:57:02] "[31m[1mGET /GIFT%20CARD.png HTTP/1.1[0m" 405 -
+2025-08-11 20:57:02,734 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:57:02] "[31m[1mGET /logo2.png HTTP/1.1[0m" 405 -
+2025-08-11 20:57:02,735 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:57:02] "[36mGET /style.css HTTP/1.1[0m" 304 -
+2025-08-11 20:57:02,737 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:57:02] "[36mGET /js/emails-location.js HTTP/1.1[0m" 304 -
+2025-08-11 20:57:02,744 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:57:02] "[31m[1mGET /get_email_logs HTTP/1.1[0m" 405 -
+2025-08-11 20:57:02,745 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:57:02] "[36mGET /sidebar-template.html HTTP/1.1[0m" 304 -
+2025-08-11 20:57:02,747 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:57:02] "GET /get_email_settings HTTP/1.1" 200 -
+2025-08-11 20:57:02,750 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:57:02] "GET /get-email-config HTTP/1.1" 200 -
+2025-08-11 20:57:02,751 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:57:02] "GET /get_email_settings HTTP/1.1" 200 -
+2025-08-11 20:57:02,758 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:57:02] "[36mGET /static/logo11.png HTTP/1.1[0m" 304 -
+2025-08-11 20:57:08,797 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:57:08] "GET /get_current_user HTTP/1.1" 200 -
+2025-08-11 20:57:08,812 - __main__ - INFO - DEBUG: Regular user: admin (role: admin, location_id: None)
+2025-08-11 20:57:08,822 - __main__ - INFO - DEBUG: Found 3 users in query
+2025-08-11 20:57:08,822 - __main__ - INFO - DEBUG: User admin (role: admin) -> No location
+2025-08-11 20:57:08,828 - __main__ - INFO - DEBUG: User ori (role: location_manager) -> queens
+2025-08-11 20:57:08,828 - __main__ - INFO - DEBUG: User nicol (role: user) -> queens
+2025-08-11 20:57:08,829 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:57:08] "GET /api/users?page=1&per_page=10 HTTP/1.1" 200 -
+2025-08-11 20:57:08,831 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:57:08] "GET /api/locations HTTP/1.1" 200 -
+2025-08-11 20:57:09,041 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:57:09] "GET /api/appointments HTTP/1.1" 200 -
+2025-08-11 20:57:09,058 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:57:09] "[36mGET /static/logo11.png HTTP/1.1[0m" 304 -
+2025-08-11 20:57:09,080 - __main__ - INFO - DEBUG: Regular user: admin (role: admin, location_id: None)
+2025-08-11 20:57:09,081 - __main__ - INFO - DEBUG: Found 3 users in query
+2025-08-11 20:57:09,081 - __main__ - INFO - DEBUG: User admin (role: admin) -> No location
+2025-08-11 20:57:09,081 - __main__ - INFO - DEBUG: User ori (role: location_manager) -> queens
+2025-08-11 20:57:09,081 - __main__ - INFO - DEBUG: User nicol (role: user) -> queens
+2025-08-11 20:57:09,082 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:57:09] "GET /api/users?all=false HTTP/1.1" 200 -
+2025-08-11 20:57:10,522 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:57:10] "[36mGET /static/logo11.png HTTP/1.1[0m" 304 -
+2025-08-11 20:57:10,523 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:57:10] "[36mGET /favicon.ico HTTP/1.1[0m" 304 -
+2025-08-11 20:57:13,313 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:57:13] "GET /get_current_user HTTP/1.1" 200 -
+2025-08-11 20:57:13,605 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:57:13] "[36mGET /static/logo11.png HTTP/1.1[0m" 304 -
+2025-08-11 20:57:13,606 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:57:13] "[36mGET /favicon.ico HTTP/1.1[0m" 304 -
+2025-08-11 20:57:15,333 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:57:15] "GET /salary HTTP/1.1" 200 -
+2025-08-11 20:57:15,341 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:57:15] "[36mGET /static/sidebar-loader.js HTTP/1.1[0m" 304 -
+2025-08-11 20:57:15,361 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:57:15] "[36mGET /sidebar-styles.css HTTP/1.1[0m" 304 -
+2025-08-11 20:57:15,368 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:57:15] "GET /get_current_user HTTP/1.1" 200 -
+2025-08-11 20:57:15,370 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:57:15] "[36mGET /sidebar-template.html HTTP/1.1[0m" 304 -
+2025-08-11 20:57:15,371 - __main__ - INFO - DEBUG: Regular user: admin (role: admin, location_id: None)
+2025-08-11 20:57:15,375 - __main__ - INFO - get_users_for_tracking: Returning 3 users (admin: True, location_id: None)
+2025-08-11 20:57:15,375 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:57:15] "GET /get_users_for_tracking HTTP/1.1" 200 -
+2025-08-11 20:57:15,375 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:57:15] "[36mGET /favicon.ico HTTP/1.1[0m" 304 -
+2025-08-11 20:57:15,376 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:57:15] "[36mGET /static/logo11.png HTTP/1.1[0m" 304 -
+2025-08-11 20:57:20,471 - __main__ - INFO - DEBUG: Regular user: admin (role: admin, location_id: None)
+2025-08-11 20:57:20,473 - __main__ - INFO - get_users_for_tracking: Returning 3 users (admin: True, location_id: None)
+2025-08-11 20:57:20,473 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:57:20] "GET /get_users_for_tracking HTTP/1.1" 200 -
+2025-08-11 20:57:22,093 - __main__ - INFO - DEBUG: Regular user: admin (role: admin, location_id: None)
+2025-08-11 20:57:22,095 - __main__ - INFO - get_users_for_tracking: Returning 3 users (admin: True, location_id: None)
+2025-08-11 20:57:22,096 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:57:22] "GET /get_users_for_tracking HTTP/1.1" 200 -
+2025-08-11 20:57:45,386 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:57:45] "GET /get_current_user HTTP/1.1" 200 -
+2025-08-11 20:58:05,650 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:58:05] "[36mGET /salary HTTP/1.1[0m" 304 -
+2025-08-11 20:58:05,658 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:58:05] "[36mGET /static/sidebar-loader.js HTTP/1.1[0m" 304 -
+2025-08-11 20:58:05,683 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:58:05] "[36mGET /sidebar-styles.css HTTP/1.1[0m" 304 -
+2025-08-11 20:58:05,686 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:58:05] "GET /get_current_user HTTP/1.1" 200 -
+2025-08-11 20:58:05,690 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:58:05] "[36mGET /sidebar-template.html HTTP/1.1[0m" 304 -
+2025-08-11 20:58:05,691 - __main__ - INFO - DEBUG: Regular user: admin (role: admin, location_id: None)
+2025-08-11 20:58:05,694 - __main__ - INFO - get_users_for_tracking: Returning 3 users (admin: True, location_id: None)
+2025-08-11 20:58:05,694 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:58:05] "GET /get_users_for_tracking HTTP/1.1" 200 -
+2025-08-11 20:58:05,696 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:58:05] "[36mGET /static/logo11.png HTTP/1.1[0m" 304 -
+2025-08-11 20:58:05,699 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:58:05] "[36mGET /favicon.ico HTTP/1.1[0m" 304 -
+2025-08-11 20:58:07,066 - __main__ - INFO - DEBUG: Regular user: admin (role: admin, location_id: None)
+2025-08-11 20:58:07,067 - __main__ - INFO - get_users_for_tracking: Returning 3 users (admin: True, location_id: None)
+2025-08-11 20:58:07,068 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:58:07] "GET /get_users_for_tracking HTTP/1.1" 200 -
+2025-08-11 20:58:14,414 - __main__ - INFO - DEBUG: Regular user: admin (role: admin, location_id: None)
+2025-08-11 20:58:14,417 - __main__ - INFO - get_users_for_tracking: Returning 3 users (admin: True, location_id: None)
+2025-08-11 20:58:14,418 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:58:14] "GET /get_users_for_tracking HTTP/1.1" 200 -
+2025-08-11 20:58:20,806 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:58:20] "GET /api/users/2 HTTP/1.1" 200 -
+2025-08-11 20:58:24,855 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:58:24] "GET /api/users/3 HTTP/1.1" 200 -
+2025-08-11 20:58:35,691 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:58:35] "GET /get_current_user HTTP/1.1" 200 -
+2025-08-11 20:58:57,235 - __main__ - INFO - DEBUG: Regular user: admin (role: admin, location_id: None)
+2025-08-11 20:58:57,236 - __main__ - INFO - get_users_for_tracking: Returning 3 users (admin: True, location_id: None)
+2025-08-11 20:58:57,236 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:58:57] "GET /get_users_for_tracking HTTP/1.1" 200 -
+2025-08-11 20:58:59,827 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:58:59] "[36mGET /sidebar-styles.css HTTP/1.1[0m" 304 -
+2025-08-11 20:58:59,832 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:58:59] "[31m[1mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 405 -
+2025-08-11 20:59:02,319 - __main__ - INFO - DEBUG: Regular user: admin (role: admin, location_id: None)
+2025-08-11 20:59:02,320 - __main__ - INFO - get_users_for_tracking: Returning 3 users (admin: True, location_id: None)
+2025-08-11 20:59:02,320 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:59:02] "GET /get_users_for_tracking HTTP/1.1" 200 -
+2025-08-11 20:59:02,326 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:59:02] "[36mGET /salary HTTP/1.1[0m" 304 -
+2025-08-11 20:59:02,337 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:59:02] "[36mGET /static/sidebar-loader.js HTTP/1.1[0m" 304 -
+2025-08-11 20:59:02,339 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:59:02] "[31m[1mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 405 -
+2025-08-11 20:59:02,381 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:59:02] "[36mGET /sidebar-styles.css HTTP/1.1[0m" 304 -
+2025-08-11 20:59:02,387 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:59:02] "GET /get_current_user HTTP/1.1" 200 -
+2025-08-11 20:59:02,388 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:59:02] "[36mGET /sidebar-template.html HTTP/1.1[0m" 304 -
+2025-08-11 20:59:02,390 - __main__ - INFO - DEBUG: Regular user: admin (role: admin, location_id: None)
+2025-08-11 20:59:02,391 - __main__ - INFO - get_users_for_tracking: Returning 3 users (admin: True, location_id: None)
+2025-08-11 20:59:02,392 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:59:02] "GET /get_users_for_tracking HTTP/1.1" 200 -
+2025-08-11 20:59:02,399 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:59:02] "[36mGET /favicon.ico HTTP/1.1[0m" 304 -
+2025-08-11 20:59:02,402 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:59:02] "[36mGET /static/logo11.png HTTP/1.1[0m" 304 -
+2025-08-11 20:59:06,928 - __main__ - INFO - DEBUG: Regular user: admin (role: admin, location_id: None)
+2025-08-11 20:59:06,930 - __main__ - INFO - get_users_for_tracking: Returning 3 users (admin: True, location_id: None)
+2025-08-11 20:59:06,930 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:59:06] "GET /get_users_for_tracking HTTP/1.1" 200 -
+2025-08-11 20:59:09,982 - __main__ - INFO - DEBUG: Regular user: admin (role: admin, location_id: None)
+2025-08-11 20:59:09,983 - __main__ - INFO - get_users_for_tracking: Returning 3 users (admin: True, location_id: None)
+2025-08-11 20:59:09,984 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:59:09] "GET /get_users_for_tracking HTTP/1.1" 200 -
+2025-08-11 20:59:19,647 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:59:19] "GET /api/users/3 HTTP/1.1" 200 -
+2025-08-11 20:59:32,404 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 20:59:32] "GET /get_current_user HTTP/1.1" 200 -
+2025-08-11 21:00:03,283 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 21:00:03] "GET /get_current_user HTTP/1.1" 200 -
+2025-08-11 21:00:09,558 - __main__ - INFO - DEBUG: Regular user: admin (role: admin, location_id: None)
+2025-08-11 21:00:09,559 - __main__ - INFO - get_users_for_tracking: Returning 3 users (admin: True, location_id: None)
+2025-08-11 21:00:09,560 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 21:00:09] "GET /get_users_for_tracking HTTP/1.1" 200 -
+2025-08-11 21:00:14,115 - __main__ - INFO - DEBUG: Regular user: admin (role: admin, location_id: None)
+2025-08-11 21:00:14,116 - __main__ - INFO - get_users_for_tracking: Returning 3 users (admin: True, location_id: None)
+2025-08-11 21:00:14,117 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 21:00:14] "GET /get_users_for_tracking HTTP/1.1" 200 -
+2025-08-11 21:00:33,280 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 21:00:33] "GET /get_current_user HTTP/1.1" 200 -
+2025-08-11 21:01:03,278 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 21:01:03] "GET /get_current_user HTTP/1.1" 200 -
+2025-08-11 21:01:33,277 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 21:01:33] "GET /get_current_user HTTP/1.1" 200 -
+2025-08-11 21:02:03,285 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 21:02:03] "GET /get_current_user HTTP/1.1" 200 -
+2025-08-11 21:02:33,275 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 21:02:33] "GET /get_current_user HTTP/1.1" 200 -
+2025-08-11 21:03:25,505 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 21:03:25] "GET /get_current_user HTTP/1.1" 200 -
+2025-08-11 21:03:25,508 - __main__ - INFO - DEBUG: Regular user: admin (role: admin, location_id: None)
+2025-08-11 21:03:25,511 - __main__ - INFO - get_users_for_tracking: Returning 3 users (admin: True, location_id: None)
+2025-08-11 21:03:25,511 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 21:03:25] "GET /get_users_for_tracking HTTP/1.1" 200 -
+2025-08-11 21:03:26,751 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 21:03:26] "GET /salary HTTP/1.1" 200 -
+2025-08-11 21:03:26,761 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 21:03:26] "[36mGET /static/sidebar-loader.js HTTP/1.1[0m" 304 -
+2025-08-11 21:03:26,790 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 21:03:26] "[36mGET /sidebar-styles.css HTTP/1.1[0m" 304 -
+2025-08-11 21:03:26,795 - __main__ - INFO - DEBUG: Regular user: admin (role: admin, location_id: None)
+2025-08-11 21:03:26,795 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 21:03:26] "GET /get_current_user HTTP/1.1" 200 -
+2025-08-11 21:03:26,796 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 21:03:26] "[36mGET /sidebar-template.html HTTP/1.1[0m" 304 -
+2025-08-11 21:03:26,797 - __main__ - INFO - get_users_for_tracking: Returning 3 users (admin: True, location_id: None)
+2025-08-11 21:03:26,797 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 21:03:26] "GET /get_users_for_tracking HTTP/1.1" 200 -
+2025-08-11 21:03:26,806 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 21:03:26] "[36mGET /favicon.ico HTTP/1.1[0m" 304 -
+2025-08-11 21:03:26,806 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 21:03:26] "[36mGET /static/logo11.png HTTP/1.1[0m" 304 -
+2025-08-11 21:03:32,110 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 21:03:32] "[36mGET /salary HTTP/1.1[0m" 304 -
+2025-08-11 21:03:32,119 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 21:03:32] "[36mGET /static/sidebar-loader.js HTTP/1.1[0m" 304 -
+2025-08-11 21:03:32,142 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 21:03:32] "[36mGET /sidebar-styles.css HTTP/1.1[0m" 304 -
+2025-08-11 21:03:32,146 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 21:03:32] "GET /get_current_user HTTP/1.1" 200 -
+2025-08-11 21:03:32,147 - __main__ - INFO - DEBUG: Regular user: admin (role: admin, location_id: None)
+2025-08-11 21:03:32,147 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 21:03:32] "[36mGET /sidebar-template.html HTTP/1.1[0m" 304 -
+2025-08-11 21:03:32,149 - __main__ - INFO - get_users_for_tracking: Returning 3 users (admin: True, location_id: None)
+2025-08-11 21:03:32,150 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 21:03:32] "GET /get_users_for_tracking HTTP/1.1" 200 -
+2025-08-11 21:03:32,151 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 21:03:32] "[36mGET /favicon.ico HTTP/1.1[0m" 304 -
+2025-08-11 21:03:32,154 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 21:03:32] "[36mGET /static/logo11.png HTTP/1.1[0m" 304 -
+2025-08-11 21:03:32,557 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 21:03:32] "[36mGET /salary HTTP/1.1[0m" 304 -
+2025-08-11 21:03:32,567 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 21:03:32] "[36mGET /static/sidebar-loader.js HTTP/1.1[0m" 304 -
+2025-08-11 21:03:32,590 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 21:03:32] "[36mGET /sidebar-styles.css HTTP/1.1[0m" 304 -
+2025-08-11 21:03:32,593 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 21:03:32] "GET /get_current_user HTTP/1.1" 200 -
+2025-08-11 21:03:32,599 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 21:03:32] "[36mGET /sidebar-template.html HTTP/1.1[0m" 304 -
+2025-08-11 21:03:32,599 - __main__ - INFO - DEBUG: Regular user: admin (role: admin, location_id: None)
+2025-08-11 21:03:32,602 - __main__ - INFO - get_users_for_tracking: Returning 3 users (admin: True, location_id: None)
+2025-08-11 21:03:32,602 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 21:03:32] "[36mGET /favicon.ico HTTP/1.1[0m" 304 -
+2025-08-11 21:03:32,603 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 21:03:32] "GET /get_users_for_tracking HTTP/1.1" 200 -
+2025-08-11 21:03:32,605 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 21:03:32] "[36mGET /static/logo11.png HTTP/1.1[0m" 304 -
+2025-08-11 21:03:34,488 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 21:03:34] "[36mGET /sidebar-styles.css HTTP/1.1[0m" 304 -
+2025-08-11 21:03:34,492 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 21:03:34] "[31m[1mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 405 -
+2025-08-11 21:03:36,308 - __main__ - INFO - DEBUG: Regular user: admin (role: admin, location_id: None)
+2025-08-11 21:03:36,313 - __main__ - INFO - get_users_for_tracking: Returning 3 users (admin: True, location_id: None)
+2025-08-11 21:03:36,314 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 21:03:36] "GET /get_users_for_tracking HTTP/1.1" 200 -
+2025-08-11 21:04:03,278 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 21:04:03] "GET /get_current_user HTTP/1.1" 200 -
+2025-08-11 21:04:33,276 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 21:04:33] "GET /get_current_user HTTP/1.1" 200 -
+2025-08-11 21:04:55,208 - __main__ - INFO - DEBUG: Regular user: admin (role: admin, location_id: None)
+2025-08-11 21:04:55,211 - __main__ - INFO - get_users_for_tracking: Returning 3 users (admin: True, location_id: None)
+2025-08-11 21:04:55,212 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 21:04:55] "GET /get_users_for_tracking HTTP/1.1" 200 -
+2025-08-11 21:04:55,212 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 21:04:55] "GET /salary HTTP/1.1" 200 -
+2025-08-11 21:04:55,221 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 21:04:55] "[36mGET /static/sidebar-loader.js HTTP/1.1[0m" 304 -
+2025-08-11 21:04:55,224 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 21:04:55] "[31m[1mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 405 -
+2025-08-11 21:04:55,262 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 21:04:55] "[36mGET /sidebar-styles.css HTTP/1.1[0m" 304 -
+2025-08-11 21:04:55,269 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 21:04:55] "GET /get_current_user HTTP/1.1" 200 -
+2025-08-11 21:04:55,271 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 21:04:55] "[36mGET /sidebar-template.html HTTP/1.1[0m" 304 -
+2025-08-11 21:04:55,272 - __main__ - INFO - DEBUG: Regular user: admin (role: admin, location_id: None)
+2025-08-11 21:04:55,274 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 21:04:55] "[36mGET /favicon.ico HTTP/1.1[0m" 304 -
+2025-08-11 21:04:55,275 - __main__ - INFO - get_users_for_tracking: Returning 3 users (admin: True, location_id: None)
+2025-08-11 21:04:55,276 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 21:04:55] "GET /get_users_for_tracking HTTP/1.1" 200 -
+2025-08-11 21:04:55,277 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 21:04:55] "[36mGET /static/logo11.png HTTP/1.1[0m" 304 -
+2025-08-11 21:05:16,500 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 21:05:16] "[36mGET /salary HTTP/1.1[0m" 304 -
+2025-08-11 21:05:16,512 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 21:05:16] "[36mGET /static/sidebar-loader.js HTTP/1.1[0m" 304 -
+2025-08-11 21:05:16,516 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 21:05:16] "[31m[1mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 405 -
+2025-08-11 21:05:16,557 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 21:05:16] "[36mGET /sidebar-styles.css HTTP/1.1[0m" 304 -
+2025-08-11 21:05:16,560 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 21:05:16] "GET /get_current_user HTTP/1.1" 200 -
+2025-08-11 21:05:16,562 - __main__ - INFO - DEBUG: Regular user: admin (role: admin, location_id: None)
+2025-08-11 21:05:16,563 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 21:05:16] "[36mGET /sidebar-template.html HTTP/1.1[0m" 304 -
+2025-08-11 21:05:16,566 - __main__ - INFO - get_users_for_tracking: Returning 3 users (admin: True, location_id: None)
+2025-08-11 21:05:16,566 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 21:05:16] "GET /get_users_for_tracking HTTP/1.1" 200 -
+2025-08-11 21:05:16,568 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 21:05:16] "[36mGET /favicon.ico HTTP/1.1[0m" 304 -
+2025-08-11 21:05:16,569 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 21:05:16] "[36mGET /static/logo11.png HTTP/1.1[0m" 304 -
+2025-08-11 21:05:27,016 - __main__ - INFO - DEBUG: Regular user: admin (role: admin, location_id: None)
+2025-08-11 21:05:27,018 - __main__ - INFO - get_users_for_tracking: Returning 3 users (admin: True, location_id: None)
+2025-08-11 21:05:27,018 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 21:05:27] "GET /get_users_for_tracking HTTP/1.1" 200 -
+2025-08-11 21:05:27,990 - __main__ - INFO - DEBUG: Regular user: admin (role: admin, location_id: None)
+2025-08-11 21:05:27,992 - __main__ - INFO - get_users_for_tracking: Returning 3 users (admin: True, location_id: None)
+2025-08-11 21:05:27,992 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 21:05:27] "GET /get_users_for_tracking HTTP/1.1" 200 -
+2025-08-11 21:05:29,905 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 21:05:29] "GET /api/users/3 HTTP/1.1" 200 -
+2025-08-11 21:05:34,693 - __main__ - INFO - DEBUG: Regular user: admin (role: admin, location_id: None)
+2025-08-11 21:05:34,694 - __main__ - INFO - get_users_for_tracking: Returning 3 users (admin: True, location_id: None)
+2025-08-11 21:05:34,695 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 21:05:34] "GET /get_users_for_tracking HTTP/1.1" 200 -
+2025-08-11 21:05:43,552 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 21:05:43] "GET /api/demos?userId=3&start=2025-08-01&end=2025-08-10 HTTP/1.1" 200 -
+2025-08-11 21:05:43,560 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 21:05:43] "GET /api/users/3/tiers HTTP/1.1" 200 -
+2025-08-11 21:05:46,559 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 21:05:46] "GET /get_current_user HTTP/1.1" 200 -
+2025-08-11 21:06:16,569 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 21:06:16] "GET /get_current_user HTTP/1.1" 200 -
+2025-08-11 21:06:19,755 - __main__ - INFO - DEBUG: Regular user: admin (role: admin, location_id: None)
+2025-08-11 21:06:19,756 - __main__ - INFO - get_users_for_tracking: Returning 3 users (admin: True, location_id: None)
+2025-08-11 21:06:19,756 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 21:06:19] "GET /get_users_for_tracking HTTP/1.1" 200 -
+2025-08-11 21:06:33,313 - __main__ - INFO - DEBUG: Regular user: admin (role: admin, location_id: None)
+2025-08-11 21:06:33,316 - __main__ - INFO - get_users_for_tracking: Returning 3 users (admin: True, location_id: None)
+2025-08-11 21:06:33,316 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 21:06:33] "GET /get_users_for_tracking HTTP/1.1" 200 -
+2025-08-11 21:06:47,280 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 21:06:47] "GET /get_current_user HTTP/1.1" 200 -
+2025-08-11 21:07:17,288 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 21:07:17] "GET /get_current_user HTTP/1.1" 200 -
+2025-08-11 21:07:47,277 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 21:07:47] "GET /get_current_user HTTP/1.1" 200 -
+2025-08-11 21:08:17,288 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 21:08:17] "GET /get_current_user HTTP/1.1" 200 -
+2025-08-11 21:08:28,750 - __main__ - INFO - DEBUG: Regular user: admin (role: admin, location_id: None)
+2025-08-11 21:08:28,752 - __main__ - INFO - get_users_for_tracking: Returning 3 users (admin: True, location_id: None)
+2025-08-11 21:08:28,752 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 21:08:28] "GET /get_users_for_tracking HTTP/1.1" 200 -
+2025-08-11 21:08:46,578 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 21:08:46] "GET /get_current_user HTTP/1.1" 200 -
+2025-08-11 21:09:17,277 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 21:09:17] "GET /get_current_user HTTP/1.1" 200 -
+2025-08-11 21:09:47,289 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 21:09:47] "GET /get_current_user HTTP/1.1" 200 -
+2025-08-11 21:10:27,275 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 21:10:27] "GET /get_current_user HTTP/1.1" 200 -
+2025-08-11 21:11:27,281 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 21:11:27] "GET /get_current_user HTTP/1.1" 200 -
+2025-08-11 21:12:27,277 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 21:12:27] "GET /get_current_user HTTP/1.1" 200 -
+2025-08-11 21:13:27,287 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 21:13:27] "GET /get_current_user HTTP/1.1" 200 -
+2025-08-11 21:14:27,279 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 21:14:27] "GET /get_current_user HTTP/1.1" 200 -
+2025-08-11 21:14:29,621 - __main__ - INFO - DEBUG: Regular user: admin (role: admin, location_id: None)
+2025-08-11 21:14:29,622 - __main__ - INFO - get_users_for_tracking: Returning 3 users (admin: True, location_id: None)
+2025-08-11 21:14:29,623 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 21:14:29] "GET /get_users_for_tracking HTTP/1.1" 200 -
+2025-08-11 21:14:31,414 - __main__ - INFO - DEBUG: Regular user: admin (role: admin, location_id: None)
+2025-08-11 21:14:31,415 - __main__ - INFO - get_users_for_tracking: Returning 3 users (admin: True, location_id: None)
+2025-08-11 21:14:31,416 - werkzeug - INFO - 127.0.0.1 - - [11/Aug/2025 21:14:31] "GET /get_users_for_tracking HTTP/1.1" 200 -
+2025-08-12 13:30:19,726 - __main__ - INFO - Database tables created successfully
+2025-08-12 13:32:18,148 - __main__ - INFO - Database tables created successfully
+2025-08-12 13:39:02,445 - __main__ - INFO - Database tables created successfully
+2025-08-12 13:40:13,034 - __main__ - INFO - Database tables created successfully
+2025-08-12 13:40:33,233 - __main__ - INFO - Database tables created successfully
+2025-08-12 14:00:18,087 - __main__ - INFO - Database tables created successfully
+2025-08-12 14:00:18,139 - __main__ - INFO - Database tables created successfully
+2025-08-12 14:00:18,141 - __main__ - INFO - Database initialization completed
+2025-08-12 14:00:18,141 - __main__ - INFO - Database initialized successfully
+2025-08-12 14:00:18,141 - __main__ - INFO - Starting MonuMe Tracker Server on 0.0.0.0:5000 (debug=False)
+2025-08-12 14:00:18,179 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.12.47:5000
+2025-08-12 14:00:18,179 - werkzeug - INFO - [33mPress CTRL+C to quit[0m

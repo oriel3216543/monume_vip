@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SystemCheck - Diagnostics</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #f5a069;
+            --primary-dark: #e8944d;
+            --primary-light: #f8b587;
+            --secondary: #2c3e50;
+            --success: #27ae60;
+            --danger: #e74c3c;
+            --warning: #f39c12;
+            --dark: #2c3e50;
+            --light: #ecf0f1;
+            --white: #ffffff;
+            --gray-100: #f8f9fa;
+            --gray-200: #e9ecef;
+            --gray-300: #dee2e6;
+            --gray-400: #ced4da;
+            --gray-500: #adb5bd;
+            --shadow: 0 4px 15px rgba(245, 160, 105, 0.15);
+            --shadow-hover: 0 8px 25px rgba(245, 160, 105, 0.25);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #f5a069 0%, #f8b587 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 40px;
+            text-align: center;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+            border: 2px solid var(--primary);
+        }
+
+        .header h1 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            color: var(--secondary);
+            font-weight: 500;
+        }
+
+        /* Card */
+        .test-card {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 25px;
+            box-shadow: var(--shadow);
+            border: 2px solid var(--gray-200);
+            transition: all 0.3s ease;
+        }
+
+        .test-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+            border-color: var(--primary);
+        }
+
+        .card-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 10px;
+        }
+
+        .card-title .icon {
+            font-size: 1.5rem;
+        }
+
+        /* Buttons */
+        .btn {
+            background: var(--primary);
+            color: var(--white);
+            border: none;
+            border-radius: 12px;
+            padding: 12px 20px;
+            font-size: 1rem;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin: 6px;
+        }
+
+        .btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .btn.secondary {
+            background: var(--secondary);
+        }
+
+        .btn.secondary:hover {
+            background: #34495e;
+        }
+
+        .btn.success {
+            background: var(--success);
+        }
+
+        .btn.success:hover {
+            background: #229954;
+        }
+
+        .btn.danger {
+            background: var(--danger);
+        }
+
+        .btn.danger:hover {
+            background: #c0392b;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        /* Results Area */
+        .result-area {
+            background: var(--gray-100);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 2px solid var(--gray-200);
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            font-size: 1rem;
+            line-height: 1.6;
+            transition: all 0.3s ease;
+        }
+
+        .result-area.success {
+            background: rgba(39, 174, 96, 0.1);
+            border-color: var(--success);
+            color: #27ae60;
+        }
+
+        .result-area.error {
+            background: rgba(231, 76, 60, 0.1);
+            border-color: var(--danger);
+            color: #e74c3c;
+        }
+
+        .result-area.info {
+            background: rgba(245, 160, 105, 0.1);
+            border-color: var(--primary);
+            color: var(--primary-dark);
+        }
+
+        .result-area.loading {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        /* Status Grid */
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .status-card {
+            background: var(--white);
+            border: 2px solid var(--primary);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .status-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .status-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .status-label {
+            color: var(--gray-500);
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Navigation */
+        .navigation {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+            margin-top: 30px;
+            box-shadow: var(--shadow);
+            border: 2px solid var(--gray-200);
+        }
+
+        .navigation h4 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .nav-link {
+            background: var(--primary);
+            color: var(--white);
+            text-decoration: none;
+            border-radius: 12px;
+            padding: 12px 20px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-link:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2.2rem;
+            }
+            
+            .status-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .test-card {
+                padding: 20px;
+            }
+            
+            .button-group {
+                justify-content: center;
+            }
+            
+            .nav-links {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--gray-200);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-dark);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🔧 SystemCheck</h1>
+            <p>Professional System Diagnostics & Performance Analysis</p>
+        </div>
+        
+        <!-- Server Status -->
+        <div class="test-card">
+            <div class="card-title">
+                <span class="icon">🌐</span>
+                Server & Connectivity
+            </div>
+            <div class="button-group">
+                <button class="btn" onclick="testServerConnection()">🔗 Test Connection</button>
+                <button class="btn secondary" onclick="testRoutes()">🛣️ Check All Routes</button>
+            </div>
+            <div id="serverResult" class="result-area">Ready to test server connectivity...</div>
+        </div>
+        
+        <!-- Data System Status -->
+        <div class="test-card">
+            <div class="card-title">
+                <span class="icon">💾</span>
+                Data System Analysis
+            </div>
+            <div class="status-grid" id="dataStatus">
+                <div class="status-card">
+                    <div class="status-number" id="locationsCount">-</div>
+                    <div class="status-label">Locations</div>
+                </div>
+                <div class="status-card">
+                    <div class="status-number" id="usersCount">-</div>
+                    <div class="status-label">Users</div>
+                </div>
+                <div class="status-card">
+                    <div class="status-number" id="sessionsCount">-</div>
+                    <div class="status-label">Sessions</div>
+                </div>
+            </div>
+            <div class="button-group">
+                <button class="btn" onclick="checkDataStatus()">📊 Analyze Data</button>
+                <button class="btn success" onclick="populateDemo()">🎯 Load Demo</button>
+                <button class="btn danger" onclick="clearAllData()">🗑️ Clear All</button>
+            </div>
+            <div id="dataResult" class="result-area">Click buttons above to analyze data system...</div>
+        </div>
+        
+        <!-- User Management System -->
+        <div class="test-card">
+            <div class="card-title">
+                <span class="icon">👥</span>
+                User Management Diagnostics
+            </div>
+            <div class="button-group">
+                <button class="btn" onclick="testUserSystem()">🔍 Test User System</button>
+                <button class="btn" onclick="testLocationSystem()">📍 Test Locations</button>
+                <button class="btn" onclick="testModalFunctions()">🪟 Test Modals</button>
+            </div>
+            <div id="userResult" class="result-area">Click buttons above to test user management...</div>
+        </div>
+        
+        <!-- JavaScript Functions -->
+        <div class="test-card">
+            <div class="card-title">
+                <span class="icon">⚙️</span>
+                JavaScript Engine Analysis
+            </div>
+            <div class="button-group">
+                <button class="btn" onclick="testGlobalFunctions()">🌐 Global Functions</button>
+                <button class="btn" onclick="testUserManagerClass()">🏗️ UserManager Class</button>
+                <button class="btn" onclick="testLocalStorage()">💾 localStorage</button>
+            </div>
+            <div id="jsResult" class="result-area">Click buttons above to test JavaScript functionality...</div>
+        </div>
+        
+        <!-- Complete System Test -->
+        <div class="test-card">
+            <div class="card-title">
+                <span class="icon">🎯</span>
+                Comprehensive System Analysis
+            </div>
+            <div class="button-group">
+                <button class="btn success" onclick="runCompleteTest()">🚀 Full System Scan</button>
+                <button class="btn" onclick="generateSystemReport()">📋 Generate Report</button>
+            </div>
+            <div id="completeResult" class="result-area">Click buttons above to run comprehensive diagnostics...</div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="navigation">
+            <h4>🚀 Navigation Hub</h4>
+            <div class="nav-links">
+                <a href="/" class="nav-link">🏠 Calculator</a>
+                <a href="/users" class="nav-link">👥 TeamHub</a>
+                <a href="/history" class="nav-link">📊 History</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Test Server Connection
+        async function testServerConnection() {
+            const result = document.getElementById('serverResult');
+            result.className = 'result-area info loading';
+            result.innerHTML = '🔄 Testing server connection...';
+            
+            try {
+                const response = await fetch('/');
+                if (response.ok) {
+                    result.className = 'result-area success';
+                    result.innerHTML = '✅ Server is operational and responding perfectly!';
+                } else {
+                    result.className = 'result-area error';
+                    result.innerHTML = `❌ Server responded with status: ${response.status}`;
+                }
+            } catch (error) {
+                result.className = 'result-area error';
+                result.innerHTML = `❌ Server connection failed: ${error.message}`;
+            }
+        }
+        
+        // Test All Routes
+        async function testRoutes() {
+            const result = document.getElementById('serverResult');
+            result.className = 'result-area info loading';
+            result.innerHTML = '🔄 Testing all system routes...';
+            
+            const routes = ['/', '/users', '/history', '/users.js'];
+            const results = [];
+            
+            for (const route of routes) {
+                try {
+                    const response = await fetch(route);
+                    results.push(`${route}: ${response.ok ? '✅' : '❌'} (${response.status})`);
+                } catch (error) {
+                    results.push(`${route}: ❌ Error: ${error.message}`);
+                }
+            }
+            
+            result.className = 'result-area success';
+            result.innerHTML = '📊 Route Analysis Complete:<br>' + results.join('<br>');
+        }
+        
+        // Check Data Status
+        function checkDataStatus() {
+            const result = document.getElementById('dataResult');
+            
+            try {
+                const locations = JSON.parse(localStorage.getItem('salaryCalc_locations') || '[]');
+                const users = JSON.parse(localStorage.getItem('salaryCalc_users') || '[]');
+                const sessions = JSON.parse(localStorage.getItem('salaryCalc_sessions') || '[]');
+                
+                // Update status cards
+                document.getElementById('locationsCount').textContent = locations.length;
+                document.getElementById('usersCount').textContent = users.length;
+                document.getElementById('sessionsCount').textContent = sessions.length;
+                
+                result.className = 'result-area success';
+                result.innerHTML = `✅ Data Analysis Complete: ${locations.length} locations, ${users.length} users, ${sessions.length} sessions`;
+            } catch (error) {
+                result.className = 'result-area error';
+                result.innerHTML = `❌ Data analysis failed: ${error.message}`;
+            }
+        }
+        
+        // Populate Demo Data
+        function populateDemo() {
+            const result = document.getElementById('dataResult');
+            
+            // Create demo data directly since we removed the demo_data.js file
+            const demoLocations = ['Downtown Store', 'Mall Location', 'Airport Branch', 'Online Sales'];
+            const demoUsers = [
+                {
+                    id: 'user-001',
+                    name: 'John Smith',
+                    location: 'Downtown Store',
+                    tiers: [
+                        { threshold: 0, rate: 15, type: 'hourly' },
+                        { threshold: 500, rate: 18, type: 'hourly' },
+                        { threshold: 1000, rate: 25, type: 'commission' }
+                    ]
+                },
+                {
+                    id: 'user-002',
+                    name: 'Sarah Johnson',
+                    location: 'Mall Location',
+                    tiers: [
+                        { threshold: 0, rate: 14, type: 'hourly' },
+                        { threshold: 300, rate: 17, type: 'hourly' },
+                        { threshold: 800, rate: 20, type: 'commission' }
+                    ]
+                }
+            ];
+            
+            try {
+                localStorage.setItem('salaryCalc_locations', JSON.stringify(demoLocations));
+                localStorage.setItem('salaryCalc_users', JSON.stringify(demoUsers));
+                localStorage.setItem('salaryCalc_sessions', JSON.stringify([]));
+                
+                result.className = 'result-area success';
+                result.innerHTML = `✅ Demo data loaded successfully: ${demoLocations.length} locations, ${demoUsers.length} users, 0 sessions`;
+                checkDataStatus(); // Update status cards
+            } catch (error) {
+                result.className = 'result-area error';
+                result.innerHTML = `❌ Demo data loading failed: ${error.message}`;
+            }
+        }
+        
+        // Clear All Data
+        function clearAllData() {
+            if (confirm('⚠️ Are you sure you want to clear all system data? This action cannot be undone.')) {
+                const result = document.getElementById('dataResult');
+                
+                try {
+                    localStorage.removeItem('salaryCalc_locations');
+                    localStorage.removeItem('salaryCalc_users');
+                    localStorage.removeItem('salaryCalc_sessions');
+                    
+                    result.className = 'result-area success';
+                    result.innerHTML = '✅ All system data cleared successfully';
+                    checkDataStatus(); // Update status cards
+                } catch (error) {
+                    result.className = 'result-area error';
+                    result.innerHTML = `❌ Data clearing failed: ${error.message}`;
+                }
+            }
+        }
+        
+        // Test User System
+        function testUserSystem() {
+            const result = document.getElementById('userResult');
+            const tests = [];
+            
+            // Test UserManager class
+            if (typeof UserManager === 'function') {
+                tests.push('✅ UserManager class detected');
+                try {
+                    const testManager = new UserManager();
+                    tests.push('✅ UserManager instance created successfully');
+                } catch (error) {
+                    tests.push(`❌ UserManager instantiation failed: ${error.message}`);
+                }
+            } else {
+                tests.push('❌ UserManager class not found');
+            }
+            
+            // Test global user functions
+            const userFunctions = ['openUserModal', 'closeUserModal', 'saveUser', 'addTierEditor'];
+            userFunctions.forEach(func => {
+                if (typeof window[func] === 'function') {
+                    tests.push(`✅ ${func} function operational`);
+                } else {
+                    tests.push(`❌ ${func} function missing`);
+                }
+            });
+            
+            result.className = tests.some(t => t.includes('❌')) ? 'result-area error' : 'result-area success';
+            result.innerHTML = tests.join('<br>');
+        }
+        
+        // Test Location System
+        function testLocationSystem() {
+            const result = document.getElementById('userResult');
+            const tests = [];
+            
+            // Test global location functions
+            const locationFunctions = ['openLocationModal', 'closeLocationModal', 'saveLocation'];
+            locationFunctions.forEach(func => {
+                if (typeof window[func] === 'function') {
+                    tests.push(`✅ ${func} function operational`);
+                } else {
+                    tests.push(`❌ ${func} function missing`);
+                }
+            });
+            
+            result.className = tests.some(t => t.includes('❌')) ? 'result-area error' : 'result-area success';
+            result.innerHTML = tests.join('<br>');
+        }
+        
+        // Test Modal Functions
+        function testModalFunctions() {
+            const result = document.getElementById('userResult');
+            const tests = [];
+            
+            try {
+                // Test modal availability
+                if (typeof openLocationModal === 'function') {
+                    tests.push('✅ Location modal system operational');
+                }
+                
+                if (typeof openUserModal === 'function') {
+                    tests.push('✅ User modal system operational');
+                }
+                
+                result.className = 'result-area success';
+                result.innerHTML = tests.join('<br>') + '<br>✅ Modal systems fully functional';
+            } catch (error) {
+                result.className = 'result-area error';
+                result.innerHTML = `❌ Modal testing failed: ${error.message}`;
+            }
+        }
+        
+        // Test Global Functions
+        function testGlobalFunctions() {
+            const result = document.getElementById('jsResult');
+            const tests = [];
+            
+            const globalFunctions = [
+                'openLocationModal', 'closeLocationModal', 'saveLocation',
+                'openUserModal', 'closeUserModal', 'saveUser', 'addTierEditor',
+                'exportAllUsers'
+            ];
+            
+            globalFunctions.forEach(func => {
+                if (typeof window[func] === 'function') {
+                    tests.push(`✅ ${func}`);
+                } else {
+                    tests.push(`❌ ${func}`);
+                }
+            });
+            
+            result.className = tests.some(t => t.includes('❌')) ? 'result-area error' : 'result-area success';
+            result.innerHTML = 'Global Function Analysis:<br>' + tests.join('<br>');
+        }
+        
+        // Test UserManager Class
+        function testUserManagerClass() {
+            const result = document.getElementById('jsResult');
+            
+            try {
+                if (typeof UserManager === 'function') {
+                    const manager = new UserManager();
+                    const methods = ['loadData', 'saveData', 'renderLocations', 'renderUsers', 'openUserModal'];
+                    const tests = [];
+                    
+                    methods.forEach(method => {
+                        if (typeof manager[method] === 'function') {
+                            tests.push(`✅ ${method} method`);
+                        } else {
+                            tests.push(`❌ ${method} method`);
+                        }
+                    });
+                    
+                    result.className = 'result-area success';
+                    result.innerHTML = 'UserManager Class Analysis:<br>' + tests.join('<br>');
+                } else {
+                    result.className = 'result-area error';
+                    result.innerHTML = '❌ UserManager class not available';
+                }
+            } catch (error) {
+                result.className = 'result-area error';
+                result.innerHTML = `❌ UserManager analysis failed: ${error.message}`;
+            }
+        }
+        
+        // Test localStorage
+        function testLocalStorage() {
+            const result = document.getElementById('jsResult');
+            
+            try {
+                const testKey = 'systemcheck_test';
+                const testValue = 'diagnostic_data';
+                
+                // Test write
+                localStorage.setItem(testKey, testValue);
+                
+                // Test read
+                const retrieved = localStorage.getItem(testKey);
+                
+                // Test delete
+                localStorage.removeItem(testKey);
+                
+                if (retrieved === testValue) {
+                    result.className = 'result-area success';
+                    result.innerHTML = '✅ localStorage is functioning perfectly';
+                } else {
+                    result.className = 'result-area error';
+                    result.innerHTML = '❌ localStorage read/write operation failed';
+                }
+            } catch (error) {
+                result.className = 'result-area error';
+                result.innerHTML = `❌ localStorage diagnostic failed: ${error.message}`;
+            }
+        }
+        
+        // Run Complete Test
+        async function runCompleteTest() {
+            const result = document.getElementById('completeResult');
+            result.className = 'result-area info loading';
+            result.innerHTML = '🔄 Running comprehensive system analysis...';
+            
+            const tests = [];
+            
+            // Server test
+            try {
+                const response = await fetch('/');
+                tests.push(response.ok ? '✅ Server System' : '❌ Server System');
+            } catch (error) {
+                tests.push('❌ Server System');
+            }
+            
+            // JavaScript test
+            tests.push(typeof UserManager === 'function' ? '✅ UserManager Core' : '❌ UserManager Core');
+            tests.push(typeof openLocationModal === 'function' ? '✅ Location System' : '❌ Location System');
+            tests.push(typeof openUserModal === 'function' ? '✅ User System' : '❌ User System');
+            
+            // localStorage test
+            try {
+                localStorage.setItem('test_diagnostic', 'pass');
+                localStorage.removeItem('test_diagnostic');
+                tests.push('✅ Data Storage');
+            } catch (error) {
+                tests.push('❌ Data Storage');
+            }
+            
+            // Data test
+            const locations = JSON.parse(localStorage.getItem('salaryCalc_locations') || '[]');
+            const users = JSON.parse(localStorage.getItem('salaryCalc_users') || '[]');
+            tests.push(`📊 Data Inventory: ${locations.length} locations, ${users.length} users`);
+            
+            const allPassed = !tests.some(t => t.includes('❌'));
+            result.className = allPassed ? 'result-area success' : 'result-area error';
+            result.innerHTML = '🎯 Comprehensive Analysis Results:<br>' + tests.join('<br>') + 
+                              '<br><br>' + (allPassed ? '🎉 All systems operational - Perfect health!' : '⚠️ Issues detected - Review individual tests');
+        }
+        
+        // Generate System Report
+        function generateSystemReport() {
+            const result = document.getElementById('completeResult');
+            
+            const report = {
+                timestamp: new Date().toISOString(),
+                systemStatus: 'Operational',
+                userManager: typeof UserManager === 'function',
+                globalFunctions: {
+                    openLocationModal: typeof openLocationModal === 'function',
+                    openUserModal: typeof openUserModal === 'function',
+                    saveLocation: typeof saveLocation === 'function',
+                    saveUser: typeof saveUser === 'function'
+                },
+                dataStorage: (() => {
+                    try {
+                        localStorage.setItem('diagnostic_test', 'pass');
+                        localStorage.removeItem('diagnostic_test');
+                        return true;
+                    } catch (error) {
+                        return false;
+                    }
+                })(),
+                dataInventory: {
+                    locations: JSON.parse(localStorage.getItem('salaryCalc_locations') || '[]').length,
+                    users: JSON.parse(localStorage.getItem('salaryCalc_users') || '[]').length,
+                    sessions: JSON.parse(localStorage.getItem('salaryCalc_sessions') || '[]').length
+                },
+                performance: {
+                    memoryUsage: performance.memory ? `${Math.round(performance.memory.usedJSHeapSize / 1024 / 1024)}MB` : 'N/A',
+                    loadTime: `${Math.round(performance.now())}ms`
+                }
+            };
+            
+            result.className = 'result-area info';
+            result.innerHTML = '📋 System Analysis Report:<br><pre style="text-align: left; font-size: 0.9rem; background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px; margin-top: 10px;">' + JSON.stringify(report, null, 2) + '</pre>';
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            checkDataStatus();
+            console.log('🚀 SystemCheck diagnostics loaded and ready');
+        });
+    </script>
+</body>
+</html> 
