@@ -4470,7 +4470,7 @@ if __name__ == '__main__':
     try:
         # Create logs directory if it doesn't exist
         os.makedirs('logs', exist_ok=True)
-        
+
         # Initialize database with app context
         with app.app_context():
             try:
@@ -4479,12 +4479,20 @@ if __name__ == '__main__':
             except Exception as e:
                 logger.error(f"Database initialization failed: {str(e)}")
                 print(f"Database initialization failed: {str(e)}")
-        
+
         host = os.environ.get('DOMAIN', '0.0.0.0')
         try:
-            port = int(os.environ.get('PORT', 5000))
+            port = int(os.environ.get('PORT', '5000'))
         except Exception:
             port = 5000
+
+        # If running on a platform that sets PORT (e.g., Railway), prefer Gunicorn even if this file is executed directly
+        if os.environ.get('PORT'):
+            import shlex
+            gunicorn_cmd = f"gunicorn MonuMe_Tracker.server:app --bind 0.0.0.0:{port} --workers 2 --timeout 120 --access-logfile - --error-logfile -"
+            logger.info(f"Detected PORT in env; exec-ing Gunicorn: {gunicorn_cmd}")
+            os.execvp('sh', ['sh', '-c', gunicorn_cmd])
+
         debug = not is_production
         logger.info(f"Starting MonuMe Tracker Server on {host}:{port} (debug={debug})")
         print("ROUTES:", [(r.rule, sorted(list(r.methods))) for r in app.url_map.iter_rules()])
