@@ -25,7 +25,7 @@ COPY . .
 # Expose port (optional; some platforms ignore this)
 EXPOSE 5000
 
-# Start the web server
-CMD ["sh","-c","gunicorn server:app --workers=2 --threads=2 --bind 0.0.0.0:${PORT:-5000}"]
+# Start the web server via Gunicorn targeting the Flask app
+CMD ["gunicorn", "MonuMe_Tracker.server:app", "--bind", "0.0.0.0:${PORT}", "--workers", "2", "--timeout", "120"]
 
 

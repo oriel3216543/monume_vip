@@ -68,6 +68,11 @@ logger = logging.getLogger(__name__)
 # Initialize Flask app
 app = Flask(__name__, static_folder="static", template_folder="templates")
 
+# Fast health check for platforms like Railway
+@app.get("/healthz")
+def healthz():
+    return "ok", 200
+
 # Load configuration (production vs development)
 is_production = os.environ.get('PRODUCTION', os.environ.get('FLASK_ENV', 'production')).lower() in (
     '1', 'true', 'prod', 'production'
