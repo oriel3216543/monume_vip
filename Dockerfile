@@ -1,31 +1,10 @@
-FROM python:3.12-slim
-
-# Prevent Python from writing .pyc files and ensure stdout/stderr are unbuffered
-ENV PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1 \
-    PIP_NO_CACHE_DIR=1
-
+FROM python:3.11-slim
+ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
 WORKDIR /app
-
-# System dependencies
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
-       wkhtmltopdf \
-       curl \
-    && rm -rf /var/lib/apt/lists/*
-
-# Python dependencies
-COPY requirements.txt ./
-RUN python -m pip install --upgrade pip \
-    && pip install -r requirements.txt
-
-# Project files
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
-
-# Expose port (optional; some platforms ignore this)
-EXPOSE 5000
-
-# Start the web server via Gunicorn targeting the Flask app
-CMD ["gunicorn", "MonuMe_Tracker.server:app", "--bind", "0.0.0.0:${PORT}", "--workers", "2", "--timeout", "120"]
+EXPOSE 8080
+CMD ["gunicorn","MonuMe_Tracker.server:app","--bind","0.0.0.0:${PORT}","--workers","2","--timeout","120","--access-logfile","-","--error-logfile","-"]
 
 
