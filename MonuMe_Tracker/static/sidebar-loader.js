@@ -198,7 +198,7 @@ class SidebarLoader {
         // Load immediate CSS file for instant styling
         if (!document.querySelector('link[href*="sidebar-styles.css"]')) {
             const immediateCSS = document.createElement('link');
-            immediateCSS.href = 'sidebar-styles.css';
+            immediateCSS.href = '/sidebar-styles.css';
             immediateCSS.rel = 'stylesheet';
             document.head.appendChild(immediateCSS);
         }
@@ -553,7 +553,7 @@ class SidebarLoader {
                 return;
             }
             
-            const response = await fetch('sidebar-template.html');
+            const response = await fetch('/sidebar-template.html');
             
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);

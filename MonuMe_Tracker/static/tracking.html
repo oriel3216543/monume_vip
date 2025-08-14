@@ -58,7 +58,7 @@
         })();
     </script>
     <!-- Load sidebar loader immediately for instant sidebar display -->
-    <script src="sidebar-loader.js"></script>
+    <script src="/sidebar-loader.js"></script>
     
     <!-- Preload critical resources -->
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@300;400;500;600;700;800&display=swap" as="style">
@@ -1313,6 +1313,34 @@
     <script src="/static/js/tracking.js"></script>
     
     <script>
+        // Ensure the tracking page shows the same sidebar entries as the dashboard
+        (function() {
+            function pruneSidebarToDashboardSet() {
+                try {
+                    const selectors = [
+                        ".sidebar a[href='/salary']",
+                        ".sidebar a[href='/users']",
+                        ".sidebar a[href='/salary/history']"
+                    ];
+                    selectors.forEach(sel => {
+                        document.querySelectorAll(sel).forEach(a => {
+                            const item = a.closest('.menu-item');
+                            if (item && item.parentElement) {
+                                item.parentElement.removeChild(item);
+                            }
+                        });
+                    });
+                } catch (e) {
+                    console.warn('Sidebar prune failed:', e);
+                }
+            }
+
+            // Run once DOM is ready
+            document.addEventListener('DOMContentLoaded', pruneSidebarToDashboardSet);
+            // Run again after sidebar loader injects content
+            document.addEventListener('sidebarLoaded', pruneSidebarToDashboardSet);
+        })();
+
         document.addEventListener("DOMContentLoaded", function() {
             // Update page title and subtitle based on location context
             updateTrackingPageTitle();
