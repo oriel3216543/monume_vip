@@ -308,28 +308,11 @@ class MonuMeLogin {
 
 // Initialize login system when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
-    // Check for existing login (but don't auto-redirect)
-    const hasExistingLogin = MonuMeLogin.checkExistingLogin();
-    
-    if (hasExistingLogin) {
-        // Show a message that user is already logged in
-        const existingUser = MonuMeLogin.getCurrentUser();
-        if (existingUser) {
-            console.log(`User ${existingUser.username} is already logged in`);
-                         // Show a message with options to user
-             const successDiv = document.getElementById('successMessage');
-             if (successDiv) {
-                 successDiv.innerHTML = `
-                     Already logged in as <strong>${existingUser.username}</strong>. 
-                     <a href="/dashboard" style="color: #ff7f42; text-decoration: underline; margin-right: 15px;">Go to Dashboard</a>
-                     <a href="#" onclick="MonuMeLogin.logoutAndClearSession()" style="color: #dc2626; text-decoration: underline;">Login as Different User</a>
-                 `;
-                 successDiv.style.display = 'block';
-             }
-        }
-    }
-    
-    // Always initialize the login instance
+    // Always start from a clean state on the login page to avoid stale sessions
+    try { MonuMeLogin.clearAuthData(); } catch (e) { /* ignore */ }
+    fetch('/api/logout', { method: 'POST', credentials: 'same-origin' }).catch(()=>{});
+
+    // Initialize the login instance
     window.monumeLogin = new MonuMeLogin();
 });
 
