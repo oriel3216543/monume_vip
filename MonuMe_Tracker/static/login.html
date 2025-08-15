@@ -4,7 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MonuMe VIP - Login</title>
-    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <!-- Provide multiple favicon formats for maximum browser compatibility -->
+    <link rel="icon" href="/favicon.ico" sizes="any">
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="icon" type="image/jpeg" href="/static/favicon.JPG">
+    <link rel="apple-touch-icon" href="/static/favicon.JPG">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
@@ -275,7 +279,7 @@
     <div class="login-container">
         <div class="login-header">
             <div class="login-logo">
-                <img src="/static/favicon.ico" alt="MonuMe VIP Logo">
+                <img src="/static/favicon.JPG" alt="MonuMe VIP Logo" onerror="this.onerror=null;this.src='/static/favicon.ico'">
             </div>
             <h1 class="login-title">MonuMe VIP</h1>
             <p class="login-subtitle">Admin & Location Access</p>
