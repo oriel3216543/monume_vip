@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MonuMe Locations - Management Dashboard</title>
-    <link rel="icon" type="image/png" href="/static/logo11.png">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
     <!-- Hidden Authorization Check -->
     <script>
         (function() {
@@ -81,8 +81,8 @@
                 `;
             }
             
-            // Show login prompt
-            function showLoginPrompt() {
+            // Show login prompt (exposed globally so other scripts can call it)
+            window.showLoginPrompt = function showLoginPrompt() {
                 // Instead of blocking the entire page, just show a warning and continue
                 console.log('Authentication failed, but continuing to load page...');
                 
@@ -1622,7 +1622,7 @@
             <div class="sidebar-brand">
                 <a href="/dashboard" title="Go to Dashboard">
                     <div class="logo-container">
-                        <img src="/static/logo11.png" alt="MonuMe Logo" class="sidebar-logo">
+                        <img src="/static/logo11.png" alt="MonuMe Logo" class="sidebar-logo" onerror="this.onerror=null;this.src='/static/favicon.ico'">
                     </div>
                 </a>
             </div>
