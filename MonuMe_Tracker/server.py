@@ -983,7 +983,7 @@ def location_dashboard_by_name(location_name):
         <head>
             <title>{{location.location_name}} - Dashboard</title>
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <link rel="icon" type="image/png" href="/favicon.JPG">
+            <link rel="icon" href="/favicon.ico">
             <script>
                 // Set location context for the dashboard
                 window.LOCATION_CONTEXT = {
@@ -1232,7 +1232,7 @@ def location_analytics(location_name):
         <head>
             <title>{{location.location_name}} - Analytics</title>
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <link rel="icon" type="image/png" href="/favicon.JPG">
+            <link rel="icon" href="/favicon.ico">
             <script>
                 // Set location context for the analytics page
                 window.LOCATION_CONTEXT = {
@@ -1569,7 +1569,7 @@ def location_salary_page(location_name):
         <head>
             <title>{{location.location_name}} - Salary</title>
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <link rel="icon" type="image/png" href="/favicon.JPG">
+            <link rel="icon" href="/favicon.ico">
         </head>
         <body>
             <script>
