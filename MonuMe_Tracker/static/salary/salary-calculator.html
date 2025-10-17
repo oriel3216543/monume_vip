@@ -285,7 +285,24 @@
                 }
             }catch(e){console.error('profile load',e)}
         }
-        async function loadUserTiersFromServer(userId){try{const res=await fetch(`/api/users/${userId}/tiers`);const data=await res.json();const tiers=Array.isArray(data)?data:(data.tiers||[]);currentUser.tiersServer=(tiers||[]).map(t=>({type:(t.tier_type||'hourly'),sales_goal_in_day:parseInt(t.sales_goal_in_day||0),min_demo:parseInt(t.daily_demo_min||0),hourly_rate:parseFloat(t.hourly_rate||0),commission_rate_pct:parseFloat(t.commission_rate_pct||0),demo_bonus:parseFloat(t.demo_bonus||0)}))}catch(e){console.error('tiers load',e);currentUser.tiersServer=[]}}
+        async function loadUserTiersFromServer(userId){
+            try{
+                const res=await fetch(`/api/users/${userId}/tiers`,{
+                    credentials:'include',
+                    headers:{'X-Requested-With':'XMLHttpRequest'}
+                });
+                const data=await res.json();
+                const tiers=Array.isArray(data)?data:(data.tiers||[]);
+                currentUser.tiersServer=(tiers||[]).map(t=>({
+                    type:(t.tier_type||'hourly'),
+                    sales_goal_in_day:parseInt(t.sales_goal_in_day||0),
+                    min_demo:parseInt(t.daily_demo_min||0),
+                    hourly_rate:parseFloat(t.hourly_rate||0),
+                    commission_rate_pct:parseFloat(t.commission_rate_pct||0),
+                    demo_bonus:parseFloat(t.demo_bonus||0)
+                }))
+            }catch(e){console.error('tiers load',e);currentUser.tiersServer=[]}
+        }
         function displayUserInfo(){const container=document.getElementById('userInfoDisplay');const section=document.getElementById('userInfoSection');if(!container||!section){return}if(!currentUser){section.classList.add('hidden');return}let tiersHtml='';if(currentUser.tiers&&currentUser.tiers.length>0){tiersHtml=`<div class="tier-display">${currentUser.tiers.map(tier=>`<div class=\"tier-card\"><div style=\"font-weight:600;color:var(--primary);margin-bottom:5px;\">$${tier.threshold}+ Sales</div><div style=\"font-size:1.1rem;font-weight:700;\">${tier.type==='commission'?`${tier.rate}%`:`$${tier.rate}/hr`}</div><div style=\"font-size:.8rem;color:var(--gray-500);\">${tier.type==='commission'?'Commission':'Hourly Rate'}</div></div>`).join('')}</div>`}
             container.innerHTML=`<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px;margin-bottom:15px;"><div><strong>👤 Name:</strong> ${currentUser.name||''}</div><div><strong>📍 Location:</strong> ${currentUser.location||''}</div><div><strong>⭐ Tiers:</strong> ${currentUser.tiers?.length||0} configured</div></div>${tiersHtml}`;section.classList.remove('hidden');const profileToggleBtn=document.getElementById('profileToggleBtn');if(profileToggleBtn&&!profileToggleBtn.innerHTML.includes('Hide')){container.classList.add('hidden')}}
         function hideUserInfo(){const s=document.getElementById('userInfoSection');if(s){s.classList.add('hidden')}}
@@ -400,7 +417,38 @@
             });
             displaySalaryResults()
         }
-        function computePayByServerTiers(row,tiers){const sales=row.sales||0;const hours=row.hours||0;const demos=row.demos||0;const reimbur=row.reimbur||0;const deductions=row.deductions||0;const candidates=[];tiers.forEach(t=>{const salesOk=sales>= (t.sales_goal_in_day||0);const demosOk=(t.min_demo||0)===0?true:(demos>=(t.min_demo||0));if(salesOk&&demosOk){const base=(t.type==='commission')?((t.commission_rate_pct||0)/100)*sales: (t.hourly_rate||0)*hours;candidates.push({tier:t,base})}});let chosen=null;if(candidates.length){candidates.sort((a,b)=> b.base - a.base || (b.tier.demo_bonus||0)-(a.tier.demo_bonus||0) || (b.tier.sales_goal_in_day||0)-(a.tier.sales_goal_in_day||0));chosen=candidates[0].tier}let tier_type='hourly',hourly_rate=0,commission_pct=0,demo_bonus=0;let hourly_component=0,commission_component=0,demo_component=0;if(chosen){tier_type=chosen.type||'hourly';hourly_rate=tier_type==='hourly'?(chosen.hourly_rate||0):0;commission_pct=tier_type==='commission'?(chosen.commission_rate_pct||0):0;demo_bonus=chosen.demo_bonus||0;if(tier_type==='commission'){commission_component=(commission_pct/100)*sales}else{hourly_component=hourly_rate*hours}demo_component=(demo_bonus||0)*demos}else{const baseRate=parseFloat(currentUser?.base_rate||0);if(baseRate>0){tier_type='hourly';hourly_rate=baseRate;hourly_component=baseRate*hours}}const variable_component=(tier_type==='commission')?commission_component:hourly_component;let computed_pay=variable_component+demo_component;computed_pay += (reimbur||0)-(deductions||0);const rate_display=(tier_type==='commission')? ((sales>0)?((commission_component/sales)*100):0) : hourly_rate;return{tier_type,hourly_rate:rate_display,commission_rate_pct:commission_pct,demo_bonus,computed_pay,hourly_component,commission_component,demo_component};}
+        function computePayByServerTiers(row,tiers){
+            const sales=row.sales||0;const hours=row.hours||0;const demos=row.demos||0;const reimbur=row.reimbur||0;const deductions=row.deductions||0;
+            const candidates=[];
+            tiers.forEach(t=>{
+                const salesOk=sales>=(t.sales_goal_in_day||0);
+                const demosOk=(t.min_demo||0)===0?true:(demos>=(t.min_demo||0));
+                if(salesOk&&demosOk){
+                    const base=(t.type==='commission')?((t.commission_rate_pct||0)/100)*sales: (t.hourly_rate||0)*hours;
+                    candidates.push({tier:t,base})
+                }
+            });
+            let chosen=null;
+            if(candidates.length){
+                candidates.sort((a,b)=> b.base - a.base || (b.tier.demo_bonus||0)-(a.tier.demo_bonus||0) || (b.tier.sales_goal_in_day||0)-(a.tier.sales_goal_in_day||0));
+                chosen=candidates[0].tier
+            }
+            let tier_type='hourly',hourly_rate=0,commission_pct=0,demo_bonus=0;
+            let hourly_component=0,commission_component=0,demo_component=0;
+            if(chosen){
+                tier_type=chosen.type||'hourly';
+                hourly_rate=tier_type==='hourly'?(chosen.hourly_rate||0):0;
+                commission_pct=tier_type==='commission'?(chosen.commission_rate_pct||0):0;
+                demo_bonus=chosen.demo_bonus||0;
+                if(tier_type==='commission'){commission_component=(commission_pct/100)*sales}else{hourly_component=hourly_rate*hours}
+                demo_component=(demo_bonus||0)*demos
+            }
+            const variable_component=(tier_type==='commission')?commission_component:hourly_component;
+            let computed_pay=variable_component+demo_component;
+            computed_pay += (reimbur||0)-(deductions||0);
+            const rate_display=(tier_type==='commission')? ((sales>0)?((commission_component/sales)*100):0) : hourly_rate;
+            return{tier_type,hourly_rate:rate_display,commission_rate_pct:commission_pct,demo_bonus,computed_pay,hourly_component,commission_component,demo_component};
+        }
         function displaySalaryResults(){const section=document.getElementById('salaryResultsSection');const tbody=document.getElementById('salaryResultsBody');tbody.innerHTML='';combinedData.forEach((row,index)=>{const employeeCost=row.sales>0?(row.salary/row.sales*100):0;const warn=row.missingDemo?'❗':'';const reimb=row.reimbur||0;const ded=row.deductions||0;const demoDollars=row.demoAmount||0;if(calculationMode==='commission'){const hourlyPay=row.hourlyPay||0;const comm=row.commissionAmount||0;const tr=document.createElement('tr');tr.innerHTML=`<td>${formatDateForDisplay(row.date)} ${warn}</td><td>$${row.sales.toFixed(2)}</td><td class="editable-cell" onclick="editCell(this, ${index}, 'hours')">${formatHoursForDisplay(row.hours)}</td><td>$${hourlyPay.toFixed(2)}</td><td>$${comm.toFixed(2)}</td><td>$${demoDollars.toFixed(2)}</td><td>$${reimb.toFixed(2)}</td><td>-$${ded.toFixed(2)}</td><td>$${row.salary.toFixed(2)}</td><td>${employeeCost.toFixed(1)}%</td>`;tbody.appendChild(tr)}else{const rateDisplay=row.tierType==='commission'?`${((row.salary/row.sales)*100).toFixed(1)}%`:`$${row.rate.toFixed(2)}/hr`;const tr=document.createElement('tr');tr.innerHTML=`<td>${formatDateForDisplay(row.date)} ${warn}</td><td>$${row.sales.toFixed(2)}</td><td>${rateDisplay}</td><td class="editable-cell" onclick="editCell(this, ${index}, 'hours')">${formatHoursForDisplay(row.hours)}</td><td>$${demoDollars.toFixed(2)}</td><td>$${reimb.toFixed(2)}</td><td>-$${ded.toFixed(2)}</td><td>$${row.salary.toFixed(2)}</td><td>${employeeCost.toFixed(1)}%</td>`;tbody.appendChild(tr)}});updateSummaryStats();section.classList.remove('hidden');updateTableHeadersWithAdditions()}
         function updateTableHeadersWithAdditions(){const table=document.getElementById('salaryResultsTable');if(!table)return;const thead=table.querySelector('thead tr');if(!thead)return;if(calculationMode==='commission'){thead.innerHTML='<th>Date</th><th>Sales ($)</th><th>Hours</th><th>Hourly Pay ($)</th><th>Comm ($)</th><th>Demo ($)</th><th>Reimburs. ($)</th><th>Deductions ($)</th><th>Salary ($)</th><th>Cost (%)</th>'}else{thead.innerHTML='<th>Date</th><th>Sales ($)</th><th>Rate ($/hr)</th><th>Hours</th><th>Demo ($)</th><th>Reimburs. ($)</th><th>Deductions ($)</th><th>Salary ($)</th><th>Cost (%)</th>'}}
         function updateSummaryStats(){const container=document.getElementById('summaryStats');const totalSales=combinedData.reduce((s,r)=>s+r.sales,0);const totalHours=combinedData.reduce((s,r)=>s+r.hours,0);const totalSalary=combinedData.reduce((s,r)=>s+r.salary,0);const totalCost=totalSales>0?(totalSalary/totalSales*100):0;if(calculationMode==='commission'){const totalHourlyPay=combinedData.reduce((s,r)=>s+(r.hourlyPay||0),0);const totalCommission=combinedData.reduce((s,r)=>s+(r.commissionAmount||0),0);container.innerHTML=`<div class="stat-card"><div class="stat-icon">💰</div><div class="stat-value">$${totalSales.toLocaleString()}</div><div class="stat-label">Total Sales</div></div><div class="stat-card"><div class="stat-icon">⏰</div><div class="stat-value">${formatHoursForDisplay(totalHours)}</div><div class="stat-label">Total Hours</div></div><div class="stat-card"><div class="stat-icon">🕒</div><div class="stat-value">$${totalHourlyPay.toLocaleString()}</div><div class="stat-label">Hourly Pay</div></div><div class="stat-card"><div class="stat-icon">📊</div><div class="stat-value">$${totalCommission.toLocaleString()}</div><div class="stat-label">Total Comm</div></div><div class="stat-card"><div class="stat-icon">💵</div><div class="stat-value">$${totalSalary.toLocaleString()}</div><div class="stat-label">Total Salary</div></div><div class="stat-card"><div class="stat-icon">📉</div><div class="stat-value">${totalCost.toFixed(1)}%</div><div class="stat-label">Total Cost</div></div>`}else{const avgRate=totalHours>0?(totalSalary/totalHours):0;container.innerHTML=`<div class="stat-card"><div class="stat-icon">💰</div><div class="stat-value">$${totalSales.toLocaleString()}</div><div class="stat-label">Total Sales</div></div><div class="stat-card"><div class="stat-icon">⏰</div><div class="stat-value">${formatHoursForDisplay(totalHours)}</div><div class="stat-label">Total Hours</div></div><div class="stat-card"><div class="stat-icon">💵</div><div class="stat-value">$${totalSalary.toLocaleString()}</div><div class="stat-label">Total Salary</div></div><div class="stat-card"><div class="stat-icon">📊</div><div class="stat-value">${totalCost.toFixed(1)}%</div><div class="stat-label">Total Cost</div></div><div class="stat-card"><div class="stat-icon">📈</div><div class="stat-value">$${avgRate.toFixed(2)}</div><div class="stat-label">Avg Rate/hr</div></div><div class="stat-card"><div class="stat-icon">📝</div><div class="stat-value">${combinedData.length}</div><div class="stat-label">Records</div></div>`}}
