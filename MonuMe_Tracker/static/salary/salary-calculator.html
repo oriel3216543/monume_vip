@@ -365,18 +365,24 @@
             showMessage('✅ Preview value updated','success')
         }catch(e){showMessage('❌ Invalid value','error');cell.innerHTML = (field==='hours')?formatHoursForDisplay(combinedData[index][field]) : (field==='demos'?combinedData[index][field] : `$${(combinedData[index][field]||0).toFixed(2)}`)}
         cell.classList.remove('editing')}
-        function recalculateFromPreview(){
+        async function recalculateFromPreview(){
             if(combinedData.length===0){showMessage('❌ No data to recalculate','error');return}
             // Commit any in-progress cell edits so the latest numbers are used
             const activeInputs = document.querySelectorAll('#combinedDataSection .cell-input');
             activeInputs.forEach(inp => { try { inp.blur(); } catch(_) {} });
-            // Slight delay to allow blur handlers to persist values, then recompute
-            setTimeout(() => {
-                // Re-render preview in case dates or fields changed order
-                displayCombinedData();
-                calculateSalaries();
-                showMessage('✅ Salaries recalculated','success');
-            }, 50);
+            // Allow blur handlers to persist values
+            await new Promise(r => setTimeout(r, 60));
+            // Ensure we have the latest tiers/profile for the currently selected user
+            try {
+                if (currentUser && currentUser.id) {
+                    await loadUserProfileFromServer(currentUser.id);
+                    await loadUserTiersFromServer(currentUser.id);
+                }
+            } catch (e) { console.warn('Recalculate: refresh tiers/profile failed', e); }
+            // Re-render preview and recompute using refreshed tiers and edited demos
+            displayCombinedData();
+            calculateSalaries();
+            showMessage('✅ Salaries recalculated','success');
         }
         function calculateSalaries(){
             if(!currentUser){console.error('❌ No user selected');return}
